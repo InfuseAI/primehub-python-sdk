@@ -23,10 +23,6 @@ def attach_dev_lab(p):
 
 def create_sdk():
     cfg = ph.PrimeHubConfig()
-    try:
-        cfg.load_default_config()
-    except FileNotFoundError as e:
-        pass
     p = ph.PrimeHub(cfg)
 
     # Note: We replace the config to CliConfig, please see details at config module
@@ -161,7 +157,9 @@ def main(sdk=None):
         logger.debug('start to parse {}'.format(sys.argv))
         args, remaining_args = main_parser.parse_known_args()
         command_name = args.command
-        logger.debug("args: {}, remaining_args: {}".format(args, remaining_args))
+        logger.debug("args: {}".format(args))
+        logger.debug("remaining_args: {}".format(remaining_args))
+        reconfigure_primehub_config_if_needed(args, sdk)
 
         # the real object to execute command
         target = sdk.commands[command_name]
@@ -190,6 +188,13 @@ def main(sdk=None):
             sys.exit(0)
         else:
             sys.exit(1)
+
+
+def reconfigure_primehub_config_if_needed(args, sdk):
+    if args.config is not None or args.endpoint is not None or args.group is not None or args.token is not None:
+        sdk.primehub_config = ph.PrimeHubConfig(
+            config=args.config, endpoint=args.endpoint,
+            group=args.group, token=args.token)
 
 
 if __name__ == '__main__':

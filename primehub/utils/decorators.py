@@ -1,12 +1,13 @@
 from functools import wraps
 from inspect import signature
+from typing import Dict
 
 from primehub.utils import create_logger
 
 logger = create_logger('decorator')
 
-__command_groups__ = dict()
-__actions__ = dict()
+__command_groups__: Dict[str, list] = dict()
+__actions__: Dict[str, dict] = dict()
 
 
 def find_actions(sub_command):

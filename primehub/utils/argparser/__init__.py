@@ -1,8 +1,7 @@
 import importlib
 import sys
-from argparse import *
-from typing import Text, Iterable, Optional, NoReturn
-import importlib
+from argparse import ArgumentParser, HelpFormatter, Action
+from typing import Text, Iterable, Optional
 
 PhArgGroupClass = getattr(importlib.import_module('argparse'), '_ArgumentGroup')
 
