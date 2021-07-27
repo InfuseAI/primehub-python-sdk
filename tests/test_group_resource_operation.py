@@ -2,7 +2,6 @@ import json
 
 from primehub import Module, cmd, Helpful
 from primehub.resource_operations import GroupResourceOperation
-from primehub.utils import GroupIsRequiredException
 from tests import BaseTestCase
 
 
@@ -27,9 +26,8 @@ class TestGroupResourceOperation(BaseTestCase):
         self.sdk.register_command('test_group_resource_operation', GroupFoobarCommand)
 
     def test_group_not_found(self):
-        with self.assertRaises(GroupIsRequiredException) as ctx:
-            self.cli_stdout(['app.py', 'test_group_resource_operation', 'list'])
-        self.assertEqual('No group information, please configure the active group first.', str(ctx.exception))
+        output = self.cli_stderr(['app.py', 'test_group_resource_operation', 'list'])
+        self.assertEqual('No group information, please configure the active group first.', output.strip())
 
     def test_group_resource_operation(self):
         self.sdk.primehub_config.group_info = {'name': 'phusers'}
