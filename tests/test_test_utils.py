@@ -18,7 +18,7 @@ class TestStdoutStderrSideEffect(BaseTestCase):
     def setUp(self) -> None:
         super(TestStdoutStderrSideEffect, self).setUp()
 
-    def test_stdout_stderr_side_effect(self):
+    def test_stdout_stderr_side_effect_removed(self):
         self.mock_request.return_value = {'data': {'me': {'message': 'side-effect'}}}
 
         output = self.cli_stdout(['app.py', 'me'])

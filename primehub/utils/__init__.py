@@ -3,6 +3,18 @@ import os
 import sys
 
 
+class PrimeHubException(BaseException):
+    pass
+
+
+class GroupIsRequiredException(BaseException):
+    pass
+
+
+def group_required():
+    raise GroupIsRequiredException('No group information, please configure the active group first.')
+
+
 def create_logger(name) -> logging.Logger:
     log_level = logging.WARNING
     if os.environ.get('PRIMEHUB_SDK_LOG_LEVEL') == 'DEBUG':
