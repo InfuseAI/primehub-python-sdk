@@ -175,6 +175,7 @@ class PrimeHub(object):
         self.register_command('images', 'Images')
         self.register_command('datasets', 'Datasets')
         self.register_command('instancetypes', 'InstanceTypes')
+        self.register_command('jobs', 'Jobs')
         self.register_command('me', 'Me')
 
     def request(self, variables: dict, query: str):
