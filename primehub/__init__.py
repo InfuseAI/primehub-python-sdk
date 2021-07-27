@@ -60,10 +60,13 @@ class PrimeHubConfig(object):
 
     def load_config(self):
         try:
-            if os.path.exists(os.path.expanduser(self.config_file)):
-                with open(self.config_file, "r") as fh:
-                    self.config_from_file = json.load(fh)
-        except BaseException:
+            if not os.path.exists(os.path.expanduser(self.config_file)):
+                return
+            with open(self.config_file, "r") as fh:
+                self.config_from_file = json.load(fh)
+                if self.config_from_file and 'group' in self.config_from_file:
+                    self.group_info = self.config_from_file['group']
+        except:
             pass
 
     def load_config_from_env(self):
