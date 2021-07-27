@@ -9,10 +9,6 @@ from primehub.utils.decorators import cmd  # noqa: F401
 from primehub.utils.http_client import Client
 
 
-class NoSuchGroup(BaseException):
-    pass
-
-
 class PrimeHubConfig(object):
     """
     PrimeHubConfig load the config from the default path ~/.primehub/config.json
@@ -66,7 +62,7 @@ class PrimeHubConfig(object):
                 self.config_from_file = json.load(fh)
                 if self.config_from_file and 'group' in self.config_from_file:
                     self.group_info = self.config_from_file['group']
-        except:
+        except BaseException:
             pass
 
     def load_config_from_env(self):
@@ -177,6 +173,8 @@ class PrimeHub(object):
         self.register_command('config', 'Config')
         self.register_command('group', 'Group')
         self.register_command('images', 'Images')
+        self.register_command('datasets', 'Datasets')
+        self.register_command('instancetypes', 'InstanceTypes')
         self.register_command('me', 'Me')
 
     def request(self, variables: dict, query: str):

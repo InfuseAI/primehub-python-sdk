@@ -1,17 +1,17 @@
-from primehub import Helpful, cmd, Module, NoSuchGroup
+from primehub.utils import group_required
 
 
 class GroupResourceOperation(object):
 
     def do_list(self, query, resource_key):
-        # self.primehub_config
+        if not self.primehub_config.group_info:
+            group_required()
 
         results = self.request({}, query)
-        outputs = []
         for g in results['data']['me']['effectiveGroups']:
-            if self.primehub_config.group == g['name']:
-                outputs.extend(g[resource_key])
-        return outputs
+            if self.primehub_config.group_info['name'] == g['name']:
+                return g[resource_key]
+        return []
 
     def do_get(self, query, resource_key, resource_name):
         resources = self.do_list(query, resource_key)
