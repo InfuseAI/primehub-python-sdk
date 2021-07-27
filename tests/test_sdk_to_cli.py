@@ -1,10 +1,7 @@
 import json
-import os
 
 from primehub import Helpful, Module, cmd
 from tests import BaseTestCase
-
-os.environ['PRIMEHUB_SDK_LOG_LEVEL'] = 'DEBUG'
 
 
 class FakeCommand(Helpful, Module):
@@ -17,15 +14,19 @@ class FakeCommand(Helpful, Module):
     def action_arg_str(self, arg1: str):
         return dict(name='action_arg_str', arg1=arg1)
 
-    # TODO support different types (only str for now)
     @cmd(name='cmd-arg-str-int', description='action_str_int_args')
     def action_arg_str_int(self, arg1: str, arg2: int):
         return dict(name='action_arg_str_int', arg1=arg1, arg2=arg2)
 
-    # TODO support optional arguments
-    @cmd(name='cmd-args-opts', description='action_optional_args', optionals=['arg2'])
-    def action_arg_str_int_optional(self, arg1: str, arg2: int = None):
-        return dict(name='action_arg_str_int_optional', arg1=arg1, arg2=arg2)
+    # Note: we support optional arguments with **kwargs
+    @cmd(name='cmd-args-opts', description='action_optional_args', optionals=[('arg2', str), ('page', int)])
+    def action_optional_args(self, arg1: str, **kwargs):
+        result = dict(name='action_arg_str_int_optional', arg1=arg1)
+        if 'arg2' in kwargs:
+            result['arg2'] = kwargs['arg2']
+        if 'page' in kwargs:
+            result['page'] = kwargs['page']
+        return result
 
     def help_description(self):
         return "help message for fake-command"
@@ -58,8 +59,22 @@ class TestCommandGroupToCommandLine(BaseTestCase):
 
     def test_action_no_args(self):
         output = self.cli_stdout(['app.py', 'test_sdk_to_cli', 'cmd-no-args'])
-        self.assertEqual(output.strip(), json.dumps(self.fake().action_no_args()))
+        self.assertEqual(json.dumps(self.fake().action_no_args()), output.strip())
 
     def test_action_1_arg(self):
         output = self.cli_stdout(['app.py', 'test_sdk_to_cli', 'cmd-arg-str', 'primehub-cli-with-1-arg'])
-        self.assertEqual(output.strip(), json.dumps(self.fake().action_arg_str('primehub-cli-with-1-arg')))
+        self.assertEqual(json.dumps(self.fake().action_arg_str('primehub-cli-with-1-arg')), output.strip())
+
+    def test_action_with_non_str_type(self):
+        output = self.cli_stdout(['app.py', 'test_sdk_to_cli', 'cmd-arg-str-int', 'str', '5566'])
+        self.assertEqual(json.dumps(self.fake().action_arg_str_int('str', 5566)), output.strip())
+
+    def test_action_with_optional_args(self):
+        output = self.cli_stdout(['app.py', 'test_sdk_to_cli', 'cmd-args-opts', 'arg1'])
+        self.assertEqual(json.dumps(self.fake().action_optional_args('arg1')), output.strip())
+
+        output = self.cli_stdout(['app.py', 'test_sdk_to_cli', 'cmd-args-opts', 'arg1', '--arg2', 'arg2'])
+        self.assertEqual(json.dumps(self.fake().action_optional_args('arg1', arg2='arg2')), output.strip())
+
+        output = self.cli_stdout(['app.py', 'test_sdk_to_cli', 'cmd-args-opts', 'arg1', '--page', '9527'])
+        self.assertEqual(json.dumps(self.fake().action_optional_args('arg1', page=9527)), output.strip())

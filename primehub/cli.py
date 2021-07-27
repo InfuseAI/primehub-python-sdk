@@ -76,27 +76,55 @@ def run_action_args(sdk, selected_component, sub_parsers, target, remaining_args
         action_parser = create_action_parser(selected_component)
         action_parser.add_command_group(sub_args.command, help=action['description'])
         argument_names = []
+        has_kwargs = False
+        logger.debug('create the action parser: {}'.format(action))
         for x in action['arguments']:
-            # TODO support optional argument
-            # optional argument will convert to `--arg` format
-            action_parser.add_argument(x)
-            argument_names.append(x)
+            param_name, param_type, skip_if_kwargs = x
+            if skip_if_kwargs:
+                # we will add optional argument in the next step
+                # convert it to `--<arg-name>` format
+                continue
+            action_parser.add_argument(param_name, type=param_type)
+            argument_names.append(param_name)
+            has_kwargs = True
+
+        # @cmd with empty optionals, skip the kwargs handling
+        if not action['optionals']:
+            has_kwargs = False
+        else:
+            for x in action['optionals']:
+                opt_name, opt_type = x
+                action_parser.add_argument("--" + opt_name, type=opt_type)
 
         try:
             parsed_action_args = action_parser.parse_args([sub_args.command] + params)
-            logger.debug('parsed_action_args: %s', parsed_action_args)
+            # logger.debug('parsed_action_args: %s # %s', parsed_action_args, unknown)
+            # if unknown:
+            #     sys.exit(0)
 
             # invoke <command_group>.<action>(param1, param2, ...) from the register command
-            action = action['func']
-            logger.debug('find action: {}, for target: {}'.format(action, target))
-            func = getattr(target, action)
+            action_func = action['func']
+            logger.debug('find action: {}, for target: {}'.format(action_func, target))
+            func = getattr(target, action_func)
 
             real_parameters = []
             for x in argument_names:
                 real_parameters.append(getattr(parsed_action_args, x))
 
-            logger.debug('invoke with parameters %s', real_parameters)
-            return_value = func(*real_parameters)
+            kw_parameters = {}
+            if has_kwargs:
+                for x in action['optionals']:
+                    opt_name, opt_type = x
+                    v = getattr(parsed_action_args, opt_name)
+                    if v is not None:
+                        kw_parameters[opt_name] = v
+
+            if has_kwargs:
+                logger.debug('invoke with parameters %s {%s}', real_parameters, vars(parsed_action_args))
+                return_value = func(*real_parameters, **kw_parameters)
+            else:
+                logger.debug('invoke with parameters %s', real_parameters)
+                return_value = func(*real_parameters)
             if return_value:
                 if isinstance(return_value, dict) or isinstance(return_value, list):
                     output(sdk, json.dumps(return_value))
