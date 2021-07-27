@@ -8,13 +8,13 @@ from primehub import Helpful, cmd, Module
 class Config(Helpful, Module):
 
     def set_endpoint(self, endpoint: str):
-        self.primehub.primehub_config['endpoint'] = endpoint
+        self.primehub.primehub_config.endpoint = endpoint
 
     def set_token(self, token: str):
-        self.primehub.primehub_config['token'] = token
+        self.primehub.primehub_config.api_token = token
 
     def set_group(self, group: str):
-        self.primehub.primehub_config['group'] = group
+        self.primehub.primehub_config.group = group
 
     def help_description(self):
         return "Update the settings of PrimeHub SDK"

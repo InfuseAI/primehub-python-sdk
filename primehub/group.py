@@ -19,12 +19,12 @@ class Group(Helpful, Module):
               # group quota
               projectQuotaCpu
               projectQuotaGpu
-              projectQuotaMemory      
+              projectQuotaMemory
               images {
                 id
                 name
                 displayName
-                description        
+                description
                 type
                 url
                 urlForGpu
@@ -32,14 +32,14 @@ class Group(Helpful, Module):
               }
               instanceTypes {
                 id
-                name        
+                name
                 displayName
                 description
               }
               datasets {
                 id
                 name
-                displayName        
+                displayName
                 description
               }
             }
