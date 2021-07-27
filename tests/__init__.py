@@ -24,6 +24,7 @@ class BaseTestCase(TestCase):
         primehub.PrimeHubConfig.get_default_path = mock.MagicMock()
         primehub.PrimeHubConfig.get_default_path.return_value = self.test_default_config_path
 
+        # TODO: clear buffer
         self.sdk = PrimeHub(PrimeHubConfig())
         self.stderr = io.StringIO()
         self.stdout = io.StringIO()

@@ -8,6 +8,10 @@ from primehub.utils.decorators import cmd  # noqa: F401
 from primehub.utils.http_client import Client
 
 
+class NoSuchGroup(BaseException):
+    pass
+
+
 class PrimeHubConfig(object):
     """
     PrimeHubConfig load the config from the default path ~/.primehub/config.json
@@ -166,6 +170,7 @@ class PrimeHub(object):
         # register commands
         self.register_command('config', 'Config')
         self.register_command('group', 'Group')
+        self.register_command('images', 'Images')
         self.register_command('me', 'Me')
 
     def request(self, variables: dict, query: str):
