@@ -1,4 +1,4 @@
-from primehub.utils import create_logger
+from primehub.utils import create_logger, group_not_found
 
 from primehub import Helpful, cmd, Module
 
@@ -21,7 +21,7 @@ class Config(Helpful, Module):
         try:
             selected_group = self._fetch_group_info(group)
             if selected_group is None:
-                logger.warning('Cannot find the group [%s] in the effective groups', group)
+                logger.info('Cannot find the group [%s] in the effective groups', group)
             else:
                 self.primehub.primehub_config.current_group = selected_group
         except BaseException as e:
@@ -64,6 +64,10 @@ class CliConfig(Config):
     @cmd(name='set-group', description='set group and save to the config file')
     def set_group(self, group: str):
         super(CliConfig, self).set_group(group)
+        if not self.primehub.primehub_config.group_info:
+            group_not_found(group)
+        if not self.primehub.primehub_config.group_info.get('id', None):
+            group_not_found(group)
         self.update()
 
     def update(self):

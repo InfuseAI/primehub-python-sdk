@@ -7,12 +7,16 @@ class PrimeHubException(BaseException):
     pass
 
 
-class GroupIsRequiredException(BaseException):
+class GroupIsRequiredException(PrimeHubException):
     pass
 
 
 def group_required():
     raise GroupIsRequiredException('No group information, please configure the active group first.')
+
+
+def group_not_found(group):
+    raise GroupIsRequiredException('No group information for [%s], please set the right group' % group)
 
 
 def create_logger(name) -> logging.Logger:
