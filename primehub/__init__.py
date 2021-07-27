@@ -39,6 +39,7 @@ class PrimeHubConfig(object):
         self.config_from_file = {}
         self.config_from_env = {}
         self.config_from_user_input = {}
+        self.group_info = {}
 
         self.load_config()
         self.load_config_from_env()
@@ -90,7 +91,11 @@ class PrimeHubConfig(object):
         output = dict()
         output['endpoint'] = self.endpoint
         output['api-token'] = self.api_token
-        output['group'] = dict(name=self.group)
+        if self.group_info and self.group_info.get('name', None) == self.group:
+            output['group'] = self.group_info
+        else:
+            output['group'] = dict(name=self.group)
+
         with open(path or self.config_file, "w") as fh:
             fh.write(json.dumps(output))
 
@@ -100,7 +105,6 @@ class PrimeHubConfig(object):
             return self.config_from_user_input['group']
         if self.config_from_env.get('PRIMEHUB_GROUP', None):
             return self.config_from_env.get('PRIMEHUB_GROUP')
-
         if self.config_from_file.get('group', None) and self.config_from_file['group'].get('name', None):
             return self.config_from_file['group']['name']
 
@@ -131,6 +135,14 @@ class PrimeHubConfig(object):
     @endpoint.setter
     def endpoint(self, endpoint):
         self.config_from_user_input['endpoint'] = endpoint
+
+    @property
+    def current_group(self):
+        return self.group_info
+
+    @current_group.setter
+    def current_group(self, group_info):
+        self.group_info = group_info
 
 
 class Helpful(metaclass=abc.ABCMeta):

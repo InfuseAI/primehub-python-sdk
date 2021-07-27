@@ -29,7 +29,27 @@ class TestCmdConfig(BaseTestCase):
         args = ['app.py', 'config', 'set-token', 'config-set:api-token']
         self.cli_stdout(args)
 
+        # mock the result of fetching group info
+        group_info = {
+            'id': 'group-id',
+            'name': 'config-set:group',
+            'displayName': 'group-display-name'
+        }
+        self.mock_request.return_value = {'data': {'me': {'effectiveGroups': [group_info]}}}
         args = ['app.py', 'config', 'set-group', 'config-set:group']
         self.cli_stdout(args)
 
+        # Verify new configuration has been prefixed with 'config:set'
         self.assert_config_with_prefix('config-set', PrimeHubConfig())
+
+        # Verify group information updated
+        # {
+        #   me {
+        #     effectiveGroups {
+        #       id
+        #       name
+        #       displayName
+        #     }
+        #   }
+        # }
+        self.assertEqual(group_info, self.load_json_file(PrimeHubConfig().get_default_path())['group'])

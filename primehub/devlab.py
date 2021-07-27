@@ -31,6 +31,22 @@ class DevLab(Helpful, Module):
         from primehub.utils.decorators import show_debug_info
         show_debug_info()
 
+    @cmd(name='test-query', description='test-graphql')
+    def test_query(self):
+        query = """
+        {
+          me {
+            effectiveGroups {
+              id
+              name
+              displayName
+            }
+          }
+        }
+        """
+        results = self.request({}, query)
+        return results['data']['me']['effectiveGroups']
+
     def help(self):
         return "help me"
 

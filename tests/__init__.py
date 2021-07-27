@@ -75,3 +75,7 @@ class BaseTestCase(TestCase):
         from tempfile import mkstemp
         fd, p = mkstemp(".data", text=True)
         return p
+
+    def load_json_file(self, path):
+        with open(path, "r") as fh:
+            return json.load(fh)
