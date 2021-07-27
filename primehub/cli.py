@@ -7,7 +7,7 @@ from primehub.utils.decorators import find_actions, find_action_method, find_act
 
 import sys
 
-from primehub.utils import create_logger
+from primehub.utils import create_logger, PrimeHubException
 
 logger = create_logger('primehub-cli')
 
@@ -184,6 +184,7 @@ def main(sdk=None):
 
     command_groups = create_commands(main_parser, sdk)
 
+    hide_help = False
     helper = None
     exit_normally = False
     try:
@@ -218,11 +219,17 @@ def main(sdk=None):
 
         if helper:
             sys.exit(1)
+    except PrimeHubException as e:
+        hide_help = True
+        exit_normally = False
+        print(e, file=sdk.stderr)
+        sys.exit(1)
     except SystemExit:
-        if helper:
-            helper.print_help(file=sdk.stderr)
-        else:
-            main_parser.print_help(file=sdk.stderr)
+        if not hide_help:
+            if helper:
+                helper.print_help(file=sdk.stderr)
+            else:
+                main_parser.print_help(file=sdk.stderr)
 
         if exit_normally:
             sys.exit(0)
