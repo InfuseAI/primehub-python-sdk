@@ -16,10 +16,13 @@ class BaseTestCase(TestCase):
 
         import primehub.utils.http_client
 
-        # Note: using setatter to work around with mypy checking
-        # primehub.utils.http_client.Client.request = mock.MagicMock()
-        setattr(primehub.utils.http_client.Client, 'request', mock.MagicMock())
+        primehub.utils.http_client.Client.request = mock.MagicMock()
         self.mock_request = primehub.utils.http_client.Client.request
+
+        import primehub
+        self.test_default_config_path = self.tempfile()
+        primehub.PrimeHubConfig.get_default_path = mock.MagicMock()
+        primehub.PrimeHubConfig.get_default_path.return_value = self.test_default_config_path
 
         self.sdk = PrimeHub(PrimeHubConfig())
         self.stderr = io.StringIO()
@@ -67,3 +70,8 @@ class BaseTestCase(TestCase):
         self.assertEqual(prefix + ':endpoint', cfg.endpoint)
         self.assertEqual(prefix + ':api-token', cfg.api_token)
         self.assertEqual(prefix + ':group', cfg.group)
+
+    def tempfile(self):
+        from tempfile import mkstemp
+        fd, p = mkstemp(".data", text=True)
+        return p
