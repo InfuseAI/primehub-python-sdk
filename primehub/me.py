@@ -3,7 +3,7 @@ from primehub import Helpful, cmd, Module
 
 class Me(Helpful, Module):
 
-    @cmd(name='me', description='Let me tell you who you are!')
+    @cmd(name='me', description='Get user information')
     def me(self):
         query = """
         query {
@@ -23,4 +23,4 @@ class Me(Helpful, Module):
         return result
 
     def help_description(self):
-        return "Get user data"
+        return "Show user account"
