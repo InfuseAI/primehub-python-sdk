@@ -1,9 +1,21 @@
+import functools
 import io
 import json
 import os
 from unittest import TestCase, mock
 
 from primehub import PrimeHub, PrimeHubConfig, cli
+
+
+def reset_stderr_stdout(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        finally:
+            args[0].reset_cli_output()
+
+    return wrapper
 
 
 class BaseTestCase(TestCase):
@@ -24,18 +36,16 @@ class BaseTestCase(TestCase):
         primehub.PrimeHubConfig.get_default_path = mock.MagicMock()
         primehub.PrimeHubConfig.get_default_path.return_value = self.test_default_config_path
 
-        # TODO: clear buffer
         self.sdk = PrimeHub(PrimeHubConfig())
-        self.stderr = io.StringIO()
-        self.stdout = io.StringIO()
-        cli.default_stderr_file = self.stderr
-        cli.default_stdout_file = self.stdout
+        self.sdk.stderr = io.StringIO()
+        self.sdk.stdout = io.StringIO()
 
     def tearDown(self) -> None:
         os.environ['PRIMEHUB_GROUP'] = ""
         os.environ['PRIMEHUB_API_TOKEN'] = ""
         os.environ['PRIMEHUB_API_ENDPOINT'] = ""
 
+    @reset_stderr_stdout
     def cli_stderr(self, argv: list):
         try:
             import sys
@@ -43,8 +53,9 @@ class BaseTestCase(TestCase):
             cli.main(sdk=self.sdk)
         except SystemExit:
             pass
-        return self.stderr.getvalue()
+        return self.sdk.stderr.getvalue()
 
+    @reset_stderr_stdout
     def cli_stdout(self, argv: list):
         try:
             import sys
@@ -52,7 +63,11 @@ class BaseTestCase(TestCase):
             cli.main(sdk=self.sdk)
         except SystemExit:
             pass
-        return self.stdout.getvalue()
+        return self.sdk.stdout.getvalue()
+
+    def reset_cli_output(self):
+        self.sdk.stderr = io.StringIO()
+        self.sdk.stdout = io.StringIO()
 
     def create_fake_config(self, content: dict) -> str:
         from tempfile import mkstemp

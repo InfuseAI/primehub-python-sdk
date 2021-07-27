@@ -2,6 +2,7 @@ import abc
 import importlib
 import json
 import os
+import sys
 from typing import Union, Callable, Dict
 
 from primehub.utils.decorators import cmd  # noqa: F401
@@ -166,6 +167,8 @@ class PrimeHub(object):
     def __init__(self, config: PrimeHubConfig):
         self.primehub_config = config
         self.commands: Dict[str, Module] = dict()
+        self._stderr = sys.stderr
+        self._stdout = sys.stdout
 
         # register commands
         self.register_command('config', 'Config')
@@ -195,6 +198,22 @@ class PrimeHub(object):
         if item in self.commands:
             return self.commands[item]
         raise AttributeError("Cannot find a command [{}]".format(item))
+
+    @property
+    def stderr(self):
+        return self._stderr
+
+    @stderr.setter
+    def stderr(self, out):
+        self._stderr = out
+
+    @property
+    def stdout(self):
+        return self._stdout
+
+    @stdout.setter
+    def stdout(self, out):
+        self._stdout = out
 
 
 class Module(object):

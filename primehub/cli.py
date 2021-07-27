@@ -11,9 +11,6 @@ from primehub.utils import create_logger
 
 logger = create_logger('primehub-cli')
 
-default_stderr_file = sys.stderr
-default_stdout_file = sys.stdout
-
 
 def attach_dev_lab(p):
     import os
@@ -52,7 +49,7 @@ def create_commands(parser, sdk):
     return parsers
 
 
-def run_action_args(selected_component, sub_parsers, target, remaining_args):
+def run_action_args(sdk, selected_component, sub_parsers, target, remaining_args):
     logger.debug('invoke {} with remaining_args: {}'.format(run_action_args.__name__, remaining_args))
     helper = None
 
@@ -98,9 +95,9 @@ def run_action_args(selected_component, sub_parsers, target, remaining_args):
             return_value = func(*real_parameters)
             if return_value:
                 if isinstance(return_value, dict) or isinstance(return_value, list):
-                    output(json.dumps(return_value))
+                    output(sdk, json.dumps(return_value))
                 else:
-                    output(return_value)
+                    output(sdk, return_value)
         except SystemExit:
             return action_parser
 
@@ -111,7 +108,7 @@ def run_action_args(selected_component, sub_parsers, target, remaining_args):
     return helper
 
 
-def run_action_noargs(selected_component, sub_parsers, target, args):
+def run_action_noargs(sdk, selected_component, sub_parsers, target, args):
     logger.debug('invoke %s', run_action_noargs.__name__)
     helper = None
     try:
@@ -129,17 +126,17 @@ def run_action_noargs(selected_component, sub_parsers, target, args):
         logger.debug('invoked {}'.format(func))
         if return_value:
             if isinstance(return_value, dict) or isinstance(return_value, list):
-                output(json.dumps(return_value))
+                output(sdk, json.dumps(return_value))
             else:
-                output(return_value)
+                output(sdk, return_value)
     except AttributeError:
         logger.debug('{}'.format(sys.exc_info()))
         helper = sub_parsers[selected_component]
     return helper
 
 
-def output(message):
-    print(message, file=default_stdout_file)
+def output(sdk, message):
+    print(message, file=sdk.stdout)
 
 
 def main(sdk=None):
@@ -172,17 +169,17 @@ def main(sdk=None):
             return
 
         if remaining_args:
-            helper = run_action_args(command_name, command_groups, target, remaining_args)
+            helper = run_action_args(sdk, command_name, command_groups, target, remaining_args)
         else:
-            helper = run_action_noargs(command_name, command_groups, target, args)
+            helper = run_action_noargs(sdk, command_name, command_groups, target, args)
 
         if helper:
             sys.exit(1)
     except SystemExit:
         if helper:
-            helper.print_help(file=default_stderr_file)
+            helper.print_help(file=sdk.stderr)
         else:
-            main_parser.print_help(file=default_stderr_file)
+            main_parser.print_help(file=sdk.stderr)
 
         if exit_normally:
             sys.exit(0)
