@@ -5,6 +5,9 @@ import os
 from unittest import TestCase, mock
 
 from primehub import PrimeHub, PrimeHubConfig, cli
+from primehub.utils import create_logger
+
+logger = create_logger('primehub-test')
 
 
 def reset_stderr_stdout(func):
@@ -47,25 +50,30 @@ class BaseTestCase(TestCase):
 
     @reset_stderr_stdout
     def cli_stderr(self, argv: list):
-        try:
-            import sys
-            sys.argv = argv
-            cli.main(sdk=self.sdk)
-        except SystemExit:
-            pass
+        print("cli_stderr", argv)
+        self.invoke_cli(argv)
         return self.sdk.stderr.getvalue()
 
     @reset_stderr_stdout
     def cli_stdout(self, argv: list):
+        print("cli_stdout", argv)
+        self.invoke_cli(argv)
+        return self.sdk.stdout.getvalue()
+
+    def invoke_cli(self, argv):
         try:
             import sys
             sys.argv = argv
+            if [x for x in argv if not isinstance(x, str)]:
+                raise ValueError('all arguments must be a str type')
             cli.main(sdk=self.sdk)
         except SystemExit:
             pass
-        return self.sdk.stdout.getvalue()
 
     def reset_cli_output(self):
+        logger.info("\n{} reset_cli_output {}".format("=" * 40, "=" * 40))
+        logger.info("\nSTDOUT:\n\n{}\n\nSTDERR:\n\n{}\n\n".format(self.sdk.stdout.getvalue(),
+                                                                  self.sdk.stderr.getvalue()))
         self.sdk.stderr = io.StringIO()
         self.sdk.stdout = io.StringIO()
 

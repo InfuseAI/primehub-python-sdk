@@ -74,7 +74,16 @@ def cmd(**cmd_args):
         # TODO only generate references when invoked from primehub-cli
         cmd_args['func'] = func.__name__
         sig = signature(func)
-        cmd_args['arguments'] = [x.name for x in sig.parameters.values() if x.name != 'self']
+        import inspect
+
+        def info(x):
+            if x.annotation is inspect.Parameter.empty:
+                t = str
+            else:
+                t = x.annotation
+            return x.name, t, str(x.kind) == 'VAR_KEYWORD',
+
+        cmd_args['arguments'] = [info(x) for x in sig.parameters.values() if x.name != 'self']
         logger.debug("cmd -> %s", cmd_args)
         register_to_command_group(func, cmd_args)
 
