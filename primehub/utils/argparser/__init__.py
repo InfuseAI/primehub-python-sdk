@@ -87,27 +87,32 @@ class PrimeHubHelpFormatter(HelpFormatter):
         super(PrimeHubHelpFormatter, self).start_section(heading)
 
 
-def create_command_parser(description=None):
-    p = PrimeHubArgParser(formatter_class=PrimeHubHelpFormatter, add_help=False)
-    p.add_argument('command')
-    p.command_description = description
-
+def add_global_options(p):
     help_opts = p.add_argument_group('Options')
     help_opts.add_argument('-h', '--help', help='Show the help', action='store_true', default=False, dest='show_help')
-
     opts = p.add_argument_group('Global Options')
     opts.add_argument('--config', help='the path of the config file')
     opts.add_argument('--endpoint', help='the endpoint to the PrimeHub GraphQL URL')
     opts.add_argument('--token', help='API Token generated from PrimeHub Console')
     opts.add_argument('--group', help='override the active group')
 
+
+def create_command_parser(description=None):
+    p = PrimeHubArgParser(formatter_class=PrimeHubHelpFormatter, add_help=False)
+    p.add_argument('command')
+    p.command_description = description
+
+    add_global_options(p)
     return p
 
 
-def create_action_parser(description=None):
+def create_action_parser(group_command, description=None):
     p = PrimeHubArgParser(formatter_class=PrimeHubHelpFormatter, add_help=False)
+    p.usage = 'primehub {} [command]'.format(group_command)
     p.add_argument('command')
-    p.command_description = ""
+    p.command_description = description
+
+    add_global_options(p)
     return p
 
 
