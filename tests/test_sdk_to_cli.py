@@ -39,6 +39,9 @@ class TestCommandGroupToCommandLine(BaseTestCase):
         # clean commands, add the FakeCommand
         self.sdk.register_command('test_sdk_to_cli', FakeCommand)
 
+    def fake(self) -> FakeCommand:
+        return FakeCommand(self.sdk)
+
     def test_command_groups(self):
         output = self.cli_stderr(['app.py', '-h'])
 
@@ -50,13 +53,8 @@ class TestCommandGroupToCommandLine(BaseTestCase):
         self.assertTrue(description in c[0], 'We should find the help messages in the output')
 
     def test_action_help(self):
-        # output = self.cli_stderr(['app.py', 'test_sdk_to_cli', '-h'])
-        # TODO it will fail, not implemented it
-        # self.assertTrue('action_no_args' in output)
-        pass
-
-    def fake(self) -> FakeCommand:
-        return FakeCommand(self.sdk)
+        output = self.cli_stderr(['app.py', 'test_sdk_to_cli', '-h'])
+        self.assertTrue('action_no_args' in output)
 
     def test_action_no_args(self):
         output = self.cli_stdout(['app.py', 'test_sdk_to_cli', 'cmd-no-args'])

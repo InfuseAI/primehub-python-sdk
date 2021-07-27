@@ -61,6 +61,10 @@ def run_action_args(sdk, selected_component, sub_parsers, target, remaining_args
     sub_args, params = sub_parsers[selected_component].parse_known_args(remaining_args)
     logger.debug('sub_args: {}, params: {}'.format(sub_args, params))
 
+    if sub_args.show_help:
+        helper = sub_parsers[selected_component]
+        return helper
+
     try:
         action = find_action_info(target, sub_args.command)
         if not action:
@@ -69,7 +73,7 @@ def run_action_args(sdk, selected_component, sub_parsers, target, remaining_args
 
         # build a parser for selected action
         # primehub [command]             [action] [param1] [param2] ...
-        action_parser = create_action_parser()
+        action_parser = create_action_parser(selected_component)
         action_parser.add_command_group(sub_args.command, help=action['description'])
         argument_names = []
         for x in action['arguments']:
@@ -112,6 +116,10 @@ def run_action_noargs(sdk, selected_component, sub_parsers, target, args):
     logger.debug('invoke %s', run_action_noargs.__name__)
     helper = None
     try:
+        if args.show_help:
+            helper = sub_parsers[selected_component]
+            return helper
+
         action = find_action_method(target, args.command)
         logger.debug('remaining_args is empty, find an action from parent\'s command [{}] => method: {}'
                      .format(args.command, action))
@@ -158,15 +166,22 @@ def main(sdk=None):
         logger.debug("remaining_args: {}".format(remaining_args))
         reconfigure_primehub_config_if_needed(args, sdk)
 
+        if command_name not in sdk.commands:
+            main_parser.epilog = 'Error: "{}" command not found'.format(command_name)
+            sys.exit(1)
+
         # the real object to execute command
         target = sdk.commands[command_name]
         logger.debug("component: {}, target: {}".format(command_name, target))
 
         # got show-help, print help and exit normally
-        if args.show_help:
+        if args.show_help and not remaining_args:
             helper = command_groups[command_name]
             exit_normally = True
-            return
+            sys.exit(0)
+
+        if args.show_help and remaining_args:
+            remaining_args.append('-h')
 
         if remaining_args:
             helper = run_action_args(sdk, command_name, command_groups, target, remaining_args)
