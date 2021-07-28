@@ -28,7 +28,7 @@ class Client(object):
         if tail:
             params['tailLines'] = str(tail)
         headers = {'authorization': 'Bearer {}'.format(self.primehub_config.api_token)}
-        content = requests.get(endpoint, headers=headers, params=params).text
+        content = requests.get(endpoint, headers=headers, params=params, stream=follow)
         return content
 
 
