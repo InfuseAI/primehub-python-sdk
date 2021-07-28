@@ -3,7 +3,11 @@ import sys
 from argparse import ArgumentParser, HelpFormatter, Action
 from typing import Text, Iterable, Optional
 
+from primehub.utils import create_logger
+
 PhArgGroupClass = getattr(importlib.import_module('argparse'), '_ArgumentGroup')
+
+logger = create_logger('primehub-parser')
 
 
 class PrimeHubArgParser(ArgumentParser):
@@ -18,6 +22,8 @@ class PrimeHubArgParser(ArgumentParser):
         If you override this in a subclass, it should not return -- it
         should either exit or raise an exception.
         """
+
+        logger.debug('errors: %s', message)
 
         # NOTE: we print usage at cli.py module
         # self.print_usage(sys.stderr)
