@@ -181,6 +181,9 @@ class PrimeHub(object):
     def request(self, variables: dict, query: str):
         return Client(self.primehub_config).request(variables, query)
 
+    def request_logs(self, endpint: str, follow: bool, tail: int):
+        return Client(self.primehub_config).request_logs(endpint, follow, tail)
+
     def register_command(self, module_name: str, command_class: Union[str, Callable], command_name=None):
         if not command_name:
             command_name = module_name
@@ -195,6 +198,7 @@ class PrimeHub(object):
         # attach request method
         cmd_group.primehub_config = self.primehub_config
         cmd_group.request = self.request
+        cmd_group.request_logs = self.request_logs
 
     def __getattr__(self, item):
         if item in self.commands:
