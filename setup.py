@@ -15,7 +15,7 @@ setup(name='primehub-python-sdk',
       },
       python_requires=">=3.6",
       packages=find_packages(),
-      install_requires=['requests'],
+      install_requires=['requests', 'tabulate'],
       extras_require={'dev': [
           'pytest>=4.6',
           'pytest-flake8',
