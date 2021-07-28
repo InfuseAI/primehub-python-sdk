@@ -8,6 +8,7 @@ logger = create_logger('decorator')
 
 __command_groups__: Dict[str, list] = dict()
 __actions__: Dict[str, dict] = dict()
+__requires_permission__: Dict[str, str] = dict()
 
 
 def find_actions(sub_command):
@@ -72,6 +73,7 @@ def cmd(**cmd_args):
 
     def make_command_references(func):
         # TODO only generate references when invoked from primehub-cli
+        cmd_args['module'] = func.__module__
         cmd_args['func'] = func.__name__
         sig = signature(func)
         import inspect

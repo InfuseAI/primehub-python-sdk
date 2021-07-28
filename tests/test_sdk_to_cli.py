@@ -1,6 +1,8 @@
 import json
+import os
 
 from primehub import Helpful, Module, cmd
+from primehub.utils.permission import ask_for_permission
 from tests import BaseTestCase
 
 
@@ -31,6 +33,24 @@ class FakeCommand(Helpful, Module):
     @cmd(name='cmd-only-opts', description='action_only_optionals', optionals=[('file', str)])
     def action_only_optionals(self, **kwargs):
         return kwargs
+
+    @ask_for_permission
+    @cmd(name='cmd-remove-it', description='the action acts when user say-yes')
+    def action_in_danger(self, file_to_remove, **kwargs):
+        os.unlink(file_to_remove)
+        return dict(result=True)
+
+    @ask_for_permission
+    @cmd(name='cmd-remove-it-no-arg-type-1', description='the action acts when user say-yes', optionals=[('file', str)])
+    def action_in_danger_no_arg_type_1(self, **kwargs):
+        os.unlink(kwargs.get('file'))
+        return dict(result=True)
+
+    @ask_for_permission
+    @cmd(name='cmd-remove-it-no-arg-type-2', description='the action acts when user say-yes')
+    def action_in_danger_no_arg_type_2(self, **kwargs):
+        os.unlink("test_ask_for_permission_no_arg_type2.txt")
+        return dict(result=True)
 
     def help_description(self):
         return "help message for fake-command"
@@ -86,3 +106,42 @@ class TestCommandGroupToCommandLine(BaseTestCase):
     def test_action_with_only_optionals(self):
         output = self.cli_stdout(['app.py', 'test_sdk_to_cli', 'cmd-only-opts', '--file', 'filename'])
         self.assertEqual(json.dumps(self.fake().action_only_optionals(file='filename')), output.strip())
+
+    def test_ask_for_permission_1_arg(self):
+        file = self.tempfile()
+
+        # the file will not be removed, because we don't have the flag `--yes-i-really-mean-it`
+        self.assertTrue(os.path.exists(file))
+        self.cli_stderr(['app.py', 'test_sdk_to_cli', 'cmd-remove-it', file])
+        self.assertTrue(os.path.exists(file))
+
+        # the file will be removed by the flag `--yes-i-really-mean-it`
+        self.cli_stdout(['app.py', 'test_sdk_to_cli', 'cmd-remove-it', file, '--yes-i-really-mean-it'])
+        self.assertFalse(os.path.exists(file))
+
+    def test_ask_for_permission_no_arg_type1(self):
+        file = self.tempfile()
+
+        # the file will not be removed, because we don't have the flag `--yes-i-really-mean-it`
+        self.assertTrue(os.path.exists(file))
+        self.cli_stderr(['app.py', 'test_sdk_to_cli', 'cmd-remove-it-no-arg-type-1', '--file', file])
+        self.assertTrue(os.path.exists(file))
+
+        # the file will be removed by the flag `--yes-i-really-mean-it`
+        self.cli_stdout(
+            ['app.py', 'test_sdk_to_cli', 'cmd-remove-it-no-arg-type-1', '--file', file, '--yes-i-really-mean-it'])
+        self.assertFalse(os.path.exists(file))
+
+    def test_ask_for_permission_no_arg_type2(self):
+        file_path_to_delete = "test_ask_for_permission_no_arg_type2.txt"
+        with open(file_path_to_delete, "w") as fh:
+            fh.write("empty")
+
+        # the file will not be removed, because we don't have the flag `--yes-i-really-mean-it`
+        self.assertTrue(os.path.exists(file_path_to_delete))
+        self.cli_stderr(['app.py', 'test_sdk_to_cli', 'cmd-remove-it-no-arg-type-2'])
+        self.assertTrue(os.path.exists(file_path_to_delete))
+
+        # the file will be removed by the flag `--yes-i-really-mean-it`
+        self.cli_stdout(['app.py', 'test_sdk_to_cli', 'cmd-remove-it-no-arg-type-2', '--yes-i-really-mean-it'])
+        self.assertFalse(os.path.exists(file_path_to_delete))

@@ -4,6 +4,7 @@ import traceback
 import primehub as ph
 from primehub.utils.argparser import create_command_parser, create_action_parser
 from primehub.utils.decorators import find_actions, find_action_method, find_action_info
+from primehub.utils.permission import has_permission_flag, enable_ask_for_permission_feature
 
 import sys
 
@@ -88,16 +89,18 @@ def run_action_args(sdk, selected_component, sub_parsers, target, remaining_args
             action_parser.add_argument(param_name, type=param_type)
             argument_names.append(param_name)
 
-        # @cmd with empty optionals, skip the kwargs handling
-        if not action['optionals']:
-            has_kwargs = False
-        else:
-            for x in action['optionals']:
-                opt_name, opt_type = x
-                action_parser.add_argument("--" + opt_name, type=opt_type)
+        # @cmd with optionals
+        for x in action['optionals']:
+            opt_name, opt_type = x
+            action_parser.add_argument("--" + opt_name, type=opt_type)
+
+        # @ask_for_permission
+        if has_permission_flag(action):
+            action_parser.add_argument('--yes-i-really-mean-it', dest='__primehub_permission__', action="store_true")
 
         try:
             parsed_action_args = action_parser.parse_args([sub_args.command] + params)
+            logger.debug('parsed_action_args: %s', parsed_action_args)
 
             # invoke <command_group>.<action>(param1, param2, ...) from the register command
             action_func = action['func']
@@ -117,6 +120,9 @@ def run_action_args(sdk, selected_component, sub_parsers, target, remaining_args
                         kw_parameters[opt_name] = v
 
             if has_kwargs:
+                if hasattr(parsed_action_args,
+                           '__primehub_permission__') and parsed_action_args.__primehub_permission__:
+                    kw_parameters['--yes-i-really-mean-it'] = True
                 logger.debug('invoke with parameters %s {%s}', real_parameters, vars(parsed_action_args))
                 return_value = func(*real_parameters, **kw_parameters)
             else:
@@ -178,6 +184,9 @@ def main(sdk=None):
 
     if not sdk:
         sdk = create_sdk()
+
+    # enable @ask_for_permission for command-line
+    enable_ask_for_permission_feature()
 
     command_groups = create_commands(main_parser, sdk)
 

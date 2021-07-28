@@ -11,6 +11,15 @@ class GroupIsRequiredException(PrimeHubException):
     pass
 
 
+class UserRejectAction(PrimeHubException):
+    pass
+
+
+def reject_action(action):
+    raise UserRejectAction(
+        'User rejects action [%s], please use the flag "--yes-i-really-mean-it" to allow the action.' % action)
+
+
 def group_required():
     raise GroupIsRequiredException('No group information, please configure the active group first.')
 
