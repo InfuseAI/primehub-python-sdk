@@ -21,6 +21,16 @@ class Client(object):
             raise GraphQLException(result)
         return result
 
+    def request_logs(self, endpoint, follow, tail):
+        params = {'follow': 'false'}
+        if follow:
+            params['follow'] = 'true'
+        if tail:
+            params['tailLines'] = str(tail)
+        headers = {'authorization': 'Bearer {}'.format(self.primehub_config.api_token)}
+        content = requests.get(endpoint, headers=headers, params=params).text
+        return content
+
 
 if __name__ == '__main__':
     print(Client.__module__)
