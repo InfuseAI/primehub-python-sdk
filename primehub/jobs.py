@@ -100,11 +100,9 @@ class Jobs(Helpful, Module):
         results = self.request({'where': {'id': job_id}}, query)
         return results['data']['phJob']
 
-    # TODO: need a dummy argument now
-    #   ex: primehub jobs submit hi < /tmp/sample_job.json | jq
     # TODO: add -f
     @cmd(name='submit', description='Submit a job', optionals=[('file', str)])
-    def submit(self, x, **kwargs):
+    def submit(self, **kwargs):
         query = """
         mutation ($data: PhJobCreateInput!) {
           createPhJob(data: $data) {
@@ -234,7 +232,11 @@ class Jobs(Helpful, Module):
         results = self.request({'where': {'id': job_id}}, query)
         endpoint = results['data']['phJob']['logEndpoint']
         content = self.request_logs(endpoint, follow, tail)
-        return content
+        if follow:
+            for s in content.iter_lines():
+                print(s.decode())
+            return
+        return content.text
 
     def help_description(self):
         return "Get a job or list jobs"
