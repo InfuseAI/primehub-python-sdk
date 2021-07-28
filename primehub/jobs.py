@@ -101,7 +101,8 @@ class Jobs(Helpful, Module):
         return results['data']['phJob']
 
     # TODO: add -f
-    @cmd(name='submit', description='Submit a job', optionals=[('file', str)])
+    # TODO: handel invalid config
+    @cmd(name='submit', description='Submit a job', optionals=[('file', str), ('from', str)])
     def submit(self, **kwargs):
         query = """
         mutation ($data: PhJobCreateInput!) {
@@ -133,6 +134,9 @@ class Jobs(Helpful, Module):
           }
         }
         """
+        if kwargs.get('from', None):
+            return self.submit_from_schedule(kwargs['from'])
+
         data = {}
         if has_data_from_stdin():
             data = json.loads("".join(sys.stdin.readlines()))
@@ -145,6 +149,19 @@ class Jobs(Helpful, Module):
         data['groupId'] = self.primehub_config.group_info['id']
         results = self.request({'data': data}, query)
         return results['data']['createPhJob']
+
+    def submit_from_schedule(self, schedule_id):
+        query = """
+        mutation ($where: PhScheduleWhereUniqueInput!) {
+          runPhSchedule(where: $where) {
+            job {
+              id
+            }
+          }
+        }
+        """
+        results = self.request({'where': {'id': schedule_id}}, query)
+        return results['data']['runPhSchedule']
 
     # TODO: handel id does not exist
     @cmd(name='rerun', description='Rerun a job by id')
