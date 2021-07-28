@@ -28,6 +28,10 @@ class FakeCommand(Helpful, Module):
             result['page'] = kwargs['page']
         return result
 
+    @cmd(name='cmd-only-opts', description='action_only_optionals', optionals=[('file', str)])
+    def action_only_optionals(self, **kwargs):
+        return kwargs
+
     def help_description(self):
         return "help message for fake-command"
 
@@ -78,3 +82,7 @@ class TestCommandGroupToCommandLine(BaseTestCase):
 
         output = self.cli_stdout(['app.py', 'test_sdk_to_cli', 'cmd-args-opts', 'arg1', '--page', '9527'])
         self.assertEqual(json.dumps(self.fake().action_optional_args('arg1', page=9527)), output.strip())
+
+    def test_action_with_only_optionals(self):
+        output = self.cli_stdout(['app.py', 'test_sdk_to_cli', 'cmd-only-opts', '--file', 'filename'])
+        self.assertEqual(json.dumps(self.fake().action_only_optionals(file='filename')), output.strip())

@@ -83,10 +83,10 @@ def run_action_args(sdk, selected_component, sub_parsers, target, remaining_args
             if skip_if_kwargs:
                 # we will add optional argument in the next step
                 # convert it to `--<arg-name>` format
+                has_kwargs = True
                 continue
             action_parser.add_argument(param_name, type=param_type)
             argument_names.append(param_name)
-            has_kwargs = True
 
         # @cmd with empty optionals, skip the kwargs handling
         if not action['optionals']:
@@ -98,9 +98,6 @@ def run_action_args(sdk, selected_component, sub_parsers, target, remaining_args
 
         try:
             parsed_action_args = action_parser.parse_args([sub_args.command] + params)
-            # logger.debug('parsed_action_args: %s # %s', parsed_action_args, unknown)
-            # if unknown:
-            #     sys.exit(0)
 
             # invoke <command_group>.<action>(param1, param2, ...) from the register command
             action_func = action['func']

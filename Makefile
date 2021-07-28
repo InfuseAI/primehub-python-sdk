@@ -1,3 +1,6 @@
+default: test-html
+
+
 dev-requires:
 	pip install -e .[dev]
 
