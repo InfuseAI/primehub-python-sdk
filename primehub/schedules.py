@@ -6,9 +6,8 @@ import sys
 
 class Schedules(Helpful, Module):
 
-    # TODO: add page argument
-    @cmd(name='list', description='List schedules')
-    def list(self):
+    @cmd(name='list', description='List schedules', optionals=[('page', int)])
+    def list(self, **kwargs):
         query = """
         query ($where: PhScheduleWhereInput, $page: Int, $orderBy: PhScheduleOrderByInput) {
           phSchedulesConnection(where: $where, page: $page, orderBy: $orderBy) {
@@ -47,17 +46,22 @@ class Schedules(Helpful, Module):
           }
         }
         """
-        edges = []
         variables = {
           'where': {
             'groupId_in': [self.primehub_config.group_info['id']]
           },
           'page': 1
         }
+        if kwargs.get('page', None):
+            variables['page'] = kwargs['page']
+            results = self.request(variables, query)
+            return [e['node'] for e in results['data']['phSchedulesConnection']['edges']]
+
+        edges = []
         while True:
             results = self.request(variables, query)
             if results['data']['phSchedulesConnection']['edges']:
-                edges.extend(results['data']['phSchedulesConnection']['edges'])
+                edges.extend([e['node'] for e in results['data']['phSchedulesConnection']['edges']])
                 variables['page'] = variables['page'] + 1
             else:
                 break

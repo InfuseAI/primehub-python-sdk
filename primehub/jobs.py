@@ -7,9 +7,8 @@ import sys
 
 class Jobs(Helpful, Module):
 
-    # TODO: add page argument
-    @cmd(name='list', description='List jobs')
-    def list(self):
+    @cmd(name='list', description='List jobs', optionals=[('page', int)])
+    def list(self, **kwargs):
         query = """
         query ($where: PhJobWhereInput, $page: Int, $orderBy: PhJobOrderByInput) {
           phJobsConnection(where: $where, page: $page, orderBy: $orderBy) {
@@ -49,17 +48,22 @@ class Jobs(Helpful, Module):
           }
         }
         """
-        edges = []
         variables = {
           'where': {
             'groupId_in': [self.primehub_config.group_info['id']]
           },
           'page': 1
         }
+        if kwargs.get('page', None):
+            variables['page'] = kwargs['page']
+            results = self.request(variables, query)
+            return [e['node'] for e in results['data']['phJobsConnection']['edges']]
+
+        edges = []
         while True:
             results = self.request(variables, query)
             if results['data']['phJobsConnection']['edges']:
-                edges.extend(results['data']['phJobsConnection']['edges'])
+                edges.extend([e['node'] for e in results['data']['phJobsConnection']['edges']])
                 variables['page'] = variables['page'] + 1
             else:
                 break
