@@ -14,7 +14,9 @@ __requires_permission__: Dict[str, str] = dict()
 def find_actions(sub_command):
     m = sub_command.__module__
     if m in __command_groups__:
-        return __command_groups__[m]
+        actions = __command_groups__[m]
+        from operator import itemgetter
+        return sorted(actions, key=itemgetter('name'))
     return []
 
 
@@ -102,6 +104,10 @@ def show_debug_info():
     print("Actions:")
     for k, v in __actions__.items():
         print("  {}\n    {}".format(k, v))
+    print("")
+    print("Permission:")
+    for k, v in __requires_permission__.items():
+        print("  {}".format(k))
     print("")
 
 

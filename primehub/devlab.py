@@ -58,8 +58,5 @@ class DevLab(Helpful, Module):
             fh.write("\n")
         return dict(message='create a file [ask_for_permission.txt] having the current datetime content')
 
-    def help(self):
-        return "help me"
-
     def help_description(self):
         return "dev-lab is used to the primehub-python-sdk development and testing"
