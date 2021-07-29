@@ -1,4 +1,5 @@
 import json
+from typing import Iterator
 
 import requests  # type: ignore
 
@@ -21,15 +22,20 @@ class Client(object):
             raise GraphQLException(result)
         return result
 
-    def request_logs(self, endpoint, follow, tail):
+    def request_logs(self, endpoint, follow, tail) -> Iterator[str]:
         params = {'follow': 'false'}
         if follow:
             params['follow'] = 'true'
         if tail:
             params['tailLines'] = str(tail)
         headers = {'authorization': 'Bearer {}'.format(self.primehub_config.api_token)}
-        response = requests.get(endpoint, headers=headers, params=params, stream=follow)
-        return response
+
+        with requests.get(endpoint, headers=headers, params=params, stream=follow) as response:
+            if follow:
+                for line in response.iter_lines():
+                    yield line.decode()
+            else:
+                yield response.text
 
 
 if __name__ == '__main__':

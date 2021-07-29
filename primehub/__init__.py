@@ -180,6 +180,21 @@ class PrimeHub(object):
         self.register_command('notebooks', 'Notebooks')
         self.register_command('me', 'Me')
 
+        # initial
+        self._ensure_config_details(config)
+
+    def _ensure_config_details(self, config: PrimeHubConfig):
+        try:
+            group_id = config.current_group.get('id', None)
+            group_name = config.current_group.get('name', None)
+            if group_name is None:
+                return
+
+            if group_id is None:
+                self.config.set_group(group_name)
+        except BaseException:
+            pass
+
     def request(self, variables: dict, query: str):
         return Client(self.primehub_config).request(variables, query)
 
