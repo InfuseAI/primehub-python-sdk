@@ -10,3 +10,5 @@ test: dev-requires
 test-html: dev-requires
 	py.test --cov=primehub --cov-report html --flake8 --mypy
 
+docs: dev-requires
+	doc-primehub

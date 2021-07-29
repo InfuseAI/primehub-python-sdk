@@ -1,6 +1,6 @@
 import importlib
 import sys
-from argparse import ArgumentParser, HelpFormatter, Action
+from argparse import ArgumentParser, Action, RawTextHelpFormatter
 from typing import Text, Iterable, Optional
 
 from primehub.utils import create_logger
@@ -40,7 +40,8 @@ class PrimeHubArgParser(ArgumentParser):
                             self._mutually_exclusive_groups)
 
         # description
-        formatter.add_text(self.description)
+        if self.description:
+            formatter.add_text("  " + self.description)
 
         if hasattr(self, 'command_description'):
             formatter.add_text(self.command_description)
@@ -74,7 +75,7 @@ class PrimeHubArgParser(ArgumentParser):
         self.available_group.add_argument(*args, **kwargs)
 
 
-class PrimeHubHelpFormatter(HelpFormatter):
+class PrimeHubHelpFormatter(RawTextHelpFormatter):
 
     def __init__(self,
                  prog,
@@ -114,7 +115,7 @@ def create_command_parser(description=None):
 
 def create_action_parser(group_command, description=None):
     p = PrimeHubArgParser(formatter_class=PrimeHubHelpFormatter, add_help=False)
-    p.usage = 'primehub {} [command]'.format(group_command)
+    p.usage = 'primehub {} <command>'.format(group_command)
     p.add_argument('command')
     p.command_description = description
 
@@ -124,7 +125,7 @@ def create_action_parser(group_command, description=None):
 
 if __name__ == '__main__':
     p = create_command_parser()
-    p.usage = 'primehub [command]'
+    p.usage = 'primehub <command>'
 
     # Add fake commands to the parser's help
     p.add_command_group('config', help='xd')

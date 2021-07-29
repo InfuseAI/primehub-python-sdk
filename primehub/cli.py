@@ -42,7 +42,8 @@ def create_commands(parser, sdk):
 
         # Create the group parser
         p = parsers[command_group] = create_command_parser(description=target.help_description())
-        p.usage = """primehub {} [command]""".format(command_group)
+        p.usage = """primehub {} <command>""".format(command_group)
+
         for action in find_actions(target):
             name, description = action['name'], action['description']
             p.add_command_group(name, help=description)
@@ -180,7 +181,7 @@ def output(sdk, message):
 
 def main(sdk=None):
     main_parser = create_command_parser()
-    main_parser.usage = """primehub [command]"""
+    main_parser.usage = """primehub <command>"""
 
     if not sdk:
         sdk = create_sdk()
