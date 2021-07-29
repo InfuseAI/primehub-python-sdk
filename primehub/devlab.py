@@ -58,6 +58,19 @@ class DevLab(Helpful, Module):
             fh.write("\n")
         return dict(message='create a file [ask_for_permission.txt] having the current datetime content')
 
+    @cmd(name='notebook-logs', description='read logs from notebook pod')
+    def notebook_logs(self, **kwargs):
+        endpoint = self.primehub.primehub_config.endpoint.replace('/api/graphql', '/api/logs/jupyterhub')
+        response = self.request_logs(endpoint, True, 10)
+        try:
+            for r in response.iter_lines():
+                print(r)
+        finally:
+            response.close()
+
+        # content = self.request_logs(endpoint, follow, tail)
+        pass
+
     def help(self):
         return "help me"
 
