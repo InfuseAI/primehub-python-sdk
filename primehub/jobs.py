@@ -252,12 +252,15 @@ class Jobs(Helpful, Module):
 
         results = self.request({'where': {'id': job_id}}, query)
         endpoint = results['data']['phJob']['logEndpoint']
-        content = self.request_logs(endpoint, follow, tail)
+        response = self.request_logs(endpoint, follow, tail)
         if follow:
-            for s in content.iter_lines():
-                print(s.decode())
-            return
-        return content.text
+            try:
+                for s in response.iter_lines():
+                    print(s.decode())
+            finally:
+                response.close()
+                return
+        return response.text
 
     def help_description(self):
         return "Get a job or list jobs"
