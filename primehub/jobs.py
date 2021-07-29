@@ -70,7 +70,7 @@ class Jobs(Helpful, Module):
         return edges
 
     @cmd(name='get', description='Get a job by id')
-    def get(self, job_id):
+    def get(self, id):
         query = """
         query ($where: PhJobWhereUniqueInput!) {
           phJob(where: $where) {
@@ -101,7 +101,7 @@ class Jobs(Helpful, Module):
           }
         }
         """
-        results = self.request({'where': {'id': job_id}}, query)
+        results = self.request({'where': {'id': id}}, query)
         return results['data']['phJob']
 
     # TODO: add -f
@@ -154,7 +154,7 @@ class Jobs(Helpful, Module):
         results = self.request({'data': data}, query)
         return results['data']['createPhJob']
 
-    def submit_from_schedule(self, schedule_id):
+    def submit_from_schedule(self, id):
         query = """
         mutation ($where: PhScheduleWhereUniqueInput!) {
           runPhSchedule(where: $where) {
@@ -164,12 +164,12 @@ class Jobs(Helpful, Module):
           }
         }
         """
-        results = self.request({'where': {'id': schedule_id}}, query)
+        results = self.request({'where': {'id': id}}, query)
         return results['data']['runPhSchedule']
 
     # TODO: handel id does not exist
     @cmd(name='rerun', description='Rerun a job by id')
-    def rerun(self, job_id):
+    def rerun(self, id):
         query = """
         mutation ($where: PhJobWhereUniqueInput!) {
           rerunPhJob(where: $where) {
@@ -200,12 +200,12 @@ class Jobs(Helpful, Module):
           }
         }
         """
-        results = self.request({'where': {'id': job_id}}, query)
+        results = self.request({'where': {'id': id}}, query)
         return results['data']['rerunPhJob']
 
     # TODO: handel id does not exist
     @cmd(name='cancel', description='Cnacel a job by id')
-    def cancel(self, job_id):
+    def cancel(self, id):
         query = """
         mutation ($where: PhJobWhereUniqueInput!) {
           cancelPhJob(where: $where) {
@@ -213,11 +213,11 @@ class Jobs(Helpful, Module):
           }
         }
         """
-        self.request({'where': {'id': job_id}}, query)
-        return self.get(job_id)
+        self.request({'where': {'id': id}}, query)
+        return self.get(id)
 
     @cmd(name='wait', description='Wait a job by id', optionals=[('timeout', int)])
-    def wait(self, job_id, **kwargs):
+    def wait(self, id, **kwargs):
         query = """
         query ($where: PhJobWhereUniqueInput!) {
           phJob(where: $where) {
@@ -228,17 +228,17 @@ class Jobs(Helpful, Module):
         timeout = kwargs.get('timeout', 0)
         start_time = time.time()
         while True:
-            results = self.request({'where': {'id': job_id}}, query)
+            results = self.request({'where': {'id': id}}, query)
             phase = results['data']['phJob']['phase']
             if phase in ['Succeeded', 'Failed', 'Cancelled']:
                 break
             time.sleep(1)
             if timeout != 0 and (time.time() - start_time >= timeout):
                 break
-        return self.get(job_id)
+        return self.get(id)
 
-    @cmd(name='log', description='Get job log by id', optionals=[('follow', bool), ('tail', int)])
-    def log(self, job_id, **kwargs):
+    @cmd(name='logs', description='Get job logs by id', optionals=[('follow', bool), ('tail', int)])
+    def logs(self, id, **kwargs):
         query = """
         query ($where: PhJobWhereUniqueInput!) {
           phJob(where: $where) {
@@ -250,7 +250,7 @@ class Jobs(Helpful, Module):
         follow = kwargs.get('follow', False)
         tail = kwargs.get('tail', 10)
 
-        results = self.request({'where': {'id': job_id}}, query)
+        results = self.request({'where': {'id': id}}, query)
         endpoint = results['data']['phJob']['logEndpoint']
         response = self.request_logs(endpoint, follow, tail)
         if follow:

@@ -1,4 +1,5 @@
 from primehub import Helpful, cmd, Module, has_data_from_stdin
+from primehub.utils.permission import ask_for_permission
 import os
 import json
 import sys
@@ -68,7 +69,7 @@ class Schedules(Helpful, Module):
         return edges
 
     @cmd(name='get', description='Get a schedule by id')
-    def get(self, schedule_id):
+    def get(self, id):
         query = """
         query ($where: PhScheduleWhereUniqueInput!) {
           phSchedule(where: $where) {
@@ -98,7 +99,7 @@ class Schedules(Helpful, Module):
           }
         }
         """
-        results = self.request({'where': {'id': schedule_id}}, query)
+        results = self.request({'where': {'id': id}}, query)
         return results['data']['phSchedule']
 
     # TODO: add -f
@@ -150,7 +151,7 @@ class Schedules(Helpful, Module):
     # TODO: add -f
     # TODO: handel invalid config
     @cmd(name='update', description='Update a schedule by id', optionals=[('file', str)])
-    def update(self, job_id, **kwargs):
+    def update(self, id, **kwargs):
         query = """
         mutation ($data: PhScheduleUpdateInput!, $where: PhScheduleWhereUniqueInput!) {
           updatePhSchedule(data: $data, where: $where) {
@@ -190,12 +191,12 @@ class Schedules(Helpful, Module):
                 with open(filename, 'r') as fh:
                     data = json.load(fh)
         data['groupId'] = self.primehub_config.group_info['id']
-        results = self.request({'data': data, 'where': {'id': job_id}}, query)
+        results = self.request({'data': data, 'where': {'id': id}}, query)
         return results['data']['updatePhSchedule']
 
-    # TODO: add optionals=[('yes-i-really-mean-it', bool)]
+    @ask_for_permission
     @cmd(name='delete', description='Run a schedule by id')
-    def delete(self, schedule_id, **kwargs):
+    def delete(self, id, **kwargs):
         query = """
         mutation ($where: PhScheduleWhereUniqueInput!) {
           deletePhSchedule(where: $where) {
@@ -203,10 +204,7 @@ class Schedules(Helpful, Module):
           }
         }
         """
-        # valid = kwargs.get('yes-i-really-mean-it', False)
-        # if not valid:
-        #     return 'Delete a schedule by passing --yes-i-really-mean-it flag'
-        results = self.request({'where': {'id': schedule_id}}, query)
+        results = self.request({'where': {'id': id}}, query)
         return results['data']['deletePhSchedule']
 
     def help_description(self):
