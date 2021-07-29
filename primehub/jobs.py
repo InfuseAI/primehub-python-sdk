@@ -1,3 +1,5 @@
+from typing import Iterator
+
 from primehub import Helpful, cmd, Module, has_data_from_stdin
 import time
 import os
@@ -49,10 +51,10 @@ class Jobs(Helpful, Module):
         }
         """
         variables = {
-          'where': {
-            'groupId_in': [self.primehub_config.group_info['id']]
-          },
-          'page': 1
+            'where': {
+                'groupId_in': [self.primehub_config.group_info['id']]
+            },
+            'page': 1
         }
         if kwargs.get('page', None):
             variables['page'] = kwargs['page']
@@ -238,7 +240,7 @@ class Jobs(Helpful, Module):
         return self.get(id)
 
     @cmd(name='logs', description='Get job logs by id', optionals=[('follow', bool), ('tail', int)])
-    def logs(self, id, **kwargs):
+    def logs(self, id, **kwargs) -> Iterator[str]:
         query = """
         query ($where: PhJobWhereUniqueInput!) {
           phJob(where: $where) {
@@ -250,17 +252,9 @@ class Jobs(Helpful, Module):
         follow = kwargs.get('follow', False)
         tail = kwargs.get('tail', 10)
 
-        results = self.request({'where': {'id': id}}, query)
+        results = self.primehub.request({'where': {'id': id}}, query)
         endpoint = results['data']['phJob']['logEndpoint']
-        response = self.request_logs(endpoint, follow, tail)
-        if follow:
-            try:
-                for s in response.iter_lines():
-                    print(s.decode())
-            finally:
-                response.close()
-                return
-        return response.text
+        return self.primehub.request_logs(endpoint, follow, tail)
 
     def help_description(self):
         return "Get a job or list jobs"

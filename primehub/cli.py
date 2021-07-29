@@ -1,5 +1,6 @@
 import json
 import traceback
+from types import GeneratorType
 
 import primehub as ph
 from primehub.utils.argparser import create_command_parser, create_action_parser
@@ -176,7 +177,11 @@ def run_action_noargs(sdk, selected_component, sub_parsers, target, args):
 
 
 def output(sdk, message):
-    print(message, file=sdk.stdout)
+    if isinstance(message, GeneratorType):
+        for m in message:
+            print(m, file=sdk.stdout)
+    else:
+        print(message, file=sdk.stdout)
 
 
 def main(sdk=None):
