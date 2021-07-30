@@ -133,9 +133,9 @@ def run_action_args(sdk, selected_component, sub_parsers, target, remaining_args
                 return_value = func(*real_parameters)
             if return_value:
                 if isinstance(return_value, dict) or isinstance(return_value, list):
-                    output(sdk, json.dumps(return_value))
+                    console_output(sdk, json.dumps(return_value))
                 else:
-                    output(sdk, return_value)
+                    console_output(sdk, return_value)
         except SystemExit:
             return action_parser
 
@@ -168,16 +168,16 @@ def run_action_noargs(sdk, selected_component, sub_parsers, target, args):
         logger.debug('invoked {}'.format(func))
         if return_value:
             if isinstance(return_value, dict) or isinstance(return_value, list):
-                output(sdk, json.dumps(return_value))
+                console_output(sdk, json.dumps(return_value))
             else:
-                output(sdk, return_value)
+                console_output(sdk, return_value)
     except AttributeError:
         logger.debug('{}'.format(sys.exc_info()))
         helper = sub_parsers[selected_component]
     return helper
 
 
-def output(sdk, message):
+def console_output(sdk, message):
     if isinstance(message, GeneratorType):
         for m in message:
             print(m, file=sdk.stdout)
