@@ -1,15 +1,13 @@
 import json
+import sys
 import traceback
 from types import GeneratorType
 
 import primehub as ph
+from primehub.utils import create_logger, PrimeHubException
 from primehub.utils.argparser import create_command_parser, create_action_parser
 from primehub.utils.decorators import find_actions, find_action_method, find_action_info
 from primehub.utils.permission import has_permission_flag, enable_ask_for_permission_feature
-
-import sys
-
-from primehub.utils import create_logger, PrimeHubException
 
 logger = create_logger('primehub-cli')
 
@@ -132,10 +130,7 @@ def run_action_args(sdk, selected_component, sub_parsers, target, remaining_args
                 logger.debug('invoke with parameters %s', real_parameters)
                 return_value = func(*real_parameters)
             if return_value:
-                if isinstance(return_value, dict) or isinstance(return_value, list):
-                    console_output(sdk, json.dumps(return_value))
-                else:
-                    console_output(sdk, return_value)
+                console_output(sdk, return_value)
         except SystemExit:
             return action_parser
 
@@ -167,10 +162,7 @@ def run_action_noargs(sdk, selected_component, sub_parsers, target, args):
         return_value = func()
         logger.debug('invoked {}'.format(func))
         if return_value:
-            if isinstance(return_value, dict) or isinstance(return_value, list):
-                console_output(sdk, json.dumps(return_value))
-            else:
-                console_output(sdk, return_value)
+            console_output(sdk, return_value)
     except AttributeError:
         logger.debug('{}'.format(sys.exc_info()))
         helper = sub_parsers[selected_component]
@@ -178,11 +170,23 @@ def run_action_noargs(sdk, selected_component, sub_parsers, target, args):
 
 
 def console_output(sdk, message):
+    def my_print(m):
+        if isinstance(m, dict) or isinstance(m, list):
+            print(json.dumps(m), file=sdk.stdout)
+        else:
+            print(m, file=sdk.stdout)
+
+        # TODO: human friendly output
+        # if isinstance(m, dict):
+        #     display_tree_like_format(m)
+        # else:
+        #     print(m, file=sdk.stdout)
+
     if isinstance(message, GeneratorType):
         for m in message:
-            print(m, file=sdk.stdout)
+            my_print(m)
     else:
-        print(message, file=sdk.stdout)
+        my_print(message)
 
 
 def main(sdk=None):
