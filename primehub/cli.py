@@ -17,7 +17,8 @@ logger = create_logger('primehub-cli')
 def attach_dev_lab(p):
     import os
     if 'true' == os.environ.get('PRIMEHUB_SDK_DEVLAB', 'false'):
-        p.register_command('devlab', 'DevLab')
+        p.register_command('extras.devlab', 'DevLab', 'devlab')
+        p.register_command('extras.e2e', 'E2EForBasicFunction', 'e2e')
 
 
 def create_sdk():
