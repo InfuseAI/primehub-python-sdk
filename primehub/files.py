@@ -55,4 +55,4 @@ class Files(Helpful, Module):
         return
 
     def help_description(self):
-        return "Get a job or list jobs"
+        return "List and download shared files"

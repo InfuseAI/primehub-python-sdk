@@ -34,7 +34,7 @@ primehub files list <path>
 Usage: 
   primehub files <command>
 
-Get a job or list jobs
+List and download shared files
 
 Available Commands:
   download             Download shared files
