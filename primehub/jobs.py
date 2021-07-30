@@ -5,6 +5,7 @@ import time
 import os
 import json
 import sys
+from urllib.parse import urlparse
 
 
 class Jobs(Helpful, Module):
@@ -255,6 +256,46 @@ class Jobs(Helpful, Module):
         results = self.primehub.request({'where': {'id': id}}, query)
         endpoint = results['data']['phJob']['logEndpoint']
         return self.primehub.request_logs(endpoint, follow, tail)
+
+    @cmd(name='list-artifacts', description='List artifacts of a job by id')
+    def list_artifacts(self, id):
+        query = """
+        query ($where: PhJobWhereUniqueInput!) {
+          phJob(where: $where) {
+            artifact {
+              prefix
+              items {
+                name
+                size
+                lastModified
+              }
+            }
+          }
+        }
+        """
+        results = self.request({'where': {'id': id}}, query)
+        return results['data']['phJob']['artifact']
+
+    # TODO: handel path or dest does not exist
+    @cmd(name='download-artifacts', description='Download artifacts', optionals=[('recursive', bool)])
+    def download_artifacts(self, id, path, dest, **kwargs):
+        artifacts = self.list_artifacts(id)
+        u = urlparse(self.primehub_config.endpoint)
+        endpoint = u._replace(path='/api/files/' + artifacts['prefix'] + '/').geturl()
+
+        if dest[-1] != '/':
+            dest = dest + '/'
+
+        if kwargs.get('recursive', False):
+            if path[-1] != '/':     # avoid files or directories with the same prefix
+                path = path + '/'
+            dirname = os.path.dirname(path[:-1])
+            paths = [e['name'] for e in artifacts['items'] if e['name'].startswith(path)]
+            for p in paths:
+                self.request_file(endpoint + p, dest + p[len(dirname):])
+            return
+        self.request_file(endpoint + path, dest + os.path.basename(path))
+        return
 
     def help_description(self):
         return "Get a job or list jobs"
