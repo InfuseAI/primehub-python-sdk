@@ -9,8 +9,10 @@ primehub jobs `<verb>` `[args]` `[flags]`
 ## Available Commands
 
 - cancel
+- download-artifacts
 - get
 - list
+- list-artifacts
 - logs
 - rerun
 - submit
@@ -23,6 +25,15 @@ Cnacel a job by id
 
 ```
 primehub jobs cancel <id>
+```
+
+
+#### Download-artifacts
+
+Download artifacts 
+
+```
+primehub jobs download-artifacts <id> <path> <dest>
 ```
 
 
@@ -41,6 +52,15 @@ List jobs
 
 ```
 primehub jobs list 
+```
+
+
+#### List-artifacts
+
+List artifacts of a job by id 
+
+```
+primehub jobs list-artifacts <id>
 ```
 
 
@@ -88,8 +108,10 @@ Get a job or list jobs
 
 Available Commands:
   cancel               Cnacel a job by id
+  download-artifacts   Download artifacts
   get                  Get a job by id
   list                 List jobs
+  list-artifacts       List artifacts of a job by id
   logs                 Get job logs by id
   rerun                Rerun a job by id
   submit               Submit a job
