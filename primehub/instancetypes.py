@@ -1,8 +1,13 @@
+from typing import Optional
+
 from primehub import Helpful, cmd, Module
 from primehub.resource_operations import GroupResourceOperation
 
 
 class InstanceTypes(Helpful, Module, GroupResourceOperation):
+    """
+    List instance types or get an instance type from the list
+    """
     resource_name = 'instanceTypes'
     query = """
     query {
@@ -21,11 +26,26 @@ class InstanceTypes(Helpful, Module, GroupResourceOperation):
     """
 
     @cmd(name='list', description='List instance types')
-    def list(self):
+    def list(self) -> list:
+        """
+        List instance types
+
+        :rtype: list
+        :returns: all instance types in the current group
+        """
         return self.do_list(InstanceTypes.query, InstanceTypes.resource_name)
 
     @cmd(name='get', description='Get an instance type by name')
-    def get(self, name):
+    def get(self, name) -> Optional[dict]:
+        """
+        Get an instance type from the current group
+
+        :type name: str
+        :param name: the name of an instance type
+
+        :rtype: Optional[dict]
+        :returns: an instance type
+        """
         return self.do_get(InstanceTypes.query, InstanceTypes.resource_name, name)
 
     def help_description(self):

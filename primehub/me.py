@@ -4,7 +4,13 @@ from primehub import Helpful, cmd, Module
 class Me(Helpful, Module):
 
     @cmd(name='me', description='Get user information')
-    def me(self):
+    def me(self) -> dict:
+        """
+        Get account information
+
+        :rtype: dict
+        :returns: account information
+        """
         query = """
         query {
           me {

@@ -1,10 +1,21 @@
+from typing import Optional
+
 from primehub import Helpful, cmd, Module
 
 
 class Group(Helpful, Module):
+    """
+    List effective groups or get a group entry from the list
+    """
 
     @cmd(name='list', description='List groups')
-    def list(self):
+    def list(self) -> list:
+        """
+        List available groups
+
+        :rtype: list
+        :returns: all effective groups for your account
+        """
         query = """
         {
           me {
@@ -50,7 +61,16 @@ class Group(Helpful, Module):
         return results['data']['me']['effectiveGroups']
 
     @cmd(name='get', description='Get group by name')
-    def get(self, group_name):
+    def get(self, group_name: str) -> Optional[dict]:
+        """
+        Get a group from available groups
+
+        :type group_name: str
+        :param group_name: the name of a group
+
+        :rtype: Optional[dict]
+        :returns: a group entry from available groups
+        """
         groups = self.list()
         group = [x for x in groups if x['name'] == group_name]
         if group:

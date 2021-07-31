@@ -5,7 +5,7 @@ from distutils.core import setup
 from setuptools import find_packages  # type: ignore
 
 setup(name='primehub-python-sdk',
-      version='1.0',
+      version='0.1',
       description='PrimeHub SDK',
       author='qrtt1',
       author_email='qrtt1@infuseai.io',
