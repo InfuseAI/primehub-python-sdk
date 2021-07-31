@@ -243,6 +243,16 @@ class PrimeHub(object):
     def stdout(self, out):
         self._stdout = out
 
+    def get_all_commands(self):
+        return sorted(self.commands.keys())
+
+    def is_ready(self):
+        if self.primehub_config.current_group is None:
+            return False
+        if not self.primehub_config.current_group.get('id', None):
+            return False
+        return True
+
 
 class Module(object):
 
