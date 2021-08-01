@@ -34,7 +34,9 @@ class PrimeHubConfig(object):
     """
 
     def __init__(self, **kwargs):
-        self.config_file = kwargs.get('config', self.get_default_path())
+        self.config_file = kwargs.get('config', None)
+        if not self.config_file:
+            self.config_file = self.get_default_path()
 
         # PrimeHub SDK evaluate
         self.config_from_file = {}
@@ -114,7 +116,8 @@ class PrimeHubConfig(object):
 
     @group.setter
     def group(self, group):
-        self.config_from_user_input['group'] = group
+        if group:
+            self.config_from_user_input['group'] = group
 
     @property
     def api_token(self):
@@ -126,7 +129,8 @@ class PrimeHubConfig(object):
 
     @api_token.setter
     def api_token(self, api_token):
-        self.config_from_user_input['api-token'] = api_token
+        if api_token:
+            self.config_from_user_input['api-token'] = api_token
 
     @property
     def endpoint(self):
@@ -138,7 +142,8 @@ class PrimeHubConfig(object):
 
     @endpoint.setter
     def endpoint(self, endpoint):
-        self.config_from_user_input['endpoint'] = endpoint
+        if endpoint:
+            self.config_from_user_input['endpoint'] = endpoint
 
     @property
     def current_group(self):
@@ -146,7 +151,8 @@ class PrimeHubConfig(object):
 
     @current_group.setter
     def current_group(self, group_info):
-        self.group_info = group_info
+        if group_info:
+            self.group_info = group_info
 
 
 class Helpful(metaclass=abc.ABCMeta):

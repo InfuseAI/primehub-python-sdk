@@ -8,9 +8,13 @@ class ConfigWatcher(Helpful, Module):
 
     @cmd(name='watch', description='watch-primehub-config')
     def watch(self):
+        # ensure the config file is changed
+        assert self.primehub.primehub_config.config_file != self.primehub.primehub_config.get_default_path()
+
         from tempfile import mkstemp
         fd, path = mkstemp('.json', text=True)
         self.primehub.primehub_config.save(path=path)
+
         return dict(config_file=path)
 
     def help_description(self):

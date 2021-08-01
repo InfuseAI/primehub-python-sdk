@@ -38,6 +38,7 @@ class BaseTestCase(TestCase):
         self.test_default_config_path = self.tempfile()
         primehub.PrimeHubConfig.get_default_path = mock.MagicMock()
         primehub.PrimeHubConfig.get_default_path.return_value = self.test_default_config_path
+        print("the default path is ", self.test_default_config_path)
 
         self.sdk = PrimeHub(PrimeHubConfig())
         self.sdk.stderr = io.StringIO()
