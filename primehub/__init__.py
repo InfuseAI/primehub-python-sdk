@@ -273,6 +273,10 @@ class Module(object):
         return self.current_group['name']
 
     @property
+    def endpoint(self) -> str:
+        return self.primehub.primehub_config.endpoint
+
+    @property
     def primehub_config(self):
         raise ValueError('primehub_config is access denied')
 
