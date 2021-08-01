@@ -3,6 +3,11 @@ import json
 from typing import Iterator
 
 import requests  # type: ignore
+from urllib3.exceptions import NewConnectionError
+
+from primehub.utils import create_logger
+
+logger = create_logger('primehub-http')
 
 
 class GraphQLException(BaseException):
@@ -17,7 +22,11 @@ class Client(object):
     def request(self, variables: dict, query: str):
         request_body = dict(variables=json.dumps(variables), query=query)
         headers = {'authorization': 'Bearer {}'.format(self.primehub_config.api_token)}
-        content = requests.post(self.primehub_config.endpoint, data=request_body, headers=headers).text
+        try:
+            content = requests.post(self.primehub_config.endpoint, data=request_body, headers=headers).text
+        except NewConnectionError as e:
+            logger.exception(exc_info=e)
+            return GraphQLException(e)
         result = json.loads(content)
         if 'errors' in result:
             raise GraphQLException(result)
