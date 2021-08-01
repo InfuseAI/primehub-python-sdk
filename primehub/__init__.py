@@ -278,7 +278,9 @@ class Module(object):
 
     @property
     def primehub_config(self):
-        raise ValueError('primehub_config is access denied')
+        raise ValueError(
+            'The attribute [primehub_config] is access denied, '
+            'please use props of the Module to get configurations')
 
 
 def has_data_from_stdin():
