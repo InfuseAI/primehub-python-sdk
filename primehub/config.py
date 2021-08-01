@@ -5,18 +5,47 @@ from primehub import Helpful, cmd, Module
 logger = create_logger('cmd-config')
 
 
-# The config module provides functions to update PrimeHub SDK connection and context information
-# Config class only changes data in the memory
-# CliConfig will change data and update it to the real configuration file.
 class Config(Helpful, Module):
+    """
+    The config module provides functions to update PrimeHubConfig.
+
+    Config class only changes data in the memory,
+    otherwise CliConfig will change data and update it to the real configuration file.
+
+    In SDK mode, config will use Config.
+    In Command mode, config will use CliConfig.
+    CliConfig will update the file config after a `set_*` method call.
+    """
 
     def set_endpoint(self, endpoint: str):
+        """
+        Set endpoint to the GraphQL API.
+
+        It usually is in this pattern https://<primehub-domain>/api/graphql
+
+        :type endpoint: str
+        :param endpoint: an URL to GraphQL API endpoint
+        """
         self.primehub.primehub_config.endpoint = endpoint
 
     def set_token(self, token: str):
+        """
+        Set api-token to the PrimeHubConfig
+
+        :type token: str
+        :param token: a token used by GraphQL request
+        """
         self.primehub.primehub_config.api_token = token
 
     def set_group(self, group: str):
+        """
+        Set current group to work with group aware actions.
+
+        When setting a group, it will validate the group. It the group is invalid, PrimeHub.current_group will be None.
+
+        :type group: str
+        :param group: group name
+        """
         self.primehub.primehub_config.group = group
         try:
             selected_group = self._fetch_group_info(group)
