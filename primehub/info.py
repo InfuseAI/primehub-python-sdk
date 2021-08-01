@@ -3,20 +3,18 @@ from primehub import Helpful, cmd, Module
 
 class CliInformation(Helpful, Module):
 
-    # TODO we should support group-context aware
-    # TODO create a decorator @group_required
     @cmd(name='info', description='Show PrimeHub Cli information')
     def info(self):
         me = self.primehub.me.me()
         me['user_id'] = me['id']
 
-        current_group = self.primehub.group.get(self.primehub.primehub_config.group)
+        current_group = self.primehub.group.get(self.group_name)
         images = [x['name'] for x in current_group['images']]
         instance_types = [x['name'] for x in current_group['instanceTypes']]
         datasets = [x['name'] for x in current_group['datasets']]
 
         if not current_group:
-            group_status = " (No matched group for name %s)" % self.primehub.primehub_config.group
+            group_status = " (No matched group for name %s)" % self.group_name
         else:
             group_status = """
   Id: %(id)s
@@ -35,7 +33,7 @@ class CliInformation(Helpful, Module):
         def indent2(lines):
             return "\n  ".join(lines)
 
-        args = dict(endpoint=self.primehub.primehub_config.endpoint, group_status=group_status.strip(),
+        args = dict(endpoint=self.endpoint, group_status=group_status.strip(),
                     images=indent2(images), instance_types=indent2(instance_types), datasets=indent2(datasets))
         output = """Endpoint: %(endpoint)s
 User:
