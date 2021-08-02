@@ -19,7 +19,7 @@ Get a dataset by name
 ```
 primehub datasets get <name>
 ```
-Required Arguments
+
 * name: the name of a dataset
  
 

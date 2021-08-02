@@ -42,7 +42,7 @@ Run a schedule by id
 ```
 primehub schedules delete <id>
 ```
-Required Arguments
+
 * id
  
 
@@ -59,7 +59,7 @@ Get a schedule by id
 ```
 primehub schedules get <id>
 ```
-Required Arguments
+
 * id
  
 
@@ -96,7 +96,7 @@ Update a schedule by id
 ```
 primehub schedules update <id>
 ```
-Required Arguments
+
 * id
  
 
