@@ -131,15 +131,40 @@ class Jobs(Helpful, Module):
     # TODO: add -f
     # TODO: handel invalid config
     @cmd(name='submit', description='Submit a job', optionals=[('file', str), ('from', str)])
-    def submit(self, **kwargs):
+    def submit_cmd(self, **kwargs):
         """
-        Submit a job from files or PrimeHub Schedules
+        Submit a job from commands
 
         :type file: str
         :param file: The file path of job configurations
 
         :type from: str
         :param from: The schedule id to submit as a job
+
+        :rtype dict
+        :return The detail infromation of the submitted job
+        """
+        if kwargs.get('from', None):
+            return self.submit_from_schedule(kwargs['from'])
+
+        config = {}
+        filename = kwargs.get('file', None)
+        if filename and os.path.exists(filename):
+            with open(filename, 'r') as fh:
+                config = json.load(fh)
+
+        if has_data_from_stdin():
+            config = json.loads("".join(sys.stdin.readlines()))
+
+        config['groupId'] = self.group_id
+        return self.submit(config)
+
+    def submit(self, config):
+        """
+        Submit a job with config
+
+        :type config: dict
+        :param config: The job config
 
         :rtype dict
         :return The detail infromation of the submitted job
@@ -174,20 +199,8 @@ class Jobs(Helpful, Module):
           }
         }
         """
-        if kwargs.get('from', None):
-            return self.submit_from_schedule(kwargs['from'])
-
-        data = {}
-        if has_data_from_stdin():
-            data = json.loads("".join(sys.stdin.readlines()))
-        else:
-            filename = kwargs.get('file', None)
-            print(filename)
-            if os.path.exists(filename):
-                with open(filename, 'r') as fh:
-                    data = json.load(fh)
-        data['groupId'] = self.group_id
-        results = self.request({'data': data}, query)
+        config['groupId'] = self.group_id
+        results = self.request({'data': config}, query)
         return results['data']['createPhJob']
 
     def submit_from_schedule(self, id):
