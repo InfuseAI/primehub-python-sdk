@@ -24,7 +24,7 @@ Cnacel a job by id
 
 
 ```
-primehub cancel cancel <id>
+primehub jobs cancel <id>
 ```
 **Required Arguments**
 * id
@@ -41,7 +41,7 @@ Download artifacts
 
 
 ```
-primehub download-artifacts download-artifacts <id> <path> <dest>
+primehub jobs download-artifacts <id> <path> <dest>
 ```
 **Required Arguments**
 * id
@@ -65,7 +65,7 @@ Get a job by id
 
 
 ```
-primehub get get <id>
+primehub jobs get <id>
 ```
 **Required Arguments**
 * id
@@ -82,7 +82,7 @@ List jobs
 
 
 ```
-primehub list list
+primehub jobs list
 ```
  
 
@@ -102,7 +102,7 @@ List artifacts of a job by id
 
 
 ```
-primehub list-artifacts list-artifacts <id>
+primehub jobs list-artifacts <id>
 ```
 **Required Arguments**
 * id
@@ -119,7 +119,7 @@ Get job logs by id
 
 
 ```
-primehub logs logs <id>
+primehub jobs logs <id>
 ```
 **Required Arguments**
 * id
@@ -143,7 +143,7 @@ Rerun a job by id
 
 
 ```
-primehub rerun rerun <id>
+primehub jobs rerun <id>
 ```
 **Required Arguments**
 * id
@@ -160,7 +160,7 @@ Submit a job
 
 
 ```
-primehub submit submit
+primehub jobs submit
 ```
  
 
@@ -182,7 +182,7 @@ Wait a job by id
 
 
 ```
-primehub wait wait <id>
+primehub jobs wait <id>
 ```
 **Required Arguments**
 * id

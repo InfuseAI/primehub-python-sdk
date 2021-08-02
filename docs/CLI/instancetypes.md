@@ -17,7 +17,7 @@ Get an instance type by name
 
 
 ```
-primehub get get <name>
+primehub instancetypes get <name>
 ```
 **Required Arguments**
 * name
@@ -34,7 +34,7 @@ List instance types
 
 
 ```
-primehub list list
+primehub instancetypes list
 ```
  
 

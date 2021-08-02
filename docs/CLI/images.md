@@ -17,7 +17,7 @@ Get a image by name
 
 
 ```
-primehub get get <name>
+primehub images get <name>
 ```
 **Required Arguments**
 * name
@@ -34,7 +34,7 @@ List images
 
 
 ```
-primehub list list
+primehub images list
 ```
  
 

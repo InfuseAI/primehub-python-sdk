@@ -17,7 +17,7 @@ Get group by name
 
 
 ```
-primehub get get <group_name>
+primehub group get <group_name>
 ```
 **Required Arguments**
 * group_name
@@ -34,7 +34,7 @@ List groups
 
 
 ```
-primehub list list
+primehub group list
 ```
  
 

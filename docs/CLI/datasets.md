@@ -17,7 +17,7 @@ Get a dataset by name
 
 
 ```
-primehub get get <name>
+primehub datasets get <name>
 ```
 **Required Arguments**
 * name
@@ -34,7 +34,7 @@ List datasets
 
 
 ```
-primehub list list
+primehub datasets list
 ```
  
 

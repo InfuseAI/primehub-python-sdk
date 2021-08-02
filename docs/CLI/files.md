@@ -17,7 +17,7 @@ Download shared files
 
 
 ```
-primehub download download <path> <dest>
+primehub files download <path> <dest>
 ```
 **Required Arguments**
 * path
@@ -40,7 +40,7 @@ List shared files
 
 
 ```
-primehub list list <path>
+primehub files list <path>
 ```
 **Required Arguments**
 * path

@@ -17,11 +17,11 @@ primehub {{command}} `<verb>` `[args]` `[flags]`
 
 {% if item['required_arguments'] %}
 ```
-primehub {{item['name']}} {{item['name']}} {{item['required_arguments_string']}}
+primehub {{command}} {{item['name']}} {{item['required_arguments_string']}}
 ```
 {% else %}
 ```
-primehub {{item['name']}} {{item['name']}}
+primehub {{command}} {{item['name']}}
 ```
 {% endif %}
 

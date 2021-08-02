@@ -18,7 +18,7 @@ set endpoint and save to the config file
 
 
 ```
-primehub set-endpoint set-endpoint <endpoint>
+primehub config set-endpoint <endpoint>
 ```
 **Required Arguments**
 * endpoint
@@ -35,7 +35,7 @@ set group and save to the config file
 
 
 ```
-primehub set-group set-group <group>
+primehub config set-group <group>
 ```
 **Required Arguments**
 * group
@@ -52,7 +52,7 @@ set token and save to the config file
 
 
 ```
-primehub set-token set-token <token>
+primehub config set-token <token>
 ```
 **Required Arguments**
 * token

@@ -20,7 +20,7 @@ Create a schedule
 
 
 ```
-primehub create create
+primehub schedules create
 ```
  
 
@@ -40,7 +40,7 @@ Run a schedule by id
 
 
 ```
-primehub delete delete <id>
+primehub schedules delete <id>
 ```
 **Required Arguments**
 * id
@@ -57,7 +57,7 @@ Get a schedule by id
 
 
 ```
-primehub get get <id>
+primehub schedules get <id>
 ```
 **Required Arguments**
 * id
@@ -74,7 +74,7 @@ List schedules
 
 
 ```
-primehub list list
+primehub schedules list
 ```
  
 
@@ -94,7 +94,7 @@ Update a schedule by id
 
 
 ```
-primehub update update <id>
+primehub schedules update <id>
 ```
 **Required Arguments**
 * id

@@ -16,7 +16,7 @@ Get notebooks logs
 
 
 ```
-primehub logs logs
+primehub notebooks logs
 ```
  
 
