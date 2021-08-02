@@ -20,7 +20,8 @@ setup(name='primehub-python-sdk',
           'pytest>=4.6',
           'pytest-flake8',
           'pytest-mypy',
-          'pytest-cov'
+          'pytest-cov',
+          'Jinja2'
       ]},
       package_data={
           'primehub': ['*.json']

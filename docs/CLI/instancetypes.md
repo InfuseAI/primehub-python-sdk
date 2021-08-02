@@ -1,35 +1,51 @@
 
-
 # Primehub Instancetypes
 
 primehub instancetypes `<verb>` `[args]` `[flags]`
 
 
-
 ## Available Commands
 
-- get
-- list
+* Get
+* List
+
 
 
 #### Get
 
-Get an instance type by name 
+Get an instance type by name
+
 
 ```
 primehub instancetypes get <name>
 ```
+**Required Arguments**
+* name
+ 
+
+
+ 
+
 
 
 #### List
 
-List instance types 
+List instance types
+
 
 ```
-primehub instancetypes list 
+primehub instancetypes list
 ```
+ 
 
-## Help
+
+ 
+
+
+ 
+
+## Command Help
+
 ```
 Usage: 
   primehub instancetypes <command>
@@ -48,5 +64,5 @@ Global Options:
   --endpoint ENDPOINT  the endpoint to the PrimeHub GraphQL URL
   --token TOKEN        API Token generated from PrimeHub Console
   --group GROUP        override the active group
+
 ```
-        

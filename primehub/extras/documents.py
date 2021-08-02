@@ -61,6 +61,7 @@ def generate_help_for_command(sdk: PrimeHub, name):
 
     action_docs = []
     for action in find_actions(sdk.commands[name]):
+        print(action)
         print("generate action:", action['name'])
         require_permission = ""
         if has_permission_flag(action):

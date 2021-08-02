@@ -1,105 +1,206 @@
 
-
 # Primehub Jobs
 
 primehub jobs `<verb>` `[args]` `[flags]`
 
 
-
 ## Available Commands
 
-- cancel
-- download-artifacts
-- get
-- list
-- list-artifacts
-- logs
-- rerun
-- submit
-- wait
+* Cancel
+* Download-artifacts
+* Get
+* List
+* List-artifacts
+* Logs
+* Rerun
+* Submit
+* Wait
+
 
 
 #### Cancel
 
-Cnacel a job by id 
+Cnacel a job by id
+
 
 ```
 primehub jobs cancel <id>
 ```
+**Required Arguments**
+* id
+ 
+
+
+ 
+
 
 
 #### Download-artifacts
 
-Download artifacts 
+Download artifacts
+
 
 ```
 primehub jobs download-artifacts <id> <path> <dest>
 ```
+**Required Arguments**
+* id
+* path
+* dest
+ 
+
+
+
+**Optional Arguments**
+
+* recursive
+
+ 
+
 
 
 #### Get
 
-Get a job by id 
+Get a job by id
+
 
 ```
 primehub jobs get <id>
 ```
+**Required Arguments**
+* id
+ 
+
+
+ 
+
 
 
 #### List
 
-List jobs 
+List jobs
+
 
 ```
-primehub jobs list 
+primehub jobs list
 ```
+ 
+
+
+
+**Optional Arguments**
+
+* page
+
+ 
+
 
 
 #### List-artifacts
 
-List artifacts of a job by id 
+List artifacts of a job by id
+
 
 ```
 primehub jobs list-artifacts <id>
 ```
+**Required Arguments**
+* id
+ 
+
+
+ 
+
 
 
 #### Logs
 
-Get job logs by id 
+Get job logs by id
+
 
 ```
 primehub jobs logs <id>
 ```
+**Required Arguments**
+* id
+ 
+
+
+
+**Optional Arguments**
+
+* follow
+
+* tail
+
+ 
+
 
 
 #### Rerun
 
-Rerun a job by id 
+Rerun a job by id
+
 
 ```
 primehub jobs rerun <id>
 ```
+**Required Arguments**
+* id
+ 
+
+
+ 
+
 
 
 #### Submit
 
-Submit a job 
+Submit a job
+
 
 ```
-primehub jobs submit 
+primehub jobs submit
 ```
+ 
+
+
+
+**Optional Arguments**
+
+* file
+
+* from
+
+ 
+
 
 
 #### Wait
 
-Wait a job by id 
+Wait a job by id
+
 
 ```
 primehub jobs wait <id>
 ```
+**Required Arguments**
+* id
+ 
 
-## Help
+
+
+**Optional Arguments**
+
+* timeout
+
+ 
+
+
+ 
+
+## Command Help
+
 ```
 Usage: 
   primehub jobs <command>
@@ -125,5 +226,5 @@ Global Options:
   --endpoint ENDPOINT  the endpoint to the PrimeHub GraphQL URL
   --token TOKEN        API Token generated from PrimeHub Console
   --group GROUP        override the active group
+
 ```
-        

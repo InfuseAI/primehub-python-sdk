@@ -1,25 +1,40 @@
 
-
 # Primehub Notebooks
 
 primehub notebooks `<verb>` `[args]` `[flags]`
 
 
-
 ## Available Commands
 
-- logs
+* Logs
+
 
 
 #### Logs
 
-Get notebooks logs 
+Get notebooks logs
+
 
 ```
-primehub notebooks logs 
+primehub notebooks logs
 ```
+ 
 
-## Help
+
+
+**Optional Arguments**
+
+* follow
+
+* tail
+
+ 
+
+
+ 
+
+## Command Help
+
 ```
 Usage: 
   primehub notebooks <command>
@@ -37,5 +52,5 @@ Global Options:
   --endpoint ENDPOINT  the endpoint to the PrimeHub GraphQL URL
   --token TOKEN        API Token generated from PrimeHub Console
   --group GROUP        override the active group
+
 ```
-        
