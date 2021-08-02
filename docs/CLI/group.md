@@ -20,7 +20,7 @@ Get group by name
 primehub group get <group_name>
 ```
 **Required Arguments**
-* group_name
+* group_name: the name of a group
  
 
 

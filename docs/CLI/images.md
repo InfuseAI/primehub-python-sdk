@@ -20,7 +20,7 @@ Get a image by name
 primehub images get <name>
 ```
 **Required Arguments**
-* name
+* name: the name of an image
  
 
 

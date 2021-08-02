@@ -1,12 +1,13 @@
 import io
 import os
+import re
 import sys
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 
 from primehub import PrimeHub
 from primehub.cli import create_sdk, main as cli_main
-from primehub.utils.decorators import find_actions
+from primehub.utils.decorators import find_actions, find_action_method, find_action_info
 
 env = Environment(
     loader=PackageLoader("primehub.extras"),
@@ -43,6 +44,13 @@ def generate_help_for_command(sdk: PrimeHub, name):
     actions = find_actions(sdk.commands[name])
     for action in actions:
 
+        explain = extract_description_from_docstring(action, name, sdk)
+
+        def explained(x):
+            if x in explain:
+                return "{}: {}".format(x, explain[x])
+            return x
+
         ## arguments
         arg_list = []
         for x in action['arguments']:
@@ -50,15 +58,14 @@ def generate_help_for_command(sdk: PrimeHub, name):
                 # skip **kwargs
                 continue
             arg_list.append(x[0])
-        action['required_arguments'] = arg_list
         action['required_arguments_string'] = " ".join(["<%s>" % x for x in arg_list])
+        action['required_arguments'] = [explained(x) for x in arg_list]
 
         ## optionals
         opt_list = []
         for x in action['optionals']:
             opt_list.append(x[0])
-        action['optional_arguments'] = opt_list
-
+        action['optional_arguments'] = [explained(x) for x in opt_list]
     document = generate_command_document(command=name, command_help=command_help,
                                          actions=actions)
 
@@ -66,6 +73,16 @@ def generate_help_for_command(sdk: PrimeHub, name):
     with open(p, "w") as fh:
         fh.write(document)
     # print("generate command-group:", name)
+
+
+def extract_description_from_docstring(action, name, sdk):
+    output = dict()
+    method_name = find_action_method(sdk.commands[name], action['name'])
+    doc_string = getattr(sdk.commands[name], method_name).__doc__
+    param_description = re.findall(r':param ([^:]+):(.+)', str(doc_string))
+    for k, v in param_description:
+        output[k.strip()] = v.strip()
+    return output
 
 
 def main():
