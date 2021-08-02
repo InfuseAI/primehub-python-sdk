@@ -113,6 +113,7 @@ primehub schedules update <id>
 
 ## Command Help
 
+```
 Usage: 
   primehub schedules <command>
 
@@ -133,3 +134,5 @@ Global Options:
   --endpoint ENDPOINT  the endpoint to the PrimeHub GraphQL URL
   --token TOKEN        API Token generated from PrimeHub Console
   --group GROUP        override the active group
+
+```

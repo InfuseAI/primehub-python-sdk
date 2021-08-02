@@ -46,6 +46,7 @@ primehub instancetypes list
 
 ## Command Help
 
+```
 Usage: 
   primehub instancetypes <command>
 
@@ -63,3 +64,5 @@ Global Options:
   --endpoint ENDPOINT  the endpoint to the PrimeHub GraphQL URL
   --token TOKEN        API Token generated from PrimeHub Console
   --group GROUP        override the active group
+
+```
