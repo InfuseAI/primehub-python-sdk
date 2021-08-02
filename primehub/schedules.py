@@ -49,7 +49,7 @@ class Schedules(Helpful, Module):
         """
         variables = {
           'where': {
-            'groupId_in': [self.primehub_config.group_info['id']]
+            'groupId_in': [self.group_id]
           },
           'page': 1
         }
@@ -144,7 +144,7 @@ class Schedules(Helpful, Module):
             if os.path.exists(filename):
                 with open(filename, 'r') as fh:
                     data = json.load(fh)
-        data['groupId'] = self.primehub_config.group_info['id']
+        data['groupId'] = self.group_id
         results = self.request({'data': data}, query)
         return results['data']['createPhSchedule']
 
@@ -190,7 +190,7 @@ class Schedules(Helpful, Module):
             if os.path.exists(filename):
                 with open(filename, 'r') as fh:
                     data = json.load(fh)
-        data['groupId'] = self.primehub_config.group_info['id']
+        data['groupId'] = self.group_id
         results = self.request({'data': data, 'where': {'id': id}}, query)
         return results['data']['updatePhSchedule']
 

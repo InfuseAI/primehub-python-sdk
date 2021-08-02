@@ -53,7 +53,7 @@ class Jobs(Helpful, Module):
         """
         variables = {
             'where': {
-                'groupId_in': [self.primehub_config.group_info['id']]
+                'groupId_in': [self.group_id]
             },
             'page': 1
         }
@@ -153,7 +153,7 @@ class Jobs(Helpful, Module):
             if os.path.exists(filename):
                 with open(filename, 'r') as fh:
                     data = json.load(fh)
-        data['groupId'] = self.primehub_config.group_info['id']
+        data['groupId'] = self.group_id
         results = self.request({'data': data}, query)
         return results['data']['createPhJob']
 
@@ -280,7 +280,7 @@ class Jobs(Helpful, Module):
     @cmd(name='download-artifacts', description='Download artifacts', optionals=[('recursive', bool)])
     def download_artifacts(self, id, path, dest, **kwargs):
         artifacts = self.list_artifacts(id)
-        u = urlparse(self.primehub_config.endpoint)
+        u = urlparse(self.endpoint)
         endpoint = u._replace(path='/api/files/' + artifacts['prefix'] + '/').geturl()
 
         if dest[-1] != '/':

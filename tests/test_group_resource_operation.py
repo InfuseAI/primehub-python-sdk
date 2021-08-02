@@ -30,7 +30,7 @@ class TestGroupResourceOperation(BaseTestCase):
         self.assertEqual('No group information, please configure the active group first.', output.strip())
 
     def test_group_resource_operation(self):
-        self.sdk.primehub_config.group_info = {'name': 'phusers'}
+        self.sdk.primehub_config.group_info = {'name': 'phusers', 'id': 'any-id'}
         self.mock_request.return_value = {
             'data': {
                 'me': {

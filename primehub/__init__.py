@@ -5,6 +5,7 @@ import os
 import sys
 from typing import Union, Callable, Dict
 
+from primehub.utils import group_required
 from primehub.utils.decorators import cmd  # noqa: F401
 from primehub.utils.http_client import Client
 
@@ -146,12 +147,12 @@ class PrimeHubConfig(object):
             self.config_from_user_input['endpoint'] = endpoint
 
     @property
-    def current_group(self):
+    def current_group(self) -> dict:
         return self.group_info
 
     @current_group.setter
     def current_group(self, group_info):
-        if group_info:
+        if group_info and group_info.get('id', None):
             self.group_info = group_info
 
 
@@ -223,7 +224,6 @@ class PrimeHub(object):
         cmd_group = self.commands[command_name] = clazz(self)
 
         # attach request method
-        cmd_group.primehub_config = self.primehub_config
         cmd_group.request = self.request
         cmd_group.request_logs = self.request_logs
         cmd_group.request_file = self.request_file
@@ -254,6 +254,33 @@ class Module(object):
 
     def __init__(self, primehub: PrimeHub, **kwargs):
         self.primehub = primehub
+
+    @property
+    def current_group(self) -> dict:
+        g = self.primehub.primehub_config.current_group
+        if not g:
+            group_required()
+        if not g.get('id', None):
+            group_required()
+        return g
+
+    @property
+    def group_id(self) -> str:
+        return self.current_group['id']
+
+    @property
+    def group_name(self) -> str:
+        return self.current_group['name']
+
+    @property
+    def endpoint(self) -> str:
+        return self.primehub.primehub_config.endpoint
+
+    @property
+    def primehub_config(self):
+        raise ValueError(
+            'The attribute [primehub_config] is access denied, '
+            'please use props of the Module to get configurations')
 
 
 def has_data_from_stdin():

@@ -11,7 +11,7 @@ class Notebooks(Helpful, Module):
         follow = kwargs.get('follow', False)
         tail = kwargs.get('tail', 10)
 
-        endpoint = urllib.parse.urljoin(self.primehub.primehub_config.endpoint, '/api/logs/jupyterhub')
+        endpoint = urllib.parse.urljoin(self.endpoint, '/api/logs/jupyterhub')
         return self.primehub.request_logs(endpoint, follow, tail)
 
     def help_description(self):

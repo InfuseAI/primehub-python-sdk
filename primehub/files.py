@@ -26,14 +26,14 @@ class Files(Helpful, Module):
     # TODO: handel path or dest does not exist
     @cmd(name='download', description='Download shared files', optionals=[('recursive', bool)])
     def download(self, path, dest, **kwargs):
-        u = urlparse(self.primehub_config.endpoint)
-        endpoint = u._replace(path='/api/files/groups/' + self.primehub_config.group_info['name']).geturl()
+        u = urlparse(self.endpoint)
+        endpoint = u._replace(path='/api/files/groups/' + self.group_name).geturl()
 
         if dest[-1] != '/':
             dest = dest + '/'
 
         if kwargs.get('recursive', False):
-            if path[-1] != '/':     # avoid files and directories with the same prefix
+            if path[-1] != '/':  # avoid files and directories with the same prefix
                 path = path + '/'
             dirname = os.path.dirname(path[:-1])
             dirs = [path]
@@ -43,9 +43,9 @@ class Files(Helpful, Module):
                 for dir in dirs:
                     for file in self.list(dir):
                         p = dir + file['name']
-                        if p[-1] == '/':   # folder
+                        if p[-1] == '/':  # folder
                             sub_dirs.append(p)
-                        else:              # file
+                        else:  # file
                             self.request_file(endpoint + path + p, dest + p[len(dirname):])
                 dirs = sub_dirs
             return
