@@ -26,7 +26,7 @@ primehub schedules create
 
 
 
-**Optional Arguments**
+Optional Arguments
 
 * file
 
@@ -42,7 +42,7 @@ Run a schedule by id
 ```
 primehub schedules delete <id>
 ```
-**Required Arguments**
+Required Arguments
 * id
  
 
@@ -59,7 +59,7 @@ Get a schedule by id
 ```
 primehub schedules get <id>
 ```
-**Required Arguments**
+Required Arguments
 * id
  
 
@@ -80,7 +80,7 @@ primehub schedules list
 
 
 
-**Optional Arguments**
+Optional Arguments
 
 * page
 
@@ -96,13 +96,13 @@ Update a schedule by id
 ```
 primehub schedules update <id>
 ```
-**Required Arguments**
+Required Arguments
 * id
  
 
 
 
-**Optional Arguments**
+Optional Arguments
 
 * file
 

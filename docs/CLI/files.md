@@ -19,14 +19,14 @@ Download shared files
 ```
 primehub files download <path> <dest>
 ```
-**Required Arguments**
+Required Arguments
 * path
 * dest
  
 
 
 
-**Optional Arguments**
+Optional Arguments
 
 * recursive
 
@@ -42,7 +42,7 @@ List shared files
 ```
 primehub files list <path>
 ```
-**Required Arguments**
+Required Arguments
 * path
  
 

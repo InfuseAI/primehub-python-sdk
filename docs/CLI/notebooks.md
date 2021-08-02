@@ -22,7 +22,7 @@ primehub notebooks logs
 
 
 
-**Optional Arguments**
+Optional Arguments
 
 * follow
 

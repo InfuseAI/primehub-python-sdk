@@ -19,7 +19,7 @@ Get an instance type by name
 ```
 primehub instancetypes get <name>
 ```
-**Required Arguments**
+Required Arguments
 * name: the name of an instance type
  
 

@@ -26,7 +26,7 @@ Cnacel a job by id
 ```
 primehub jobs cancel <id>
 ```
-**Required Arguments**
+Required Arguments
 * id
  
 
@@ -43,7 +43,7 @@ Download artifacts
 ```
 primehub jobs download-artifacts <id> <path> <dest>
 ```
-**Required Arguments**
+Required Arguments
 * id
 * path
 * dest
@@ -51,7 +51,7 @@ primehub jobs download-artifacts <id> <path> <dest>
 
 
 
-**Optional Arguments**
+Optional Arguments
 
 * recursive
 
@@ -67,7 +67,7 @@ Get a job by id
 ```
 primehub jobs get <id>
 ```
-**Required Arguments**
+Required Arguments
 * id
  
 
@@ -88,7 +88,7 @@ primehub jobs list
 
 
 
-**Optional Arguments**
+Optional Arguments
 
 * page
 
@@ -104,7 +104,7 @@ List artifacts of a job by id
 ```
 primehub jobs list-artifacts <id>
 ```
-**Required Arguments**
+Required Arguments
 * id
  
 
@@ -121,13 +121,13 @@ Get job logs by id
 ```
 primehub jobs logs <id>
 ```
-**Required Arguments**
+Required Arguments
 * id
  
 
 
 
-**Optional Arguments**
+Optional Arguments
 
 * follow
 
@@ -145,7 +145,7 @@ Rerun a job by id
 ```
 primehub jobs rerun <id>
 ```
-**Required Arguments**
+Required Arguments
 * id
  
 
@@ -166,7 +166,7 @@ primehub jobs submit
 
 
 
-**Optional Arguments**
+Optional Arguments
 
 * file
 
@@ -184,13 +184,13 @@ Wait a job by id
 ```
 primehub jobs wait <id>
 ```
-**Required Arguments**
+Required Arguments
 * id
  
 
 
 
-**Optional Arguments**
+Optional Arguments
 
 * timeout
 

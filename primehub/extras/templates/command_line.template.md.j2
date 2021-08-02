@@ -26,7 +26,7 @@ primehub {{command}} {{item['name']}}
 {% endif %}
 
 {%- if item['required_arguments'] -%}
-**Required Arguments**
+Required Arguments
 {%- for argument in item['required_arguments'] %}
 * {{argument}}
 {%- endfor %}
@@ -34,7 +34,7 @@ primehub {{command}} {{item['name']}}
 
 
 {% if item['optional_arguments'] %}
-**Optional Arguments**
+Optional Arguments
 {% for argument in item['optional_arguments'] %}
 * {{argument}}
 {% else %}
