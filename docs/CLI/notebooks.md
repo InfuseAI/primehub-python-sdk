@@ -1,40 +1,6 @@
 
 # Primehub Notebooks
 
-primehub notebooks `<verb>` `[args]` `[flags]`
-
-
-## Available Commands
-
-* Logs
-
-
-
-#### Logs
-
-Get notebooks logs
-
-
-```
-primehub notebooks logs
-```
- 
-
-
-
-**Optional Arguments**
-
-* follow
-
-* tail
-
- 
-
-
- 
-
-## Command Help
-
 ```
 Usage: 
   primehub notebooks <command>
@@ -54,3 +20,26 @@ Global Options:
   --group GROUP        override the active group
 
 ```
+
+
+### logs
+
+Get notebooks logs
+
+
+```
+primehub notebooks logs
+```
+ 
+
+* *(optional)* follow
+
+* *(optional)* tail
+
+
+
+ 
+
+## Examples
+
+TBD: please write example for [notebooks]

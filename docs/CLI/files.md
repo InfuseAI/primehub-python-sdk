@@ -1,59 +1,6 @@
 
 # Primehub Files
 
-primehub files `<verb>` `[args]` `[flags]`
-
-
-## Available Commands
-
-* Download
-* List
-
-
-
-#### Download
-
-Download shared files
-
-
-```
-primehub files download <path> <dest>
-```
-**Required Arguments**
-* path
-* dest
- 
-
-
-
-**Optional Arguments**
-
-* recursive
-
- 
-
-
-
-#### List
-
-List shared files
-
-
-```
-primehub files list <path>
-```
-**Required Arguments**
-* path
- 
-
-
- 
-
-
- 
-
-## Command Help
-
 ```
 Usage: 
   primehub files <command>
@@ -74,3 +21,42 @@ Global Options:
   --group GROUP        override the active group
 
 ```
+
+
+### download
+
+Download shared files
+
+
+```
+primehub files download <path> <dest>
+```
+
+* path
+* dest
+ 
+
+* *(optional)* recursive
+
+
+
+
+### list
+
+List shared files
+
+
+```
+primehub files list <path>
+```
+
+* path
+ 
+
+
+
+ 
+
+## Examples
+
+TBD: please write example for [files]

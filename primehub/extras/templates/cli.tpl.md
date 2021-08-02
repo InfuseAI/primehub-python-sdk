@@ -1,17 +1,12 @@
 
 # Primehub {{command.capitalize()}}
 
-primehub {{command}} `<verb>` `[args]` `[flags]`
-
-
-## Available Commands
-
-{% for item in actions -%}
-* {{item['name'].capitalize()}}
-{% endfor %}
+```
+{{command_help}}
+```
 
 {% for item in actions %}
-#### {{item['name'].capitalize()}}
+### {{item['name']}}
 
 {{item['description']}}
 
@@ -26,27 +21,17 @@ primehub {{command}} {{item['name']}}
 {% endif %}
 
 {%- if item['required_arguments'] -%}
-**Required Arguments**
 {%- for argument in item['required_arguments'] %}
 * {{argument}}
 {%- endfor %}
 {% endif %} {# end of :: if item['required_arguments'] #}
-
-
-{% if item['optional_arguments'] %}
-**Optional Arguments**
 {% for argument in item['optional_arguments'] %}
-* {{argument}}
-{% else %}
-*no optional arguments*
+* *(optional)* {{argument}}
 {% endfor %}
-{% endif %} {# end of :: if item['optional_arguments'] #}
 
 
 {% endfor %} {# end of :: for item in actions #}
 
-## Command Help
+## Examples
 
-```
-{{command_help}}
-```
+{{examples}}
