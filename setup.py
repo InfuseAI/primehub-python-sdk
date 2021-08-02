@@ -11,7 +11,7 @@ setup(name='primehub-python-sdk',
       author_email='qrtt1@infuseai.io',
       url='https://github.com/InfuseAI/primehub-python-sdk',
       entry_points={
-          'console_scripts': ['primehub = primehub.cli:main', 'doc-primehub = primehub.extras.documents:main']
+          'console_scripts': ['primehub = primehub.cli:main', 'doc-primehub = primehub.extras.doc_generator:main']
       },
       python_requires=">=3.6",
       packages=find_packages(),

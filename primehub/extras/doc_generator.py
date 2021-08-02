@@ -7,7 +7,7 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 
 from primehub import PrimeHub
 from primehub.cli import create_sdk, main as cli_main
-from primehub.utils.decorators import find_actions, find_action_method, find_action_info
+from primehub.utils.decorators import find_actions, find_action_method
 
 env = Environment(
     loader=PackageLoader("primehub.extras"),
@@ -42,8 +42,18 @@ def generate_help_for_command(sdk: PrimeHub, name):
         pass
     command_help = sdk.stderr.getvalue()
     actions = find_actions(sdk.commands[name])
-    for action in actions:
+    attach_template_information_to_action(actions, name, sdk)
+    document = generate_command_document(command=name, command_help=command_help,
+                                         actions=actions)
 
+    print("Generate doc", name)
+    p = create_cli_doc_path(name)
+    with open(p, "w") as fh:
+        fh.write(document)
+
+
+def attach_template_information_to_action(actions, name, sdk):
+    for action in actions:
         explain = extract_description_from_docstring(action, name, sdk)
 
         def explained(x):
@@ -51,7 +61,7 @@ def generate_help_for_command(sdk: PrimeHub, name):
                 return "{}: {}".format(x, explain[x])
             return x
 
-        ## arguments
+        # arguments
         arg_list = []
         for x in action['arguments']:
             if x[2] is True:
@@ -61,18 +71,11 @@ def generate_help_for_command(sdk: PrimeHub, name):
         action['required_arguments_string'] = " ".join(["<%s>" % x for x in arg_list])
         action['required_arguments'] = [explained(x) for x in arg_list]
 
-        ## optionals
+        # optionals
         opt_list = []
         for x in action['optionals']:
             opt_list.append(x[0])
         action['optional_arguments'] = [explained(x) for x in opt_list]
-    document = generate_command_document(command=name, command_help=command_help,
-                                         actions=actions)
-
-    p = create_cli_doc_path(name)
-    with open(p, "w") as fh:
-        fh.write(document)
-    # print("generate command-group:", name)
 
 
 def extract_description_from_docstring(action, name, sdk):

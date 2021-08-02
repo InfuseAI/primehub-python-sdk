@@ -21,7 +21,7 @@ set endpoint and save to the config file
 primehub config set-endpoint <endpoint>
 ```
 
-* endpoint
+* endpoint: an URL to GraphQL API endpoint
  
 
 
@@ -38,7 +38,7 @@ set group and save to the config file
 primehub config set-group <group>
 ```
 
-* group
+* group: group name
  
 
 
@@ -55,7 +55,7 @@ set token and save to the config file
 primehub config set-token <token>
 ```
 
-* token
+* token: a token used by GraphQL request
  
 
 
