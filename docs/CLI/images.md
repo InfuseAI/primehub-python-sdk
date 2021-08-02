@@ -1,36 +1,51 @@
 
-
 # Primehub Images
 
 primehub images `<verb>` `[args]` `[flags]`
 
 
-
 ## Available Commands
 
-- get
-- list
+* Get
+* List
+
 
 
 #### Get
 
-Get a image by name 
+Get a image by name
+
 
 ```
-primehub images get <name>
+primehub get get <name>
 ```
+**Required Arguments**
+* name
+ 
+
+
+ 
+
 
 
 #### List
 
-List images 
+List images
+
 
 ```
-primehub images list 
+primehub list list
 ```
+ 
 
-## Help
-```
+
+ 
+
+
+ 
+
+## Command Help
+
 Usage: 
   primehub images <command>
 
@@ -48,5 +63,3 @@ Global Options:
   --endpoint ENDPOINT  the endpoint to the PrimeHub GraphQL URL
   --token TOKEN        API Token generated from PrimeHub Console
   --group GROUP        override the active group
-```
-        

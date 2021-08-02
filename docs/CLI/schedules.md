@@ -1,66 +1,118 @@
 
-
 # Primehub Schedules
 
 primehub schedules `<verb>` `[args]` `[flags]`
 
 
-
 ## Available Commands
 
-- create
-- delete
-- get
-- list
-- update
+* Create
+* Delete
+* Get
+* List
+* Update
+
 
 
 #### Create
 
-Create a schedule 
+Create a schedule
+
 
 ```
-primehub schedules create 
+primehub create create
 ```
+ 
+
+
+
+**Optional Arguments**
+
+* file
+
+ 
+
 
 
 #### Delete
 
-Run a schedule by id (`--yes-i-really-mean-it` is required)
+Run a schedule by id
+
 
 ```
-primehub schedules delete <id>
+primehub delete delete <id>
 ```
+**Required Arguments**
+* id
+ 
+
+
+ 
+
 
 
 #### Get
 
-Get a schedule by id 
+Get a schedule by id
+
 
 ```
-primehub schedules get <id>
+primehub get get <id>
 ```
+**Required Arguments**
+* id
+ 
+
+
+ 
+
 
 
 #### List
 
-List schedules 
+List schedules
+
 
 ```
-primehub schedules list 
+primehub list list
 ```
+ 
+
+
+
+**Optional Arguments**
+
+* page
+
+ 
+
 
 
 #### Update
 
-Update a schedule by id 
+Update a schedule by id
+
 
 ```
-primehub schedules update <id>
+primehub update update <id>
 ```
+**Required Arguments**
+* id
+ 
 
-## Help
-```
+
+
+**Optional Arguments**
+
+* file
+
+ 
+
+
+ 
+
+## Command Help
+
 Usage: 
   primehub schedules <command>
 
@@ -81,5 +133,3 @@ Global Options:
   --endpoint ENDPOINT  the endpoint to the PrimeHub GraphQL URL
   --token TOKEN        API Token generated from PrimeHub Console
   --group GROUP        override the active group
-```
-        

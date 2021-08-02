@@ -1,46 +1,71 @@
 
-
 # Primehub Config
 
 primehub config `<verb>` `[args]` `[flags]`
 
 
-
 ## Available Commands
 
-- set-endpoint
-- set-group
-- set-token
+* Set-endpoint
+* Set-group
+* Set-token
+
 
 
 #### Set-endpoint
 
-set endpoint and save to the config file 
+set endpoint and save to the config file
+
 
 ```
-primehub config set-endpoint <endpoint>
+primehub set-endpoint set-endpoint <endpoint>
 ```
+**Required Arguments**
+* endpoint
+ 
+
+
+ 
+
 
 
 #### Set-group
 
-set group and save to the config file 
+set group and save to the config file
+
 
 ```
-primehub config set-group <group>
+primehub set-group set-group <group>
 ```
+**Required Arguments**
+* group
+ 
+
+
+ 
+
 
 
 #### Set-token
 
-set token and save to the config file 
+set token and save to the config file
+
 
 ```
-primehub config set-token <token>
+primehub set-token set-token <token>
 ```
+**Required Arguments**
+* token
+ 
 
-## Help
-```
+
+ 
+
+
+ 
+
+## Command Help
+
 Usage: 
   primehub config <command>
 
@@ -59,5 +84,3 @@ Global Options:
   --endpoint ENDPOINT  the endpoint to the PrimeHub GraphQL URL
   --token TOKEN        API Token generated from PrimeHub Console
   --group GROUP        override the active group
-```
-        

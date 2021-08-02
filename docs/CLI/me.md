@@ -1,26 +1,33 @@
 
-
 # Primehub Me
 
 primehub me `<verb>` `[args]` `[flags]`
 
 
-
 ## Available Commands
 
-- me
+* Me
+
 
 
 #### Me
 
-Get user information 
+Get user information
+
 
 ```
-primehub me me 
+primehub me me
 ```
+ 
 
-## Help
-```
+
+ 
+
+
+ 
+
+## Command Help
+
 Usage: 
   primehub me <command>
 
@@ -37,5 +44,3 @@ Global Options:
   --endpoint ENDPOINT  the endpoint to the PrimeHub GraphQL URL
   --token TOKEN        API Token generated from PrimeHub Console
   --group GROUP        override the active group
-```
-        

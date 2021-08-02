@@ -1,26 +1,33 @@
 
-
 # Primehub Info
 
 primehub info `<verb>` `[args]` `[flags]`
 
 
-
 ## Available Commands
 
-- info
+* Info
+
 
 
 #### Info
 
-Show PrimeHub Cli information 
+Show PrimeHub Cli information
+
 
 ```
-primehub info info 
+primehub info info
 ```
+ 
 
-## Help
-```
+
+ 
+
+
+ 
+
+## Command Help
+
 Usage: 
   primehub info <command>
 
@@ -37,5 +44,3 @@ Global Options:
   --endpoint ENDPOINT  the endpoint to the PrimeHub GraphQL URL
   --token TOKEN        API Token generated from PrimeHub Console
   --group GROUP        override the active group
-```
-        

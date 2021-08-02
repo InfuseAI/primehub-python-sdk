@@ -1,36 +1,51 @@
 
-
 # Primehub Group
 
 primehub group `<verb>` `[args]` `[flags]`
 
 
-
 ## Available Commands
 
-- get
-- list
+* Get
+* List
+
 
 
 #### Get
 
-Get group by name 
+Get group by name
+
 
 ```
-primehub group get <group_name>
+primehub get get <group_name>
 ```
+**Required Arguments**
+* group_name
+ 
+
+
+ 
+
 
 
 #### List
 
-List groups 
+List groups
+
 
 ```
-primehub group list 
+primehub list list
 ```
+ 
 
-## Help
-```
+
+ 
+
+
+ 
+
+## Command Help
+
 Usage: 
   primehub group <command>
 
@@ -48,5 +63,3 @@ Global Options:
   --endpoint ENDPOINT  the endpoint to the PrimeHub GraphQL URL
   --token TOKEN        API Token generated from PrimeHub Console
   --group GROUP        override the active group
-```
-        

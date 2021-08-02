@@ -1,36 +1,51 @@
 
-
 # Primehub Datasets
 
 primehub datasets `<verb>` `[args]` `[flags]`
 
 
-
 ## Available Commands
 
-- get
-- list
+* Get
+* List
+
 
 
 #### Get
 
-Get a dataset by name 
+Get a dataset by name
+
 
 ```
-primehub datasets get <name>
+primehub get get <name>
 ```
+**Required Arguments**
+* name
+ 
+
+
+ 
+
 
 
 #### List
 
-List datasets 
+List datasets
+
 
 ```
-primehub datasets list 
+primehub list list
 ```
+ 
 
-## Help
-```
+
+ 
+
+
+ 
+
+## Command Help
+
 Usage: 
   primehub datasets <command>
 
@@ -48,5 +63,3 @@ Global Options:
   --endpoint ENDPOINT  the endpoint to the PrimeHub GraphQL URL
   --token TOKEN        API Token generated from PrimeHub Console
   --group GROUP        override the active group
-```
-        
