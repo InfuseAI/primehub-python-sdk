@@ -8,6 +8,18 @@ import sys
 class Schedules(Helpful, Module):
     """
     The schedules module provides functions to manage PrimeHub Schedules
+
+    Schedule configuration example:
+    {
+        "instanceType": "cpu-1",
+        "image": "base-notebook",
+        "displayName": "test",
+        "command": "echo \"test\"",
+        "recurrence": {
+            "type":"daily",
+            "cron":"0 4 * * *"
+        }
+    }
     """
 
     @cmd(name='list', description='List schedules', optionals=[('page', int)])
