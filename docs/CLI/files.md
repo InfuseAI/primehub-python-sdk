@@ -36,13 +36,8 @@ primehub files download <path> <dest>
 * dest
  
 
+* (optional) recursive
 
-
-Optional Arguments
-
-* recursive
-
- 
 
 
 
@@ -58,8 +53,6 @@ primehub files list <path>
 * path
  
 
-
- 
 
 
  

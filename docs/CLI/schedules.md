@@ -36,13 +36,8 @@ primehub schedules create
 ```
  
 
+* (optional) file
 
-
-Optional Arguments
-
-* file
-
- 
 
 
 
@@ -59,8 +54,6 @@ primehub schedules delete <id>
  
 
 
- 
-
 
 
 ### get
@@ -76,8 +69,6 @@ primehub schedules get <id>
  
 
 
- 
-
 
 
 ### list
@@ -90,13 +81,8 @@ primehub schedules list
 ```
  
 
+* (optional) page
 
-
-Optional Arguments
-
-* page
-
- 
 
 
 
@@ -112,13 +98,8 @@ primehub schedules update <id>
 * id
  
 
+* (optional) file
 
-
-Optional Arguments
-
-* file
-
- 
 
 
  

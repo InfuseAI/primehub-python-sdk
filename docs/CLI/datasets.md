@@ -36,8 +36,6 @@ primehub datasets get <name>
  
 
 
- 
-
 
 
 ### list
@@ -50,8 +48,6 @@ primehub datasets list
 ```
  
 
-
- 
 
 
  

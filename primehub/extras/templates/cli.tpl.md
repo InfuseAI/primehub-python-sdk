@@ -25,16 +25,9 @@ primehub {{command}} {{item['name']}}
 * {{argument}}
 {%- endfor %}
 {% endif %} {# end of :: if item['required_arguments'] #}
-
-
-{% if item['optional_arguments'] %}
-Optional Arguments
 {% for argument in item['optional_arguments'] %}
-* {{argument}}
-{% else %}
-*no optional arguments*
+* (optional) {{argument}}
 {% endfor %}
-{% endif %} {# end of :: if item['optional_arguments'] #}
 
 
 {% endfor %} {# end of :: for item in actions #}

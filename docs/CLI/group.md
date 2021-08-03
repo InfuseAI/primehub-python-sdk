@@ -36,8 +36,6 @@ primehub group get <group_name>
  
 
 
- 
-
 
 
 ### list
@@ -50,8 +48,6 @@ primehub group list
 ```
  
 
-
- 
 
 
  

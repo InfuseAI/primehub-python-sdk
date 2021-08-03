@@ -36,8 +36,6 @@ primehub images get <name>
  
 
 
- 
-
 
 
 ### list
@@ -50,8 +48,6 @@ primehub images list
 ```
  
 
-
- 
 
 
  

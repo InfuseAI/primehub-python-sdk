@@ -43,8 +43,6 @@ primehub jobs cancel <id>
  
 
 
- 
-
 
 
 ### download-artifacts
@@ -61,13 +59,8 @@ primehub jobs download-artifacts <id> <path> <dest>
 * dest
  
 
+* (optional) recursive
 
-
-Optional Arguments
-
-* recursive
-
- 
 
 
 
@@ -84,8 +77,6 @@ primehub jobs get <id>
  
 
 
- 
-
 
 
 ### list
@@ -98,13 +89,8 @@ primehub jobs list
 ```
  
 
+* (optional) page
 
-
-Optional Arguments
-
-* page
-
- 
 
 
 
@@ -121,8 +107,6 @@ primehub jobs list-artifacts <id>
  
 
 
- 
-
 
 
 ### logs
@@ -137,15 +121,10 @@ primehub jobs logs <id>
 * id
  
 
+* (optional) follow
 
+* (optional) tail
 
-Optional Arguments
-
-* follow
-
-* tail
-
- 
 
 
 
@@ -162,8 +141,6 @@ primehub jobs rerun <id>
  
 
 
- 
-
 
 
 ### submit
@@ -176,15 +153,10 @@ primehub jobs submit
 ```
  
 
+* (optional) file
 
+* (optional) from
 
-Optional Arguments
-
-* file
-
-* from
-
- 
 
 
 
@@ -200,13 +172,8 @@ primehub jobs wait <id>
 * id
  
 
+* (optional) timeout
 
-
-Optional Arguments
-
-* timeout
-
- 
 
 
  

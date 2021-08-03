@@ -37,8 +37,6 @@ primehub config set-endpoint <endpoint>
  
 
 
- 
-
 
 
 ### set-group
@@ -54,8 +52,6 @@ primehub config set-group <group>
  
 
 
- 
-
 
 
 ### set-token
@@ -70,8 +66,6 @@ primehub config set-token <token>
 * token: a token used by GraphQL request
  
 
-
- 
 
 
  

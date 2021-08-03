@@ -32,15 +32,10 @@ primehub notebooks logs
 ```
  
 
+* (optional) follow
 
+* (optional) tail
 
-Optional Arguments
-
-* follow
-
-* tail
-
- 
 
 
  

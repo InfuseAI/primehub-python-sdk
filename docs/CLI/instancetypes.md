@@ -36,8 +36,6 @@ primehub instancetypes get <name>
  
 
 
- 
-
 
 
 ### list
@@ -50,8 +48,6 @@ primehub instancetypes list
 ```
  
 
-
- 
 
 
  
