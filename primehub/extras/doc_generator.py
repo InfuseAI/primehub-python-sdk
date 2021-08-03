@@ -15,6 +15,14 @@ env = Environment(
 )
 
 
+def get_example(command):
+    try:
+        return env.get_template('examples/{}.md'.format(command)).render()
+    except BaseException:
+        pass
+    return "TBD: please write example for [{}]".format(command)
+
+
 def get_doc_path():
     import primehub
 
@@ -44,7 +52,7 @@ def generate_help_for_command(sdk: PrimeHub, name):
     actions = find_actions(sdk.commands[name])
     attach_template_information_to_action(actions, name, sdk)
     document = generate_command_document(command=name, command_help=command_help,
-                                         actions=actions)
+                                         actions=actions, examples=get_example(name))
 
     print("Generate doc", name)
     p = create_cli_doc_path(name)
@@ -98,4 +106,10 @@ def main():
 
 if __name__ == '__main__':
     # print(env.get_template('command_line.template.md.j2'))
-    main()
+    # main()
+    env.get_template('examples/config.md')
+    try:
+        env.get_template('examples/s.md')
+    except BaseException as e:
+        print(e)
+        pass

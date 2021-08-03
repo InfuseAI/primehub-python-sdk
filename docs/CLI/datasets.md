@@ -51,3 +51,7 @@ primehub datasets list
 
 
  
+
+## Examples
+
+TBD: please write example for [datasets]

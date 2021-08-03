@@ -32,10 +32,14 @@ primehub notebooks logs
 ```
  
 
-* (optional) follow
+* *(optional)* follow
 
-* (optional) tail
+* *(optional)* tail
 
 
 
  
+
+## Examples
+
+TBD: please write example for [notebooks]

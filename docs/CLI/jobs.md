@@ -59,7 +59,7 @@ primehub jobs download-artifacts <id> <path> <dest>
 * dest
  
 
-* (optional) recursive
+* *(optional)* recursive
 
 
 
@@ -89,7 +89,7 @@ primehub jobs list
 ```
  
 
-* (optional) page
+* *(optional)* page
 
 
 
@@ -121,9 +121,9 @@ primehub jobs logs <id>
 * id
  
 
-* (optional) follow
+* *(optional)* follow
 
-* (optional) tail
+* *(optional)* tail
 
 
 
@@ -153,9 +153,9 @@ primehub jobs submit
 ```
  
 
-* (optional) file
+* *(optional)* file
 
-* (optional) from
+* *(optional)* from
 
 
 
@@ -172,8 +172,12 @@ primehub jobs wait <id>
 * id
  
 
-* (optional) timeout
+* *(optional)* timeout
 
 
 
  
+
+## Examples
+
+TBD: please write example for [jobs]

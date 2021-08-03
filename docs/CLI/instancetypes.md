@@ -51,3 +51,7 @@ primehub instancetypes list
 
 
  
+
+## Examples
+
+TBD: please write example for [instancetypes]

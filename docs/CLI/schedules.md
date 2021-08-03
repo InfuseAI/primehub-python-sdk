@@ -36,7 +36,7 @@ primehub schedules create
 ```
  
 
-* (optional) file
+* *(optional)* file
 
 
 
@@ -81,7 +81,7 @@ primehub schedules list
 ```
  
 
-* (optional) page
+* *(optional)* page
 
 
 
@@ -98,8 +98,12 @@ primehub schedules update <id>
 * id
  
 
-* (optional) file
+* *(optional)* file
 
 
 
  
+
+## Examples
+
+TBD: please write example for [schedules]

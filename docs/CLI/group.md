@@ -51,3 +51,7 @@ primehub group list
 
 
  
+
+## Examples
+
+TBD: please write example for [group]

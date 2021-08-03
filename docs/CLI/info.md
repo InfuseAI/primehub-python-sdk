@@ -35,3 +35,7 @@ primehub info info
 
 
  
+
+## Examples
+
+TBD: please write example for [info]

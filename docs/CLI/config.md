@@ -69,3 +69,7 @@ primehub config set-token <token>
 
 
  
+
+## Examples
+
+config example here

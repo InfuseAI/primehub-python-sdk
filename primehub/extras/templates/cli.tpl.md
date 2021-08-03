@@ -32,3 +32,6 @@ primehub {{command}} {{item['name']}}
 
 {% endfor %} {# end of :: for item in actions #}
 
+## Examples
+
+{{examples}}

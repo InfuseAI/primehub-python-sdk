@@ -36,7 +36,7 @@ primehub files download <path> <dest>
 * dest
  
 
-* (optional) recursive
+* *(optional)* recursive
 
 
 
@@ -56,3 +56,7 @@ primehub files list <path>
 
 
  
+
+## Examples
+
+TBD: please write example for [files]
