@@ -78,3 +78,17 @@ InstanceTypes:
   gpu-1
 Datasets:
 ```
+
+### Notes
+
+The two commands are the same, because the `info` command group only has one command `info`, it could use shortcut form:
+
+```
+# shortcut form
+primehub info
+```
+
+```
+#        <command-group> <command>
+primehub info            info
+```
