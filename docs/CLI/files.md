@@ -32,8 +32,8 @@ Download shared files
 primehub files download <path> <dest>
 ```
 
-* path
-* dest
+* path: The path file or folder
+* dest: The local path to save artifacts
  
 
 * *(optional)* recursive
@@ -50,7 +50,7 @@ List shared files
 primehub files list <path>
 ```
 
-* path
+* path: The path to list
  
 
 

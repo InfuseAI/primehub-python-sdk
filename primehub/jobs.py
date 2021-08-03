@@ -304,7 +304,7 @@ class Jobs(Helpful, Module):
     @cmd(name='wait', description='Wait a job by id', optionals=[('timeout', int)])
     def wait(self, id, **kwargs):
         """
-        Wait a job until timeout or finished
+        Wait a job in a terminated state {Succeeded, Failed, Cancelled} or until timeout
 
         :type id: str
         :param id: The job id
