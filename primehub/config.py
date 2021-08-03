@@ -1,4 +1,4 @@
-from primehub.utils import create_logger, group_not_found
+from primehub.utils import create_logger, group_not_found, RequestException
 
 from primehub import Helpful, cmd, Module
 
@@ -69,10 +69,14 @@ class Config(Helpful, Module):
           }
         }
         """
-        results = self.request({}, query)
-        for g in results['data']['me']['effectiveGroups']:
-            if g['name'] == group:
-                return g
+        try:
+            results = self.request({}, query)
+            for g in results['data']['me']['effectiveGroups']:
+                if g['name'] == group:
+                    return g
+        except RequestException as e:
+            logger.warning(e)
+            pass
 
     def help_description(self):
         return "Update the settings of PrimeHub SDK"
