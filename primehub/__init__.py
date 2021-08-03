@@ -5,9 +5,11 @@ import os
 import sys
 from typing import Union, Callable, Dict
 
-from primehub.utils import group_required
+from primehub.utils import group_required, create_logger
 from primehub.utils.decorators import cmd  # noqa: F401
 from primehub.utils.http_client import Client
+
+logger = create_logger('primehub-config')
 
 
 class PrimeHubConfig(object):
@@ -60,6 +62,7 @@ class PrimeHubConfig(object):
     def load_config(self):
         try:
             if not os.path.exists(os.path.expanduser(self.config_file)):
+                logger.warning('Cannot find the config file: {}'.format(self.config_file))
                 return
             with open(self.config_file, "r") as fh:
                 self.config_from_file = json.load(fh)
@@ -103,7 +106,10 @@ class PrimeHubConfig(object):
         else:
             output['group'] = dict(name=self.group)
 
-        with open(path or self.config_file, "w") as fh:
+        output_path = os.path.expanduser(path or self.config_file)
+        if os.path.dirname(output_path):
+            os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        with open(output_path, "w") as fh:
             fh.write(json.dumps(output))
 
     @property
