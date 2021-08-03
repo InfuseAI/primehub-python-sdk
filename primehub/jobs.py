@@ -11,6 +11,14 @@ from urllib.parse import urlparse
 class Jobs(Helpful, Module):
     """
     The jobs module provides functions to manage PrimeHub Jobs
+
+    Job configuration example:
+    {
+        "instanceType": "cpu-1",
+        "image": "base-notebook",
+        "displayName": "test",
+        "command": "echo \"test\"",
+    }
     """
 
     @cmd(name='list', description='List jobs', optionals=[('page', int)])
@@ -400,6 +408,9 @@ class Jobs(Helpful, Module):
 
         :type dest: str
         :param dest: The local path to save artifacts
+
+        :type recusive: bool
+        :param recusive: Copy recursively
         """
         artifacts = self.list_artifacts(id)
         u = urlparse(self.endpoint)

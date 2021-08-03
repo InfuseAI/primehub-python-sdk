@@ -4,9 +4,21 @@ import os
 
 
 class Files(Helpful, Module):
+    """
+    The files module provides functions to manage Primehub Shared Files
+    """
 
     @cmd(name='list', description='List shared files')
     def list(self, path):
+        """
+        List all files and folders in the path
+
+        :type path: str
+        :param path: The path to list
+
+        :rtype dict
+        :return The detail information of files in the path
+        """
         query = """
         query files($where: StoreFileWhereInput!) {
           files (where: $where) {
@@ -26,6 +38,18 @@ class Files(Helpful, Module):
     # TODO: handel path or dest does not exist
     @cmd(name='download', description='Download shared files', optionals=[('recursive', bool)])
     def download(self, path, dest, **kwargs):
+        """
+        Download files
+
+        :type path: ste
+        :param path: The path file or folder
+
+        :type dest: str
+        :param dest: The local path to save artifacts
+
+        :type recusive: bool
+        :param recusive: Copy recursively
+        """
         u = urlparse(self.endpoint)
         endpoint = u._replace(path='/api/files/groups/' + self.group_name).geturl()
 
