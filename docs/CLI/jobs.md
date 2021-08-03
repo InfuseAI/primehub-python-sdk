@@ -21,7 +21,7 @@ primehub jobs `<verb>` `[args]` `[flags]`
 
 #### Cancel
 
-Cnacel a job by id 
+Cancel a job by id 
 
 ```
 primehub jobs cancel <id>
@@ -107,7 +107,7 @@ Usage:
 Get a job or list jobs
 
 Available Commands:
-  cancel               Cnacel a job by id
+  cancel               Cancel a job by id
   download-artifacts   Download artifacts
   get                  Get a job by id
   list                 List jobs
