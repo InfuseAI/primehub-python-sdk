@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 
 class Jobs(Helpful, Module):
     """
-    The jobs module provides functions to manage Primehub Jobs
+    The jobs module provides functions to manage PrimeHub Jobs
     """
 
     @cmd(name='list', description='List jobs', optionals=[('page', int)])

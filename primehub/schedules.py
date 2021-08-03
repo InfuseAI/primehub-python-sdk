@@ -6,9 +6,21 @@ import sys
 
 
 class Schedules(Helpful, Module):
+    """
+    The schedules module provides functions to manage PrimeHub Schedules
+    """
 
     @cmd(name='list', description='List schedules', optionals=[('page', int)])
     def list(self, **kwargs):
+        """
+        List all schedules information in the current group
+
+        :type page: int
+        :param page: The page number as you can see in PrimeHub Schedules UI
+
+        :rtype list
+        :return The list of schedules
+        """
         query = """
         query ($where: PhScheduleWhereInput, $page: Int, $orderBy: PhScheduleOrderByInput) {
           phSchedulesConnection(where: $where, page: $page, orderBy: $orderBy) {
@@ -70,6 +82,15 @@ class Schedules(Helpful, Module):
 
     @cmd(name='get', description='Get a schedule by id')
     def get(self, id):
+        """
+        Get detail information of a schedule by id
+
+        :type id: str
+        :param id: The schedule id
+
+        :rtype dict
+        :return The detail infromation of a schedule
+        """
         query = """
         query ($where: PhScheduleWhereUniqueInput!) {
           phSchedule(where: $where) {
@@ -105,7 +126,38 @@ class Schedules(Helpful, Module):
     # TODO: add -f
     # TODO: handel invalid config
     @cmd(name='create', description='Create a schedule', optionals=[('file', str)])
-    def create(self, **kwargs):
+    def create_cmd(self, **kwargs):
+        """
+        Submit a schedule from commands
+
+        :type file: str
+        :param file: The file path of schedule configurations
+
+        :rtype dict
+        :return The detail infromation of the created schedule
+        """
+        config = {}
+        filename = kwargs.get('file', None)
+        if filename and os.path.exists(filename):
+            with open(filename, 'r') as fh:
+                config = json.load(fh)
+
+        if has_data_from_stdin():
+            config = json.loads("".join(sys.stdin.readlines()))
+
+        return self.create(config)
+
+    # TODO: add validation for config
+    def create(self, config):
+        """
+        Create a schedules with config
+
+        :type config: dict
+        :param config: The schedule config
+
+        :rtype dict
+        :return The detail infromation of the created schedule
+        """
         query = """
         mutation ($data: PhScheduleCreateInput!) {
           createPhSchedule(data: $data) {
@@ -135,23 +187,48 @@ class Schedules(Helpful, Module):
           }
         }
         """
-        data = {}
-        if has_data_from_stdin():
-            data = json.loads("".join(sys.stdin.readlines()))
-        else:
-            filename = kwargs.get('file', None)
-            print(filename)
-            if os.path.exists(filename):
-                with open(filename, 'r') as fh:
-                    data = json.load(fh)
-        data['groupId'] = self.group_id
-        results = self.request({'data': data}, query)
+        config['groupId'] = self.group_id
+        results = self.request({'data': config}, query)
         return results['data']['createPhSchedule']
 
     # TODO: add -f
     # TODO: handel invalid config
     @cmd(name='update', description='Update a schedule by id', optionals=[('file', str)])
-    def update(self, id, **kwargs):
+    def update_cmd(self, id, **kwargs):
+        """
+        Update a schedule from commands
+
+        :type file: str
+        :param file: The file path of schedule configurations
+
+        :rtype dict
+        :return The detail infromation of the updated schedule
+        """
+        config = {}
+        filename = kwargs.get('file', None)
+        if filename and os.path.exists(filename):
+            with open(filename, 'r') as fh:
+                config = json.load(fh)
+
+        if has_data_from_stdin():
+            config = json.loads("".join(sys.stdin.readlines()))
+
+        return self.update(id, config)
+
+    # TODO: add validation for config
+    def update(self, id, config):
+        """
+        Update a schedule with config
+
+        :type id: str
+        :param id: The schedule id
+
+        :type config: dict
+        :param config: The schedule config
+
+        :rtype dict
+        :return The detail infromation of the updated schedule
+        """
         query = """
         mutation ($data: PhScheduleUpdateInput!, $where: PhScheduleWhereUniqueInput!) {
           updatePhSchedule(data: $data, where: $where) {
@@ -181,22 +258,22 @@ class Schedules(Helpful, Module):
           }
         }
         """
-        data = {}
-        if has_data_from_stdin():
-            data = json.loads("".join(sys.stdin.readlines()))
-        else:
-            filename = kwargs.get('file', None)
-            print(filename)
-            if os.path.exists(filename):
-                with open(filename, 'r') as fh:
-                    data = json.load(fh)
-        data['groupId'] = self.group_id
-        results = self.request({'data': data, 'where': {'id': id}}, query)
+        config['groupId'] = self.group_id
+        results = self.request({'data': config, 'where': {'id': id}}, query)
         return results['data']['updatePhSchedule']
 
     @ask_for_permission
     @cmd(name='delete', description='Run a schedule by id')
     def delete(self, id, **kwargs):
+        """
+        Delete a schedule by id
+
+        :type id: str
+        :param id: The schedule id
+
+        :rtype dict
+        :return The detail infromation of the deleted schedule
+        """
         query = """
         mutation ($where: PhScheduleWhereUniqueInput!) {
           deletePhSchedule(where: $where) {
