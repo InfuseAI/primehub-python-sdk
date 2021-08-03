@@ -56,6 +56,12 @@ primehub group list
 
 `group` command can show the available groups for your account.
 
+If you have the name of a group, `get` will be useful:
+
+```
+primehub group get phusers
+```
+
 The `list` command will show any groups your account belongs to:
 
 ```
@@ -145,10 +151,4 @@ primehub group list
     "datasets": []
   }
 ]
-```
-
-If you only care about one group and have its name, `get` will be useful:
-
-```
-primehub group get phusers
 ```
