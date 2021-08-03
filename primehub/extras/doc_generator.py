@@ -105,11 +105,4 @@ def main():
 
 
 if __name__ == '__main__':
-    # print(env.get_template('command_line.template.md.j2'))
-    # main()
-    env.get_template('examples/config.md')
-    try:
-        env.get_template('examples/s.md')
-    except BaseException as e:
-        print(e)
-        pass
+    main()
