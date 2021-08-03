@@ -26,7 +26,7 @@ Global Options:
 ```
 
 
-### Create
+### create
 
 Create a schedule
 
@@ -46,7 +46,7 @@ Optional Arguments
 
 
 
-### Delete
+### delete
 
 Run a schedule by id
 
@@ -63,7 +63,7 @@ primehub schedules delete <id>
 
 
 
-### Get
+### get
 
 Get a schedule by id
 
@@ -80,7 +80,7 @@ primehub schedules get <id>
 
 
 
-### List
+### list
 
 List schedules
 
@@ -100,7 +100,7 @@ Optional Arguments
 
 
 
-### Update
+### update
 
 Update a schedule by id
 

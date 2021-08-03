@@ -22,7 +22,7 @@ Global Options:
 ```
 
 
-### Logs
+### logs
 
 Get notebooks logs
 

@@ -23,7 +23,7 @@ Global Options:
 ```
 
 
-### Get
+### get
 
 Get group by name
 
@@ -40,7 +40,7 @@ primehub group get <group_name>
 
 
 
-### List
+### list
 
 List groups
 

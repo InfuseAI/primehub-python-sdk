@@ -24,7 +24,7 @@ Global Options:
 ```
 
 
-### Set-endpoint
+### set-endpoint
 
 set endpoint and save to the config file
 
@@ -41,7 +41,7 @@ primehub config set-endpoint <endpoint>
 
 
 
-### Set-group
+### set-group
 
 set group and save to the config file
 
@@ -58,7 +58,7 @@ primehub config set-group <group>
 
 
 
-### Set-token
+### set-token
 
 set token and save to the config file
 

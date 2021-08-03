@@ -23,7 +23,7 @@ Global Options:
 ```
 
 
-### Get
+### get
 
 Get a image by name
 
@@ -40,7 +40,7 @@ primehub images get <name>
 
 
 
-### List
+### list
 
 List images
 

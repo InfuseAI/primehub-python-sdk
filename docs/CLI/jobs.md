@@ -30,7 +30,7 @@ Global Options:
 ```
 
 
-### Cancel
+### cancel
 
 Cnacel a job by id
 
@@ -47,7 +47,7 @@ primehub jobs cancel <id>
 
 
 
-### Download-artifacts
+### download-artifacts
 
 Download artifacts
 
@@ -71,7 +71,7 @@ Optional Arguments
 
 
 
-### Get
+### get
 
 Get a job by id
 
@@ -88,7 +88,7 @@ primehub jobs get <id>
 
 
 
-### List
+### list
 
 List jobs
 
@@ -108,7 +108,7 @@ Optional Arguments
 
 
 
-### List-artifacts
+### list-artifacts
 
 List artifacts of a job by id
 
@@ -125,7 +125,7 @@ primehub jobs list-artifacts <id>
 
 
 
-### Logs
+### logs
 
 Get job logs by id
 
@@ -149,7 +149,7 @@ Optional Arguments
 
 
 
-### Rerun
+### rerun
 
 Rerun a job by id
 
@@ -166,7 +166,7 @@ primehub jobs rerun <id>
 
 
 
-### Submit
+### submit
 
 Submit a job
 
@@ -188,7 +188,7 @@ Optional Arguments
 
 
 
-### Wait
+### wait
 
 Wait a job by id
 

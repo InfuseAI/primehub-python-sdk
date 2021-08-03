@@ -6,7 +6,7 @@
 ```
 
 {% for item in actions %}
-### {{item['name'].capitalize()}}
+### {{item['name']}}
 
 {{item['description']}}
 

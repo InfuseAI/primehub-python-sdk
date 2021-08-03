@@ -23,7 +23,7 @@ Global Options:
 ```
 
 
-### Get
+### get
 
 Get a dataset by name
 
@@ -40,7 +40,7 @@ primehub datasets get <name>
 
 
 
-### List
+### list
 
 List datasets
 

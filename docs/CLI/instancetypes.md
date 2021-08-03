@@ -23,7 +23,7 @@ Global Options:
 ```
 
 
-### Get
+### get
 
 Get an instance type by name
 
@@ -40,7 +40,7 @@ primehub instancetypes get <name>
 
 
 
-### List
+### list
 
 List instance types
 

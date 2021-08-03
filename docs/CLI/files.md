@@ -23,7 +23,7 @@ Global Options:
 ```
 
 
-### Download
+### download
 
 Download shared files
 
@@ -46,7 +46,7 @@ Optional Arguments
 
 
 
-### List
+### list
 
 List shared files
 

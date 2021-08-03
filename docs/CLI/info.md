@@ -22,7 +22,7 @@ Global Options:
 ```
 
 
-### Info
+### info
 
 Show PrimeHub Cli information
 

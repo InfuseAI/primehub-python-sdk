@@ -22,7 +22,7 @@ Global Options:
 ```
 
 
-### Me
+### me
 
 Get user information
 
