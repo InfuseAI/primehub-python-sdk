@@ -29,7 +29,7 @@ def create_cli_doc_path(name):
 
 
 def generate_command_document(*args, **kwargs):
-    return env.get_template('command_line.template.md.j2').render(*args, **kwargs)
+    return env.get_template('cli.tpl.md').render(*args, **kwargs)
 
 
 def generate_help_for_command(sdk: PrimeHub, name):

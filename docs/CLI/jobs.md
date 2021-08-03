@@ -1,206 +1,6 @@
 
 # Primehub Jobs
 
-primehub jobs `<verb>` `[args]` `[flags]`
-
-
-## Available Commands
-
-* Cancel
-* Download-artifacts
-* Get
-* List
-* List-artifacts
-* Logs
-* Rerun
-* Submit
-* Wait
-
-
-
-#### Cancel
-
-Cnacel a job by id
-
-
-```
-primehub jobs cancel <id>
-```
-
-* id
- 
-
-
- 
-
-
-
-#### Download-artifacts
-
-Download artifacts
-
-
-```
-primehub jobs download-artifacts <id> <path> <dest>
-```
-
-* id
-* path
-* dest
- 
-
-
-
-Optional Arguments
-
-* recursive
-
- 
-
-
-
-#### Get
-
-Get a job by id
-
-
-```
-primehub jobs get <id>
-```
-
-* id
- 
-
-
- 
-
-
-
-#### List
-
-List jobs
-
-
-```
-primehub jobs list
-```
- 
-
-
-
-Optional Arguments
-
-* page
-
- 
-
-
-
-#### List-artifacts
-
-List artifacts of a job by id
-
-
-```
-primehub jobs list-artifacts <id>
-```
-
-* id
- 
-
-
- 
-
-
-
-#### Logs
-
-Get job logs by id
-
-
-```
-primehub jobs logs <id>
-```
-
-* id
- 
-
-
-
-Optional Arguments
-
-* follow
-
-* tail
-
- 
-
-
-
-#### Rerun
-
-Rerun a job by id
-
-
-```
-primehub jobs rerun <id>
-```
-
-* id
- 
-
-
- 
-
-
-
-#### Submit
-
-Submit a job
-
-
-```
-primehub jobs submit
-```
- 
-
-
-
-Optional Arguments
-
-* file
-
-* from
-
- 
-
-
-
-#### Wait
-
-Wait a job by id
-
-
-```
-primehub jobs wait <id>
-```
-
-* id
- 
-
-
-
-Optional Arguments
-
-* timeout
-
- 
-
-
- 
-
-## Command Help
-
 ```
 Usage: 
   primehub jobs <command>
@@ -228,3 +28,185 @@ Global Options:
   --group GROUP        override the active group
 
 ```
+
+
+### Cancel
+
+Cnacel a job by id
+
+
+```
+primehub jobs cancel <id>
+```
+
+* id
+ 
+
+
+ 
+
+
+
+### Download-artifacts
+
+Download artifacts
+
+
+```
+primehub jobs download-artifacts <id> <path> <dest>
+```
+
+* id
+* path
+* dest
+ 
+
+
+
+Optional Arguments
+
+* recursive
+
+ 
+
+
+
+### Get
+
+Get a job by id
+
+
+```
+primehub jobs get <id>
+```
+
+* id
+ 
+
+
+ 
+
+
+
+### List
+
+List jobs
+
+
+```
+primehub jobs list
+```
+ 
+
+
+
+Optional Arguments
+
+* page
+
+ 
+
+
+
+### List-artifacts
+
+List artifacts of a job by id
+
+
+```
+primehub jobs list-artifacts <id>
+```
+
+* id
+ 
+
+
+ 
+
+
+
+### Logs
+
+Get job logs by id
+
+
+```
+primehub jobs logs <id>
+```
+
+* id
+ 
+
+
+
+Optional Arguments
+
+* follow
+
+* tail
+
+ 
+
+
+
+### Rerun
+
+Rerun a job by id
+
+
+```
+primehub jobs rerun <id>
+```
+
+* id
+ 
+
+
+ 
+
+
+
+### Submit
+
+Submit a job
+
+
+```
+primehub jobs submit
+```
+ 
+
+
+
+Optional Arguments
+
+* file
+
+* from
+
+ 
+
+
+
+### Wait
+
+Wait a job by id
+
+
+```
+primehub jobs wait <id>
+```
+
+* id
+ 
+
+
+
+Optional Arguments
+
+* timeout
+
+ 
+
+
+ 

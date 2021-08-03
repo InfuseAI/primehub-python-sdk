@@ -1,33 +1,6 @@
 
 # Primehub Me
 
-primehub me `<verb>` `[args]` `[flags]`
-
-
-## Available Commands
-
-* Me
-
-
-
-#### Me
-
-Get user information
-
-
-```
-primehub me me
-```
- 
-
-
- 
-
-
- 
-
-## Command Help
-
 ```
 Usage: 
   primehub me <command>
@@ -47,3 +20,20 @@ Global Options:
   --group GROUP        override the active group
 
 ```
+
+
+### Me
+
+Get user information
+
+
+```
+primehub me me
+```
+ 
+
+
+ 
+
+
+ 

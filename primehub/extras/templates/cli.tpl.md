@@ -1,0 +1,41 @@
+
+# Primehub {{command.capitalize()}}
+
+```
+{{command_help}}
+```
+
+{% for item in actions %}
+### {{item['name'].capitalize()}}
+
+{{item['description']}}
+
+{% if item['required_arguments'] %}
+```
+primehub {{command}} {{item['name']}} {{item['required_arguments_string']}}
+```
+{% else %}
+```
+primehub {{command}} {{item['name']}}
+```
+{% endif %}
+
+{%- if item['required_arguments'] -%}
+{%- for argument in item['required_arguments'] %}
+* {{argument}}
+{%- endfor %}
+{% endif %} {# end of :: if item['required_arguments'] #}
+
+
+{% if item['optional_arguments'] %}
+Optional Arguments
+{% for argument in item['optional_arguments'] %}
+* {{argument}}
+{% else %}
+*no optional arguments*
+{% endfor %}
+{% endif %} {# end of :: if item['optional_arguments'] #}
+
+
+{% endfor %} {# end of :: for item in actions #}
+

@@ -1,33 +1,6 @@
 
 # Primehub Info
 
-primehub info `<verb>` `[args]` `[flags]`
-
-
-## Available Commands
-
-* Info
-
-
-
-#### Info
-
-Show PrimeHub Cli information
-
-
-```
-primehub info info
-```
- 
-
-
- 
-
-
- 
-
-## Command Help
-
 ```
 Usage: 
   primehub info <command>
@@ -47,3 +20,20 @@ Global Options:
   --group GROUP        override the active group
 
 ```
+
+
+### Info
+
+Show PrimeHub Cli information
+
+
+```
+primehub info info
+```
+ 
+
+
+ 
+
+
+ 

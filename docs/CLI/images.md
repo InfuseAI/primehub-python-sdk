@@ -1,51 +1,6 @@
 
 # Primehub Images
 
-primehub images `<verb>` `[args]` `[flags]`
-
-
-## Available Commands
-
-* Get
-* List
-
-
-
-#### Get
-
-Get a image by name
-
-
-```
-primehub images get <name>
-```
-
-* name: the name of an image
- 
-
-
- 
-
-
-
-#### List
-
-List images
-
-
-```
-primehub images list
-```
- 
-
-
- 
-
-
- 
-
-## Command Help
-
 ```
 Usage: 
   primehub images <command>
@@ -66,3 +21,37 @@ Global Options:
   --group GROUP        override the active group
 
 ```
+
+
+### Get
+
+Get a image by name
+
+
+```
+primehub images get <name>
+```
+
+* name: the name of an image
+ 
+
+
+ 
+
+
+
+### List
+
+List images
+
+
+```
+primehub images list
+```
+ 
+
+
+ 
+
+
+ 

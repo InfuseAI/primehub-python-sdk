@@ -1,51 +1,6 @@
 
 # Primehub Instancetypes
 
-primehub instancetypes `<verb>` `[args]` `[flags]`
-
-
-## Available Commands
-
-* Get
-* List
-
-
-
-#### Get
-
-Get an instance type by name
-
-
-```
-primehub instancetypes get <name>
-```
-
-* name: the name of an instance type
- 
-
-
- 
-
-
-
-#### List
-
-List instance types
-
-
-```
-primehub instancetypes list
-```
- 
-
-
- 
-
-
- 
-
-## Command Help
-
 ```
 Usage: 
   primehub instancetypes <command>
@@ -66,3 +21,37 @@ Global Options:
   --group GROUP        override the active group
 
 ```
+
+
+### Get
+
+Get an instance type by name
+
+
+```
+primehub instancetypes get <name>
+```
+
+* name: the name of an instance type
+ 
+
+
+ 
+
+
+
+### List
+
+List instance types
+
+
+```
+primehub instancetypes list
+```
+ 
+
+
+ 
+
+
+ 

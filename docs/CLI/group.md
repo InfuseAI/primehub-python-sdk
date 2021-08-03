@@ -1,51 +1,6 @@
 
 # Primehub Group
 
-primehub group `<verb>` `[args]` `[flags]`
-
-
-## Available Commands
-
-* Get
-* List
-
-
-
-#### Get
-
-Get group by name
-
-
-```
-primehub group get <group_name>
-```
-
-* group_name: the name of a group
- 
-
-
- 
-
-
-
-#### List
-
-List groups
-
-
-```
-primehub group list
-```
- 
-
-
- 
-
-
- 
-
-## Command Help
-
 ```
 Usage: 
   primehub group <command>
@@ -66,3 +21,37 @@ Global Options:
   --group GROUP        override the active group
 
 ```
+
+
+### Get
+
+Get group by name
+
+
+```
+primehub group get <group_name>
+```
+
+* group_name: the name of a group
+ 
+
+
+ 
+
+
+
+### List
+
+List groups
+
+
+```
+primehub group list
+```
+ 
+
+
+ 
+
+
+ 

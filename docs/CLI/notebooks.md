@@ -1,16 +1,28 @@
 
 # Primehub Notebooks
 
-primehub notebooks `<verb>` `[args]` `[flags]`
+```
+Usage: 
+  primehub notebooks <command>
+
+Get notebooks logs
+
+Available Commands:
+  logs                 Get notebooks logs
+
+Options:
+  -h, --help           Show the help
+
+Global Options:
+  --config CONFIG      the path of the config file
+  --endpoint ENDPOINT  the endpoint to the PrimeHub GraphQL URL
+  --token TOKEN        API Token generated from PrimeHub Console
+  --group GROUP        override the active group
+
+```
 
 
-## Available Commands
-
-* Logs
-
-
-
-#### Logs
+### Logs
 
 Get notebooks logs
 
@@ -32,25 +44,3 @@ Optional Arguments
 
 
  
-
-## Command Help
-
-```
-Usage: 
-  primehub notebooks <command>
-
-Get notebooks logs
-
-Available Commands:
-  logs                 Get notebooks logs
-
-Options:
-  -h, --help           Show the help
-
-Global Options:
-  --config CONFIG      the path of the config file
-  --endpoint ENDPOINT  the endpoint to the PrimeHub GraphQL URL
-  --token TOKEN        API Token generated from PrimeHub Console
-  --group GROUP        override the active group
-
-```

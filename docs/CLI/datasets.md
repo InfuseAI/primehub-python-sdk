@@ -1,51 +1,6 @@
 
 # Primehub Datasets
 
-primehub datasets `<verb>` `[args]` `[flags]`
-
-
-## Available Commands
-
-* Get
-* List
-
-
-
-#### Get
-
-Get a dataset by name
-
-
-```
-primehub datasets get <name>
-```
-
-* name: the name of a dataset
- 
-
-
- 
-
-
-
-#### List
-
-List datasets
-
-
-```
-primehub datasets list
-```
- 
-
-
- 
-
-
- 
-
-## Command Help
-
 ```
 Usage: 
   primehub datasets <command>
@@ -66,3 +21,37 @@ Global Options:
   --group GROUP        override the active group
 
 ```
+
+
+### Get
+
+Get a dataset by name
+
+
+```
+primehub datasets get <name>
+```
+
+* name: the name of a dataset
+ 
+
+
+ 
+
+
+
+### List
+
+List datasets
+
+
+```
+primehub datasets list
+```
+ 
+
+
+ 
+
+
+ 

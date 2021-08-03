@@ -1,118 +1,6 @@
 
 # Primehub Schedules
 
-primehub schedules `<verb>` `[args]` `[flags]`
-
-
-## Available Commands
-
-* Create
-* Delete
-* Get
-* List
-* Update
-
-
-
-#### Create
-
-Create a schedule
-
-
-```
-primehub schedules create
-```
- 
-
-
-
-Optional Arguments
-
-* file
-
- 
-
-
-
-#### Delete
-
-Run a schedule by id
-
-
-```
-primehub schedules delete <id>
-```
-
-* id
- 
-
-
- 
-
-
-
-#### Get
-
-Get a schedule by id
-
-
-```
-primehub schedules get <id>
-```
-
-* id
- 
-
-
- 
-
-
-
-#### List
-
-List schedules
-
-
-```
-primehub schedules list
-```
- 
-
-
-
-Optional Arguments
-
-* page
-
- 
-
-
-
-#### Update
-
-Update a schedule by id
-
-
-```
-primehub schedules update <id>
-```
-
-* id
- 
-
-
-
-Optional Arguments
-
-* file
-
- 
-
-
- 
-
-## Command Help
-
 ```
 Usage: 
   primehub schedules <command>
@@ -136,3 +24,101 @@ Global Options:
   --group GROUP        override the active group
 
 ```
+
+
+### Create
+
+Create a schedule
+
+
+```
+primehub schedules create
+```
+ 
+
+
+
+Optional Arguments
+
+* file
+
+ 
+
+
+
+### Delete
+
+Run a schedule by id
+
+
+```
+primehub schedules delete <id>
+```
+
+* id
+ 
+
+
+ 
+
+
+
+### Get
+
+Get a schedule by id
+
+
+```
+primehub schedules get <id>
+```
+
+* id
+ 
+
+
+ 
+
+
+
+### List
+
+List schedules
+
+
+```
+primehub schedules list
+```
+ 
+
+
+
+Optional Arguments
+
+* page
+
+ 
+
+
+
+### Update
+
+Update a schedule by id
+
+
+```
+primehub schedules update <id>
+```
+
+* id
+ 
+
+
+
+Optional Arguments
+
+* file
+
+ 
+
+
+ 
