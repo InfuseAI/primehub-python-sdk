@@ -159,6 +159,7 @@ class Jobs(Helpful, Module):
         config['groupId'] = self.group_id
         return self.submit(config)
 
+    # TODO: Add validation for config
     def submit(self, config):
         """
         Submit a job with config
@@ -271,7 +272,7 @@ class Jobs(Helpful, Module):
         return results['data']['rerunPhJob']
 
     # TODO: handel id does not exist
-    @cmd(name='cancel', description='Cnacel a job by id')
+    @cmd(name='cancel', description='Cancel a job by id')
     def cancel(self, id):
         """
         Cancle a job by id
