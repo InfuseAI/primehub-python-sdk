@@ -65,10 +65,6 @@ def run_action_args(sdk, selected_component, sub_parsers, target, remaining_args
     sub_args, params = sub_parsers[selected_component].parse_known_args(remaining_args)
     logger.debug('sub_args: {}, params: {}'.format(sub_args, params))
 
-    if sub_args.show_help:
-        helper = sub_parsers[selected_component]
-        return helper
-
     try:
         action = find_action_info(target, sub_args.command)
         if not action:
@@ -100,6 +96,14 @@ def run_action_args(sdk, selected_component, sub_parsers, target, remaining_args
         # @ask_for_permission
         if has_permission_flag(action):
             action_parser.add_argument('--yes-i-really-mean-it', dest='__primehub_permission__', action="store_true")
+
+        action_parser.usage = 'primehub {} {} {}'.format(
+            selected_component, sub_args.command, " ".join(["<%s>" % x for x in argument_names]))
+
+        if sub_args.show_help:
+            logger.debug('skip doing action, because of help calling')
+            helper = action_parser
+            return helper
 
         try:
             parsed_action_args = action_parser.parse_args([sub_args.command] + params)
