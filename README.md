@@ -9,21 +9,27 @@ Install the SDK from source code
 ```
 git clone https://github.com/InfuseAI/primehub-python-sdk.git
 cd primehub-python-sdk
-pip install -e .
+pip install -e .[dev]
 ```
 
 Verify it with `primehub` command:
 
 ```bash
-$ primehub -h
 Usage:
-  primehub [command]
+  primehub <command>
 
 Available Commands:
   config               Update the settings of PrimeHub SDK
+  datasets             Get a dataset or list datasets
+  files                List and download shared files
   group                Get a group or list groups
+  images               Get a image or list images
   info                 Display the user information and the selected group information
-  me                   Get user data
+  instancetypes        Get an instance types of list instance types
+  jobs                 Get a job or list jobs
+  me                   Show user account
+  notebooks            Get notebooks logs
+  schedules            Get a schedule or list schedules
 
 Options:
   -h, --help           Show the help
