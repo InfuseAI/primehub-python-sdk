@@ -23,6 +23,14 @@ setup(name='primehub-python-sdk',
           'pytest-cov',
           'Jinja2'
       ]},
+      project_urls={
+          "Bug Tracker": "https://github.com/InfuseAI/primehub/issues",
+      },
+      classifiers=[
+          "Programming Language :: Python :: 3",
+          "License :: OSI Approved :: Apache License",
+          "Operating System :: OS Independent",
+      ],
       package_data={
           'primehub': ['*.json']
       })
