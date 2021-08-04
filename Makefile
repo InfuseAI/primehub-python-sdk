@@ -15,3 +15,7 @@ test-regression:
 
 docs: dev-requires
 	doc-primehub
+
+pre-release: dev-requires
+	python3 -m build
+	python3 -m twine upload --repository testpypi dist/*

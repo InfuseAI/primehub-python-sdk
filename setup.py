@@ -16,13 +16,25 @@ setup(name='primehub-python-sdk',
       python_requires=">=3.6",
       packages=find_packages(),
       install_requires=['requests'],
-      extras_require={'dev': [
-          'pytest>=4.6',
-          'pytest-flake8',
-          'pytest-mypy',
-          'pytest-cov',
-          'Jinja2'
-      ]},
+      extras_require={
+          'dev': [
+              'pytest>=4.6',
+              'pytest-flake8',
+              'pytest-mypy',
+              'pytest-cov',
+              'Jinja2',
+              'twine'
+          ],
+      },
+      project_urls={
+          "Bug Tracker": "https://github.com/InfuseAI/primehub/issues",
+      },
+      classifiers=[
+          "Programming Language :: Python :: 3",
+          "License :: OSI Approved :: Apache Software License",
+          "Operating System :: OS Independent",
+          "Development Status :: 2 - Pre-Alpha"
+      ],
       package_data={
           'primehub': ['*.json']
       })
