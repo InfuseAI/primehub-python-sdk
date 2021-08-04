@@ -227,12 +227,9 @@ class PrimeHub(object):
             clazz = importlib.import_module('primehub.' + module_name).__getattribute__(command_class)
         else:
             clazz = command_class
-        cmd_group = self.commands[command_name] = clazz(self)
 
-        # attach request method
-        cmd_group.request = self.request
-        cmd_group.request_logs = self.request_logs
-        cmd_group.request_file = self.request_file
+        # register to the commands table
+        self.commands[command_name] = clazz(self)
 
     def __getattr__(self, item):
         if item in self.commands:
@@ -255,11 +252,26 @@ class PrimeHub(object):
     def stdout(self, out):
         self._stdout = out
 
+    def get_all_commands(self):
+        return sorted(self.commands.keys())
+
+    def is_ready(self):
+        if self.primehub_config.current_group is None:
+            return False
+        if not self.primehub_config.current_group.get('id', None):
+            return False
+        return True
+
 
 class Module(object):
 
     def __init__(self, primehub: PrimeHub, **kwargs):
         self.primehub = primehub
+
+        # attach request method
+        self.request = primehub.request
+        self.request_logs = primehub.request_logs
+        self.request_file = primehub.request_file
 
     @property
     def current_group(self) -> dict:

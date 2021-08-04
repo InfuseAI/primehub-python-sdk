@@ -1,35 +1,6 @@
 
-
 # Primehub Files
 
-primehub files `<verb>` `[args]` `[flags]`
-
-
-
-## Available Commands
-
-- download
-- list
-
-
-#### Download
-
-Download shared files 
-
-```
-primehub files download <path> <dest>
-```
-
-
-#### List
-
-List shared files 
-
-```
-primehub files list <path>
-```
-
-## Help
 ```
 Usage: 
   primehub files <command>
@@ -48,5 +19,44 @@ Global Options:
   --endpoint ENDPOINT  the endpoint to the PrimeHub GraphQL URL
   --token TOKEN        API Token generated from PrimeHub Console
   --group GROUP        override the active group
+
 ```
-        
+
+
+### download
+
+Download shared files
+
+
+```
+primehub files download <path> <dest>
+```
+
+* path: The path file or folder
+* dest: The local path to save artifacts
+ 
+
+* *(optional)* recursive
+
+
+
+
+### list
+
+List shared files
+
+
+```
+primehub files list <path>
+```
+
+* path: The path to list
+ 
+
+
+
+ 
+
+## Examples
+
+TBD: please write example for [files]
