@@ -184,7 +184,7 @@ class PrimeHub(object):
 
         # register commands
         self.register_command('config', 'Config')
-        self.register_command('group', 'Group')
+        self.register_command('groups', 'Groups')
         self.register_command('images', 'Images')
         self.register_command('datasets', 'Datasets')
         self.register_command('instancetypes', 'InstanceTypes')

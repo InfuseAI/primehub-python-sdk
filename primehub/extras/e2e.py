@@ -4,7 +4,7 @@ from tempfile import mkstemp
 
 from primehub import Helpful, cmd, Module
 from primehub.config import Config
-from primehub.group import Group
+from primehub.groups import Groups
 from primehub.utils import create_logger
 
 logger = create_logger('e2e')
@@ -31,8 +31,8 @@ class E2EForBasicFunction(Helpful, Module):
         print(self.primehub.info.info())
         self.endline()
 
-        self.title('Group')
-        group: Group = self.primehub.group
+        self.title('Groups')
+        group: Groups = self.primehub.group
         for g in group.list():
             print(g['id'], g['name'])
         self.endline()

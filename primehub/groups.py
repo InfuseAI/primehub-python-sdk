@@ -3,7 +3,7 @@ from typing import Optional
 from primehub import Helpful, cmd, Module
 
 
-class Group(Helpful, Module):
+class Groups(Helpful, Module):
     """
     List effective groups or get a group entry from the list
     """
@@ -31,28 +31,6 @@ class Group(Helpful, Module):
               projectQuotaCpu
               projectQuotaGpu
               projectQuotaMemory
-              images {
-                id
-                name
-                displayName
-                description
-                type
-                url
-                urlForGpu
-                groupName
-              }
-              instanceTypes {
-                id
-                name
-                displayName
-                description
-              }
-              datasets {
-                id
-                name
-                displayName
-                description
-              }
             }
           }
         }
