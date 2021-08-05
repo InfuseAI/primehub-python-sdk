@@ -9,7 +9,7 @@ Get a schedule or list schedules
 
 Available Commands:
   create               Create a schedule
-  delete               Run a schedule by id
+  delete               Delete a schedule by id
   get                  Get a schedule by id
   list                 List schedules
   update               Update a schedule by id
@@ -43,7 +43,7 @@ primehub schedules create
 
 ### delete
 
-Run a schedule by id
+Delete a schedule by id
 
 
 ```
