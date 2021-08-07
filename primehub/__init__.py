@@ -110,7 +110,7 @@ class PrimeHubConfig(object):
         if os.path.dirname(output_path):
             os.makedirs(os.path.dirname(output_path), exist_ok=True)
         with open(output_path, "w") as fh:
-            fh.write(json.dumps(output))
+            fh.write(json.dumps(output, indent=2, sort_keys=True))
 
     @property
     def group(self):
