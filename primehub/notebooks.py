@@ -3,13 +3,15 @@ from typing import Iterator
 from primehub import Helpful, cmd, Module
 import urllib.parse
 
+from primehub.utils.optionals import toggle_flag
+
 
 class Notebooks(Helpful, Module):
     """
     The notebooks module provides functions to manage Primehub Notebooks
     """
 
-    @cmd(name='logs', description='Get notebooks logs', optionals=[('follow', bool), ('tail', int)])
+    @cmd(name='logs', description='Get notebooks logs', optionals=[('follow', toggle_flag), ('tail', int)])
     def logs(self, **kwargs) -> Iterator[str]:
         """
         Get notebooks logs
