@@ -1,8 +1,10 @@
 from functools import wraps
 from inspect import signature
+from types import FunctionType
 from typing import Dict
 
 from primehub.utils import create_logger
+from primehub.utils.optionals import default_optional_builder
 
 logger = create_logger('decorator')
 
@@ -63,6 +65,11 @@ def cmd(**cmd_args):
         raise ValueError('name description is required')
     if 'optionals' not in cmd_args:
         cmd_args['optionals'] = []
+
+    for idx, opts in enumerate(cmd_args['optionals']):
+        maybe_builder = opts[-1]
+        if not isinstance(maybe_builder, FunctionType):
+            cmd_args['optionals'][idx] = tuple(list(opts) + [default_optional_builder])
 
     def inner(func):
         make_command_references(func)

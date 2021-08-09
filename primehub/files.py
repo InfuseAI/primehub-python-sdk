@@ -2,6 +2,8 @@ from primehub import Helpful, cmd, Module
 from urllib.parse import urlparse
 import os
 
+from primehub.utils.optionals import toggle_flag
+
 
 class Files(Helpful, Module):
     """
@@ -36,7 +38,7 @@ class Files(Helpful, Module):
         return results['data']['files']['items']
 
     # TODO: handel path or dest does not exist
-    @cmd(name='download', description='Download shared files', optionals=[('recursive', bool)])
+    @cmd(name='download', description='Download shared files', optionals=[('recursive', toggle_flag)])
     def download(self, path, dest, **kwargs):
         """
         Download files

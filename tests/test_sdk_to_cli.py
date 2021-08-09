@@ -2,6 +2,7 @@ import json
 import os
 
 from primehub import Helpful, Module, cmd
+from primehub.utils.optionals import toggle_flag
 from primehub.utils.permission import ask_for_permission
 from tests import BaseTestCase
 
@@ -51,6 +52,11 @@ class FakeCommand(Helpful, Module):
     def action_in_danger_no_arg_type_2(self, **kwargs):
         os.unlink("test_ask_for_permission_no_arg_type2.txt")
         return dict(result=True)
+
+    @cmd(name='recursive-toggle-flag', description='the action has a toggle flag',
+         optionals=[('recursive', toggle_flag)])
+    def action_toggle_flag(self, **kwargs):
+        return kwargs
 
     def help_description(self):
         return "help message for fake-command"
@@ -145,3 +151,10 @@ class TestCommandGroupToCommandLine(BaseTestCase):
         # the file will be removed by the flag `--yes-i-really-mean-it`
         self.cli_stdout(['app.py', 'test_sdk_to_cli', 'cmd-remove-it-no-arg-type-2', '--yes-i-really-mean-it'])
         self.assertFalse(os.path.exists(file_path_to_delete))
+
+    def test_toggle_flag(self):
+        output = self.cli_stdout(['app.py', 'test_sdk_to_cli', 'recursive-toggle-flag', '--recursive'])
+        self.assertEqual(dict(recursive=True), json.loads(output))
+
+        output = self.cli_stdout(['app.py', 'test_sdk_to_cli', 'recursive-toggle-flag'])
+        self.assertEqual(dict(recursive=False), json.loads(output))

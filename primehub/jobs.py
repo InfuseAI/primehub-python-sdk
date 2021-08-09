@@ -7,6 +7,8 @@ import json
 import sys
 from urllib.parse import urlparse
 
+from primehub.utils.optionals import toggle_flag
+
 
 class Jobs(Helpful, Module):
     """
@@ -395,7 +397,7 @@ class Jobs(Helpful, Module):
         return results['data']['phJob']['artifact']
 
     # TODO: handel path or dest does not exist
-    @cmd(name='download-artifacts', description='Download artifacts', optionals=[('recursive', bool)])
+    @cmd(name='download-artifacts', description='Download artifacts', optionals=[('recursive', toggle_flag)])
     def download_artifacts(self, id, path, dest, **kwargs):
         """
         Download job artifacts
@@ -420,7 +422,7 @@ class Jobs(Helpful, Module):
             dest = dest + '/'
 
         if kwargs.get('recursive', False):
-            if path[-1] != '/':     # avoid files or directories with the same prefix
+            if path[-1] != '/':  # avoid files or directories with the same prefix
                 path = path + '/'
             dirname = os.path.dirname(path[:-1])
             paths = [e['name'] for e in artifacts['items'] if e['name'].startswith(path)]
