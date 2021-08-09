@@ -62,7 +62,6 @@ class PrimeHubConfig(object):
     def load_config(self):
         try:
             if not os.path.exists(os.path.expanduser(self.config_file)):
-                logger.warning('Cannot find the config file: {}'.format(self.config_file))
                 return
             with open(self.config_file, "r") as fh:
                 self.config_from_file = json.load(fh)
