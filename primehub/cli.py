@@ -90,8 +90,11 @@ def run_action_args(sdk, selected_component, sub_parsers, target, remaining_args
 
         # @cmd with optionals
         for x in action['optionals']:
-            opt_name, opt_type = x
-            action_parser.add_argument("--" + opt_name, type=opt_type)
+            # There is a tuple (x, y, z, ..., arg_builder) for each optional
+            # We use the arg_builder to create a new argument
+            arg_builder = x[-1]
+            arg_builder_args = [action_parser] + list(x[0:-1])
+            arg_builder(*arg_builder_args)
 
         # @ask_for_permission
         if has_permission_flag(action):
@@ -121,7 +124,7 @@ def run_action_args(sdk, selected_component, sub_parsers, target, remaining_args
             kw_parameters = {}
             if has_kwargs:
                 for x in action['optionals']:
-                    opt_name, opt_type = x
+                    opt_name = x[0]
                     v = getattr(parsed_action_args, opt_name)
                     if v is not None:
                         kw_parameters[opt_name] = v
