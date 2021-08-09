@@ -336,7 +336,7 @@ class Jobs(Helpful, Module):
                 break
         return self.get(id)
 
-    @cmd(name='logs', description='Get job logs by id', optionals=[('follow', bool), ('tail', int)])
+    @cmd(name='logs', description='Get job logs by id', optionals=[('follow', toggle_flag), ('tail', int)])
     def logs(self, id, **kwargs) -> Iterator[str]:
         """
         Get logs of a job
