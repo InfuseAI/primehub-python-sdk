@@ -74,7 +74,9 @@ def run_action_args(sdk, selected_component, sub_parsers, target, remaining_args
         # build a parser for selected action
         # primehub [command]             [action] [param1] [param2] ...
         action_parser = create_action_parser(selected_component)
-        action_parser.add_command_group(sub_args.command, help=action['description'])
+
+        # Note: DONT add-command-group for action command
+        # action_parser.add_command_group(sub_args.command, help=action['description'])
         argument_names = []
         has_kwargs = False
         logger.debug('create the action parser: {}'.format(action))
