@@ -119,7 +119,6 @@ def create_action_parser(group_command, description=None):
     p.add_argument('command')
     p.command_description = description
 
-    add_global_options(p)
     return p
 
 
