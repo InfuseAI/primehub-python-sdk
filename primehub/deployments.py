@@ -2,6 +2,7 @@ from typing import Iterator
 
 from primehub import Helpful, cmd, Module, has_data_from_stdin
 from primehub.utils.permission import ask_for_permission
+from primehub.utils.optionals import toggle_flag
 import time
 import os
 import json
@@ -53,6 +54,9 @@ class Deployments(Helpful, Module):
             replicas
             availableReplicas
             message
+            pods {
+              name
+            }
           }
         }
         """
@@ -89,6 +93,9 @@ class Deployments(Helpful, Module):
             replicas
             availableReplicas
             message
+            pods {
+              name
+            }
           }
         }
         """
@@ -188,6 +195,9 @@ class Deployments(Helpful, Module):
             replicas
             availableReplicas
             message
+            pods {
+              name
+            }
           }
         }
         """
@@ -252,6 +262,9 @@ class Deployments(Helpful, Module):
             replicas
             availableReplicas
             message
+            pods {
+              name
+            }
           }
         }
         """
@@ -288,6 +301,9 @@ class Deployments(Helpful, Module):
             replicas
             availableReplicas
             message
+            pods {
+              name
+            }
           }
         }
         """
@@ -355,7 +371,7 @@ class Deployments(Helpful, Module):
     # TODO: handle invalid pod
     # TODO: allow fuzzy pod name
     @cmd(name='logs', description='Get deployment logs by id',
-         optionals=[('pod', str), ('follow', bool), ('tail', int)])
+         optionals=[('pod', str), ('follow', toggle_flag), ('tail', int)])
     def logs(self, id, **kwargs) -> Iterator[str]:
         """
         Get logs of a deployment
@@ -387,14 +403,14 @@ class Deployments(Helpful, Module):
         }
         """
 
-        pod = kwargs.get('pod', '')
+        pod_name = kwargs.get('pod', 'deploy-' + id)
         follow = kwargs.get('follow', False)
         tail = kwargs.get('tail', 10)
 
         results = self.primehub.request({'where': {'id': id}}, query)
-        endpoints = [p['logEndpoint'] for p in results['data']['phDeployment']['pods'] if p['name'] == pod]
-        endpoint = endpoints[0]
-        return self.primehub.request_logs(endpoint, follow, tail)
+        pods = results['data']['phDeployment']['pods']
+        endpoints = [p['logEndpoint'] for p in pods if p['name'].startswith(pod_name)]
+        return self.primehub.request_logs(endpoints[0], follow, tail)
 
     @cmd(name='wait', description='Wait a deployment to complete', optionals=[('timeout', int)])
     def wait(self, id, **kwargs):
