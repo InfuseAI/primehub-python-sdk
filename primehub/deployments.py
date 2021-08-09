@@ -354,7 +354,8 @@ class Deployments(Helpful, Module):
 
     # TODO: handle invalid pod
     # TODO: allow fuzzy pod name
-    @cmd(name='logs', description='Get deployment logs by id', optionals=[('pod', str), ('follow', bool), ('tail', int)])
+    @cmd(name='logs', description='Get deployment logs by id',
+         optionals=[('pod', str), ('follow', bool), ('tail', int)])
     def logs(self, id, **kwargs) -> Iterator[str]:
         """
         Get logs of a deployment
