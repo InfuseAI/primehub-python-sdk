@@ -3,6 +3,7 @@ import traceback
 from types import GeneratorType
 
 import primehub as ph
+from primehub.config import CliConfig
 from primehub.utils.argparser import create_command_parser, create_action_parser
 from primehub.utils.decorators import find_actions, find_action_method, find_action_info
 from primehub.utils.permission import has_permission_flag, enable_ask_for_permission_feature
@@ -23,14 +24,19 @@ def attach_dev_lab(p):
 
 def create_sdk():
     cfg = ph.PrimeHubConfig()
-    p = ph.PrimeHub(cfg)
-
+    sdk = ph.PrimeHub(cfg)
     # Note: We replace the config to CliConfig, please see details at config module
-    p.register_command('config', 'CliConfig')
-    p.register_command('info', 'CliInformation')
+    sdk.register_command('config', 'CliConfig')
+    sdk.register_command('info', 'CliInformation')
 
-    attach_dev_lab(p)
-    return p
+    reconfigure_group(sdk)
+    attach_dev_lab(sdk)
+    return sdk
+
+
+def reconfigure_group(sdk):
+    config_command: CliConfig = sdk.config
+    config_command.reconfigure_group(sdk.primehub_config.group)
 
 
 def create_commands(parser, sdk):
@@ -279,6 +285,7 @@ def reconfigure_primehub_config_if_needed(args, sdk):
         sdk.primehub_config = ph.PrimeHubConfig(
             config=args.config, endpoint=args.endpoint,
             group=args.group, token=args.token)
+        reconfigure_group(sdk)
 
 
 if __name__ == '__main__':
