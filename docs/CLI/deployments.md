@@ -101,8 +101,6 @@ primehub deployments list
 ```
  
 
-* *(optional)* page: The page number as you can see in PrimeHub Deployments UI
-
 
 
 

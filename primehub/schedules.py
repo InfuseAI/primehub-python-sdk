@@ -276,7 +276,7 @@ class Schedules(Helpful, Module):
 
     @ask_for_permission
     @cmd(name='delete', description='Delete a schedule by id')
-    def delete(self, id, **kwargs):
+    def delete(self, id):
         """
         Delete a schedule by id
 
