@@ -13,7 +13,7 @@ setup(name='primehub-python-sdk',
       entry_points={
           'console_scripts': ['primehub = primehub.cli:main', 'doc-primehub = primehub.extras.doc_generator:main']
       },
-      python_requires=">=3.6",
+      python_requires=">=3.4",
       packages=find_packages(),
       install_requires=['requests'],
       extras_require={
