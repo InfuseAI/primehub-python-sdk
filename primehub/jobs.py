@@ -24,7 +24,7 @@ class Jobs(Helpful, Module):
     """
 
     @cmd(name='list', description='List jobs', optionals=[('page', int)])
-    def list(self, **kwargs):
+    def list(self, **kwargs) -> Iterator[dict]:
         """
         List all job information in the current group
 
@@ -73,26 +73,25 @@ class Jobs(Helpful, Module):
           }
         }
         """
-        variables = {
-            'where': {
-                'groupId_in': [self.group_id]
-            },
-            'page': 1
-        }
-        if kwargs.get('page', None):
-            variables['page'] = kwargs['page']
+        variables = {'where': {'groupId_in': [self.group_id]}, 'page': 1}
+        page = kwargs.get('page', 0)
+        if page:
+            variables['page'] = page
             results = self.request(variables, query)
-            return [e['node'] for e in results['data']['phJobsConnection']['edges']]
+            for e in results['data']['phJobsConnection']['edges']:
+                yield e['node']
+            return
 
-        edges = []
+        page = 1
         while True:
+            variables['page'] = page
             results = self.request(variables, query)
             if results['data']['phJobsConnection']['edges']:
-                edges.extend([e['node'] for e in results['data']['phJobsConnection']['edges']])
-                variables['page'] = variables['page'] + 1
+                for e in results['data']['phJobsConnection']['edges']:
+                    yield e['node']
+                page = page + 1
             else:
                 break
-        return edges
 
     @cmd(name='get', description='Get a job by id', return_required=True)
     def get(self, id):

@@ -1,3 +1,5 @@
+from typing import Iterator
+
 from primehub import Helpful, cmd, Module, has_data_from_stdin
 from primehub.utils.permission import ask_for_permission
 import os
@@ -23,7 +25,7 @@ class Schedules(Helpful, Module):
     """
 
     @cmd(name='list', description='List schedules', optionals=[('page', int)])
-    def list(self, **kwargs):
+    def list(self, **kwargs) -> Iterator[dict]:
         """
         List all schedules information in the current group
 
@@ -71,26 +73,25 @@ class Schedules(Helpful, Module):
           }
         }
         """
-        variables = {
-            'where': {
-                'groupId_in': [self.group_id]
-            },
-            'page': 1
-        }
-        if kwargs.get('page', None):
-            variables['page'] = kwargs['page']
+        variables = {'where': {'groupId_in': [self.group_id]}, 'page': 1}
+        page = kwargs.get('page', 0)
+        if page:
+            variables['page'] = page
             results = self.request(variables, query)
-            return [e['node'] for e in results['data']['phSchedulesConnection']['edges']]
+            for e in results['data']['phSchedulesConnection']['edges']:
+                yield e['node']
+            return
 
-        edges = []
+        page = 1
         while True:
+            variables['page'] = page
             results = self.request(variables, query)
             if results['data']['phSchedulesConnection']['edges']:
-                edges.extend([e['node'] for e in results['data']['phSchedulesConnection']['edges']])
-                variables['page'] = variables['page'] + 1
+                for e in results['data']['phSchedulesConnection']['edges']:
+                    yield e['node']
+                page = page + 1
             else:
                 break
-        return edges
 
     @cmd(name='get', description='Get a schedule by id', return_required=True)
     def get(self, id):
