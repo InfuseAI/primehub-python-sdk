@@ -1,6 +1,7 @@
 import json
 import traceback
 from types import GeneratorType
+from typing import Iterable
 
 import primehub as ph
 from primehub.config import CliConfig
@@ -149,6 +150,8 @@ def run_action_args(sdk, selected_component, sub_parsers, target, remaining_args
             if return_value:
                 if isinstance(return_value, dict) or isinstance(return_value, list):
                     output(sdk, json.dumps(return_value))
+                elif isinstance(return_value, Iterable):
+                    output(sdk, json.dumps(list(return_value)))
                 else:
                     output(sdk, return_value)
             else:
@@ -187,6 +190,8 @@ def run_action_noargs(sdk, selected_component, sub_parsers, target, args):
         if return_value:
             if isinstance(return_value, dict) or isinstance(return_value, list):
                 output(sdk, json.dumps(return_value))
+            elif isinstance(return_value, Iterable):
+                output(sdk, json.dumps(list(return_value)))
             else:
                 output(sdk, return_value)
         else:
