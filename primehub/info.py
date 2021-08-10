@@ -8,10 +8,10 @@ class CliInformation(Helpful, Module):
         me = self.primehub.me.me()
         me['user_id'] = me['id']
 
-        current_group = self.primehub.group.get(self.group_name)
-        images = [x['name'] for x in current_group['images']]
-        instance_types = [x['name'] for x in current_group['instanceTypes']]
-        datasets = [x['name'] for x in current_group['datasets']]
+        current_group = self.primehub.groups.get(self.group_name)
+        images = [x['name'] for x in self.primehub.images.list()]
+        instance_types = [x['name'] for x in self.primehub.instancetypes.list()]
+        datasets = [x['name'] for x in self.primehub.datasets.list()]
 
         if not current_group:
             group_status = " (No matched group for name %s)" % self.group_name
