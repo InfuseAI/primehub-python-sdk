@@ -91,10 +91,11 @@ class BaseTestCase(TestCase):
     def cfg_dict_with_prefix(self, prefix: str):
         return self.create_config_dict(prefix + ":endpoint", prefix + ":api-token", prefix + ":group")
 
-    def assert_config_with_prefix(self, prefix: str, cfg):
+    def assert_config_with_prefix(self, prefix: str, cfg: PrimeHubConfig):
         self.assertEqual(prefix + ':endpoint', cfg.endpoint)
         self.assertEqual(prefix + ':api-token', cfg.api_token)
-        self.assertEqual(prefix + ':group', cfg.group)
+        self.assertEqual(cfg.current_group.get('name'), cfg.group)
+        self.assertEqual(prefix + ':group', cfg.current_group.get('name'))
 
     def tempfile(self):
         from tempfile import mkstemp

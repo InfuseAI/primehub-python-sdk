@@ -76,6 +76,8 @@ class PrimeHubConfig(object):
         def set_env(key):
             if os.environ.get(key):
                 self.config_from_env[key] = os.environ.get(key)
+                if key == 'PRIMEHUB_GROUP' and self.group_info:
+                    self.group_info['name'] = os.environ.get(key)
 
         set_env('PRIMEHUB_API_TOKEN')
         set_env('PRIMEHUB_API_ENDPOINT')
@@ -114,16 +116,21 @@ class PrimeHubConfig(object):
     @property
     def group(self):
         if self.config_from_user_input.get('group', None):
+            logger.debug('group config_from_user_input')
             return self.config_from_user_input['group']
         if self.config_from_env.get('PRIMEHUB_GROUP', None):
+            logger.debug('group config_from_env')
             return self.config_from_env.get('PRIMEHUB_GROUP')
         if self.config_from_file.get('group', None) and self.config_from_file['group'].get('name', None):
+            logger.debug('group config_from_file')
             return self.config_from_file['group']['name']
 
     @group.setter
     def group(self, group):
         if group:
             self.config_from_user_input['group'] = group
+            if self.group_info:
+                self.group_info['name'] = group
 
     @property
     def api_token(self):
@@ -205,7 +212,7 @@ class PrimeHub(object):
                 return
 
             if group_id is None:
-                self.config.set_group(group_name)
+                self.config.reconfigure_group(group_name)
         except BaseException:
             pass
 
