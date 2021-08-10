@@ -65,6 +65,8 @@ def cmd(**cmd_args):
         raise ValueError('name description is required')
     if 'optionals' not in cmd_args:
         cmd_args['optionals'] = []
+    if 'return_required' not in cmd_args:
+        cmd_args['return_required'] = False
 
     for idx, opts in enumerate(cmd_args['optionals']):
         maybe_builder = opts[-1]

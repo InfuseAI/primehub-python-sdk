@@ -23,6 +23,10 @@ class ResponseException(PrimeHubException):
     pass
 
 
+class PrimeHubReturnsRequiredException(PrimeHubException):
+    pass
+
+
 def reject_action(action):
     raise UserRejectAction(
         'User rejects action [%s], please use the flag "--yes-i-really-mean-it" to allow the action.' % action)

@@ -9,7 +9,7 @@ from primehub.utils.permission import has_permission_flag, enable_ask_for_permis
 
 import sys
 
-from primehub.utils import create_logger, PrimeHubException
+from primehub.utils import create_logger, PrimeHubException, PrimeHubReturnsRequiredException
 
 logger = create_logger('primehub-cli')
 
@@ -145,6 +145,9 @@ def run_action_args(sdk, selected_component, sub_parsers, target, remaining_args
                     output(sdk, json.dumps(return_value))
                 else:
                     output(sdk, return_value)
+            else:
+                if action['return_required']:
+                    raise PrimeHubReturnsRequiredException()
         except SystemExit:
             return action_parser
 
@@ -180,6 +183,9 @@ def run_action_noargs(sdk, selected_component, sub_parsers, target, args):
                 output(sdk, json.dumps(return_value))
             else:
                 output(sdk, return_value)
+        else:
+            if action['return_required']:
+                raise PrimeHubReturnsRequiredException()
     except AttributeError:
         logger.debug('{}'.format(sys.exc_info()))
         helper = sub_parsers[selected_component]
@@ -241,6 +247,12 @@ def main(sdk=None):
 
         if helper:
             sys.exit(1)
+
+    except PrimeHubReturnsRequiredException:
+        logger.debug('got PrimeHubReturnsRequiredException')
+        hide_help = True
+        exit_normally = False
+        sys.exit(1)
     except PrimeHubException as e:
         hide_help = True
         exit_normally = False
@@ -257,6 +269,9 @@ def main(sdk=None):
             sys.exit(0)
         else:
             sys.exit(1)
+
+    # exit application normally
+    sys.exit(0)
 
 
 def reconfigure_primehub_config_if_needed(args, sdk):

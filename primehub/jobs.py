@@ -94,7 +94,7 @@ class Jobs(Helpful, Module):
                 break
         return edges
 
-    @cmd(name='get', description='Get a job by id')
+    @cmd(name='get', description='Get a job by id', return_required=True)
     def get(self, id):
         """
         Get detail information of a job by id

@@ -38,7 +38,7 @@ class Groups(Helpful, Module):
         results = self.request({}, query)
         return results['data']['me']['effectiveGroups']
 
-    @cmd(name='get', description='Get group by name')
+    @cmd(name='get', description='Get group by name', return_required=True)
     def get(self, group_name: str) -> Optional[dict]:
         """
         Get a group from available groups

@@ -37,7 +37,7 @@ class Images(Helpful, Module, GroupResourceOperation):
         """
         return self.do_list(Images.query, Images.resource_name)
 
-    @cmd(name='get', description='Get a image by name')
+    @cmd(name='get', description='Get a image by name', return_required=True)
     def get(self, name) -> Optional[dict]:
         """
         Get an image from the current group

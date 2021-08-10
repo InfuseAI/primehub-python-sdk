@@ -63,7 +63,7 @@ class Deployments(Helpful, Module):
         results = self.request({'where': {'groupId_in': [self.group_id]}}, query)
         return results['data']['phDeployments']
 
-    @cmd(name='get', description='Get a deployment by id')
+    @cmd(name='get', description='Get a deployment by id', return_required=True)
     def get(self, id):
         """
         Get detail information of a deployment by id

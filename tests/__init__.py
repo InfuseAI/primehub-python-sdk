@@ -61,7 +61,7 @@ class BaseTestCase(TestCase):
         self.invoke_cli(argv)
         return self.sdk.stdout.getvalue()
 
-    def invoke_cli(self, argv):
+    def invoke_cli(self, argv: list):
         try:
             import sys
             sys.argv = argv
