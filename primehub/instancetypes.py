@@ -35,7 +35,7 @@ class InstanceTypes(Helpful, Module, GroupResourceOperation):
         """
         return self.do_list(InstanceTypes.query, InstanceTypes.resource_name)
 
-    @cmd(name='get', description='Get an instance type by name')
+    @cmd(name='get', description='Get an instance type by name', return_required=True)
     def get(self, name) -> Optional[dict]:
         """
         Get an instance type from the current group

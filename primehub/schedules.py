@@ -72,10 +72,10 @@ class Schedules(Helpful, Module):
         }
         """
         variables = {
-          'where': {
-            'groupId_in': [self.group_id]
-          },
-          'page': 1
+            'where': {
+                'groupId_in': [self.group_id]
+            },
+            'page': 1
         }
         if kwargs.get('page', None):
             variables['page'] = kwargs['page']
@@ -92,7 +92,7 @@ class Schedules(Helpful, Module):
                 break
         return edges
 
-    @cmd(name='get', description='Get a schedule by id')
+    @cmd(name='get', description='Get a schedule by id', return_required=True)
     def get(self, id):
         """
         Get detail information of a schedule by id

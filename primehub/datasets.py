@@ -36,7 +36,7 @@ class Datasets(Helpful, Module, GroupResourceOperation):
         """
         return self.do_list(Datasets.query, Datasets.resource_name)
 
-    @cmd(name='get', description='Get a dataset by name')
+    @cmd(name='get', description='Get a dataset by name', return_required=True)
     def get(self, name) -> Optional[dict]:
         """
         Get a dataset from the current group

@@ -270,7 +270,7 @@ def main(sdk=None):
         else:
             sys.exit(1)
 
-    # exit application normal
+    # exit application normally
     sys.exit(0)
 
 
