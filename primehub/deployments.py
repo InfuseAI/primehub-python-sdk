@@ -24,13 +24,10 @@ class Deployments(Helpful, Module):
     }
     """
 
-    @cmd(name='list', description='List deployments', optionals=[('page', int)])
-    def list(self, **kwargs):
+    @cmd(name='list', description='List deployments')
+    def list(self):
         """
         List all deployments information in the current group
-
-        :type page: int
-        :param page: The page number as you can see in PrimeHub Deployments UI
 
         :rtype list
         :return The list of deployments
@@ -348,7 +345,7 @@ class Deployments(Helpful, Module):
 
     @ask_for_permission
     @cmd(name='delete', description='Delete a deployment by id')
-    def delete(self, id, **kwargs):
+    def delete(self, id):
         """
         Delete a deployment by id
 
