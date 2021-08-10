@@ -1,10 +1,11 @@
-import os
 import json
+import os
+from json import JSONDecodeError
 from typing import Iterator
 
 import requests  # type: ignore
 
-from primehub.utils import RequestException
+from primehub.utils import ResponseException, RequestException
 
 
 class GraphQLException(BaseException):
@@ -18,17 +19,19 @@ class Client(object):
         self.timeout = 10
 
     def request(self, variables: dict, query: str):
+        request_body = dict(variables=json.dumps(variables), query=query)
+        headers = {'authorization': 'Bearer {}'.format(self.primehub_config.api_token)}
         try:
-            request_body = dict(variables=json.dumps(variables), query=query)
-            headers = {'authorization': 'Bearer {}'.format(self.primehub_config.api_token)}
             content = requests.post(self.primehub_config.endpoint, data=request_body, headers=headers,
                                     timeout=self.timeout).text
             result = json.loads(content)
             if 'errors' in result:
                 raise GraphQLException(result)
             return result
-        except (requests.exceptions.ConnectTimeout, requests.exceptions.ConnectionError) as e:
-            raise RequestException("Got request problem with {}: {}".format(self.primehub_config.endpoint, str(e)))
+        except JSONDecodeError:
+            raise ResponseException("Response is not valid JSON:\n{}".format(content))
+        except BaseException as e:
+            raise RequestException(e)
 
     def request_logs(self, endpoint, follow, tail) -> Iterator[str]:
         params = {'follow': 'false'}

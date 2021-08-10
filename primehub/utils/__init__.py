@@ -19,6 +19,10 @@ class RequestException(PrimeHubException):
     pass
 
 
+class ResponseException(PrimeHubException):
+    pass
+
+
 def reject_action(action):
     raise UserRejectAction(
         'User rejects action [%s], please use the flag "--yes-i-really-mean-it" to allow the action.' % action)
@@ -29,7 +33,7 @@ def group_required():
 
 
 def group_not_found(group):
-    raise GroupIsRequiredException('No group information for [%s], please set the right group' % group)
+    raise GroupIsRequiredException('No group information for [%s], please check the configuration again.' % group)
 
 
 def create_logger(name) -> logging.Logger:

@@ -1,6 +1,5 @@
-from primehub.utils import create_logger, group_not_found, RequestException
-
 from primehub import Helpful, cmd, Module
+from primehub.utils import create_logger, group_not_found
 
 logger = create_logger('cmd-config')
 
@@ -46,15 +45,18 @@ class Config(Helpful, Module):
         :type group: str
         :param group: group name
         """
-        self.primehub.primehub_config.group = group
+
         try:
             selected_group = self._fetch_group_info(group)
             if selected_group is None:
                 logger.info('Cannot find the group [%s] in the effective groups', group)
+                self.primehub.primehub_config.current_group = dict()
+                self.primehub.primehub_config.group = None
             else:
                 self.primehub.primehub_config.current_group = selected_group
-        except BaseException as e:
-            logger.exception('Cannot fetch group [%s] from api-server', group, exc_info=e)
+                self.primehub.primehub_config.group = group
+        except BaseException:
+            print('Cannot fetch group [%s] from api-server' % group, file=self.primehub.stderr)
             pass
 
     def _fetch_group_info(self, group):
@@ -69,14 +71,10 @@ class Config(Helpful, Module):
           }
         }
         """
-        try:
-            results = self.request({}, query)
-            for g in results['data']['me']['effectiveGroups']:
-                if g['name'] == group:
-                    return g
-        except RequestException as e:
-            logger.warning(e)
-            pass
+        results = self.request({}, query)
+        for g in results['data']['me']['effectiveGroups']:
+            if g['name'] == group:
+                return g
 
     def help_description(self):
         return "Update the settings of PrimeHub SDK"
