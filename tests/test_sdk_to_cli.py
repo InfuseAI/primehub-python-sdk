@@ -58,6 +58,16 @@ class FakeCommand(Helpful, Module):
     def action_toggle_flag(self, **kwargs):
         return kwargs
 
+    @cmd(name='return-required-no-retruns', description='return none for return required', return_required=True)
+    def return_required_but_no_returns(self):
+        # got exit 1
+        return None
+
+    @cmd(name='return-required-with-retruns', description='return values for return required', return_required=True)
+    def return_required_with_returns(self):
+        # got exit 0
+        return "I don't care"
+
     def help_description(self):
         return "help message for fake-command"
 
@@ -158,3 +168,25 @@ class TestCommandGroupToCommandLine(BaseTestCase):
 
         output = self.cli_stdout(['app.py', 'test_sdk_to_cli', 'recursive-toggle-flag'])
         self.assertEqual(dict(recursive=False), json.loads(output))
+
+    def test_return_required(self):
+
+        def invoke_cli_and_get_exit_code(argv: list):
+            try:
+                import sys
+                from primehub import cli
+                sys.argv = argv
+                cli.main(sdk=self.sdk)
+            except SystemExit as e:
+                if e.code == 1:
+                    self.assertEqual('', self.sdk.stdout.getvalue().strip())
+                    self.assertEqual('', self.sdk.stderr.getvalue().strip())
+                if e.code == 0:
+                    self.assertNotEqual('', self.sdk.stdout.getvalue().strip())
+                return e.code
+
+        exit_code = invoke_cli_and_get_exit_code(['app.py', 'test_sdk_to_cli', 'return-required-no-retruns'])
+        self.assertEqual(1, exit_code)
+
+        exit_code = invoke_cli_and_get_exit_code(['app.py', 'test_sdk_to_cli', 'return-required-with-retruns'])
+        self.assertEqual(0, exit_code)
