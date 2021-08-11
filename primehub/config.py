@@ -45,21 +45,21 @@ class Config(Helpful, Module):
         :type group: str
         :param group: group name
         """
-        self.reconfigure_group(group)
+        self.reconfigure_group(group, raise_error=True)
 
-    def reconfigure_group(self, group):
-        try:
-            selected_group = self._fetch_group_info(group)
-            if selected_group is None:
+    def reconfigure_group(self, group, raise_error=False):
+        if group is None:
+            return
+        selected_group = self._fetch_group_info(group)
+        if selected_group is None:
+            if raise_error:
                 logger.warning(
                     '[reconfigure_group] Cannot find the group [%s] in the effective groups, '
                     'keep the original group [%s]',
                     group, self.primehub.primehub_config.current_group.get('name'))
-            else:
-                self.primehub.primehub_config.current_group = selected_group
-        except BaseException:
-            print('Cannot fetch group [%s] from api-server' % group, file=self.primehub.stderr)
-            pass
+                group_not_found(group)
+        else:
+            self.primehub.primehub_config.current_group = selected_group
 
     def _fetch_group_info(self, group):
         query = """

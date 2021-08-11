@@ -37,13 +37,16 @@ class TestCliConfig(BaseTestCase):
           --token TOKEN        API Token generated from PrimeHub Console
           --group GROUP        override the active group
         """
-
+        group_info = {'name': 'test-config-from-cli:group'}
+        self.mock_request.return_value = {'data': {'me': {'effectiveGroups': [group_info]}}}
         c = self.make_cfg()
 
         # Verify the saved config will have test-config-from-cli:*
         self.assert_config_with_prefix('test-config-from-cli', c)
 
         # Verify other options
+        group_info = {'name': 'opt:group'}
+        self.mock_request.return_value = {'data': {'me': {'effectiveGroups': [group_info]}}}
         c = self.make_cfg(['--endpoint', 'opt:endpoint', '--token', 'opt:api-token', '--group', 'opt:group'])
         self.assert_config_with_prefix('opt', c)
 
