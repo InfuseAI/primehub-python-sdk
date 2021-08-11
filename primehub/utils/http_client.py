@@ -5,11 +5,7 @@ from typing import Iterator
 
 import requests  # type: ignore
 
-from primehub.utils import ResponseException, RequestException
-
-
-class GraphQLException(BaseException):
-    pass
+from primehub.utils import ResponseException, RequestException, GraphQLException
 
 
 class Client(object):

@@ -7,6 +7,10 @@ class PrimeHubException(BaseException):
     pass
 
 
+class GraphQLException(PrimeHubException):
+    pass
+
+
 class GroupIsRequiredException(PrimeHubException):
     pass
 

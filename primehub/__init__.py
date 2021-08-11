@@ -176,10 +176,6 @@ class Helpful(metaclass=abc.ABCMeta):
         return NotImplemented
 
 
-class GraphQLException(BaseException):
-    pass
-
-
 class PrimeHub(object):
 
     def __init__(self, config: PrimeHubConfig):
