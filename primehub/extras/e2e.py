@@ -32,7 +32,7 @@ class E2EForBasicFunction(Helpful, Module):
         self.endline()
 
         self.title('Groups')
-        group: Groups = self.primehub.group
+        group: Groups = self.primehub.groups
         for g in group.list():
             print(g['id'], g['name'])
         self.endline()
@@ -64,7 +64,7 @@ class E2EForBasicFunction(Helpful, Module):
         with open(path, "w") as fh:
             fh.write(json.dumps(job_spec))
 
-        my_job = self.primehub.jobs.submit(file=path)
+        my_job = self.primehub.jobs.submit_cmd(file=path)
         my_id = my_job['id']
         print("Job ID:", my_job['id'])
 

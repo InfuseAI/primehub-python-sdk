@@ -3,10 +3,11 @@ import importlib
 import json
 import os
 import sys
-from typing import Union, Callable, Dict
+from typing import Union, Callable, Dict, Any
 
 from primehub.utils import group_required, create_logger
 from primehub.utils.decorators import cmd  # noqa: F401
+from primehub.utils.display import Display
 from primehub.utils.http_client import Client
 
 logger = create_logger('primehub-config')
@@ -275,6 +276,7 @@ class Module(object):
         self.request = primehub.request
         self.request_logs = primehub.request_logs
         self.request_file = primehub.request_file
+        self.cli_display = Display('json')
 
     @property
     def current_group(self) -> dict:
@@ -302,6 +304,9 @@ class Module(object):
         raise ValueError(
             'The attribute [primehub_config] is access denied, '
             'please use props of the Module to get configurations')
+
+    def display(self, action: dict, return_value: Any):
+        self.cli_display.display(action, return_value, self.primehub.stdout)
 
 
 def has_data_from_stdin():

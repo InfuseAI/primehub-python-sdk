@@ -1,17 +1,12 @@
-import json
+import sys
 import traceback
-from types import GeneratorType
-from typing import Iterable
 
 import primehub as ph
 from primehub.config import CliConfig
+from primehub.utils import create_logger, PrimeHubException, PrimeHubReturnsRequiredException
 from primehub.utils.argparser import create_command_parser, create_action_parser
 from primehub.utils.decorators import find_actions, find_action_method, find_action_info
 from primehub.utils.permission import has_permission_flag, enable_ask_for_permission_feature
-
-import sys
-
-from primehub.utils import create_logger, PrimeHubException, PrimeHubReturnsRequiredException
 
 logger = create_logger('primehub-cli')
 
@@ -148,12 +143,8 @@ def run_action_args(sdk, selected_component, sub_parsers, target, remaining_args
                 logger.debug('invoke with parameters %s', real_parameters)
                 return_value = func(*real_parameters)
             if return_value:
-                if isinstance(return_value, dict) or isinstance(return_value, list):
-                    output(sdk, json.dumps(return_value))
-                elif isinstance(return_value, Iterable):
-                    output(sdk, json.dumps(list(return_value)))
-                else:
-                    output(sdk, return_value)
+                display_func = getattr(target, 'display')
+                display_func(action, return_value)
             else:
                 if action['return_required']:
                     raise PrimeHubReturnsRequiredException()
@@ -188,12 +179,8 @@ def run_action_noargs(sdk, selected_component, sub_parsers, target, args):
         return_value = func()
         logger.debug('invoked {}'.format(func))
         if return_value:
-            if isinstance(return_value, dict) or isinstance(return_value, list):
-                output(sdk, json.dumps(return_value))
-            elif isinstance(return_value, Iterable):
-                output(sdk, json.dumps(list(return_value)))
-            else:
-                output(sdk, return_value)
+            display_func = getattr(target, 'display')
+            display_func(action, return_value)
         else:
             if action['return_required']:
                 raise PrimeHubReturnsRequiredException()
@@ -201,14 +188,6 @@ def run_action_noargs(sdk, selected_component, sub_parsers, target, args):
         logger.debug('{}'.format(sys.exc_info()))
         helper = sub_parsers[selected_component]
     return helper
-
-
-def output(sdk, message):
-    if isinstance(message, GeneratorType):
-        for m in message:
-            print(m, file=sdk.stdout)
-    else:
-        print(message, file=sdk.stdout)
 
 
 def main(sdk=None):
