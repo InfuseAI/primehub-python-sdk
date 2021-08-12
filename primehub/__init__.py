@@ -311,8 +311,8 @@ class Module(object):
         else:
             return HumanFriendlyDisplay()
 
-    def display(self, action: dict, return_value: Any):
-        self.get_display().display(action, return_value, self.primehub.stdout)
+    def display(self, action: dict, value: Any):
+        self.get_display().display(action, value, self.primehub.stdout)
 
 
 def has_data_from_stdin():
