@@ -67,6 +67,8 @@ class BaseTestCase(TestCase):
             sys.argv = argv
             if [x for x in argv if not isinstance(x, str)]:
                 raise ValueError('all arguments must be a str type')
+            if '--json' not in sys.argv:
+                sys.argv.append('--json')
             cli.main(sdk=self.sdk)
         except SystemExit:
             pass

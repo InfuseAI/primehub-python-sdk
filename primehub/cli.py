@@ -213,6 +213,9 @@ def main(sdk=None):
         logger.debug("remaining_args: {}".format(remaining_args))
         reconfigure_primehub_config_if_needed(args, sdk)
 
+        # configure output format from main-parser
+        sdk.json_output = args.json_output
+
         if command_name not in sdk.commands:
             main_parser.epilog = 'Error: "{}" command not found'.format(command_name)
             sys.exit(1)

@@ -5,7 +5,9 @@ from typing import Iterator
 
 import requests  # type: ignore
 
-from primehub.utils import ResponseException, RequestException, GraphQLException
+from primehub.utils import ResponseException, RequestException, GraphQLException, create_logger
+
+logger = create_logger('http')
 
 
 class Client(object):
@@ -16,10 +18,12 @@ class Client(object):
 
     def request(self, variables: dict, query: str):
         request_body = dict(variables=json.dumps(variables), query=query)
+        logger.debug('request body: {}'.format(request_body))
         headers = {'authorization': 'Bearer {}'.format(self.primehub_config.api_token)}
         try:
             content = requests.post(self.primehub_config.endpoint, data=request_body, headers=headers,
                                     timeout=self.timeout).text
+            logger.debug('response: {}'.format(content))
             result = json.loads(content)
             if 'errors' in result:
                 raise GraphQLException(result)

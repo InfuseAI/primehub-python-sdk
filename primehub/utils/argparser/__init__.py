@@ -98,10 +98,12 @@ def add_global_options(p):
     help_opts = p.add_argument_group('Options')
     help_opts.add_argument('-h', '--help', help='Show the help', action='store_true', default=False, dest='show_help')
     opts = p.add_argument_group('Global Options')
-    opts.add_argument('--config', help='the path of the config file')
-    opts.add_argument('--endpoint', help='the endpoint to the PrimeHub GraphQL URL')
-    opts.add_argument('--token', help='API Token generated from PrimeHub Console')
-    opts.add_argument('--group', help='override the active group')
+    opts.add_argument('--config', help='Change the path of the config file (Default: ~/.primehub/config.json)')
+    opts.add_argument('--endpoint', help='Override the GraphQL API endpoint')
+    opts.add_argument('--token', help='Override the API Token')
+    opts.add_argument('--group', help='Override the current group')
+    opts.add_argument('--json', help='Output the json format (output human-friendly format by default.)',
+                      dest='json_output', action='store_true')
 
 
 def create_command_parser(description=None):
