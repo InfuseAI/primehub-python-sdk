@@ -3,10 +3,11 @@ import importlib
 import json
 import os
 import sys
-from typing import Union, Callable, Dict
+from typing import Union, Callable, Dict, Any
 
 from primehub.utils import group_required, create_logger
 from primehub.utils.decorators import cmd  # noqa: F401
+from primehub.utils.display import Display, HumanFriendlyDisplay, Displayable
 from primehub.utils.http_client import Client
 
 logger = create_logger('primehub-config')
@@ -180,6 +181,7 @@ class PrimeHub(object):
 
     def __init__(self, config: PrimeHubConfig):
         self.primehub_config = config
+        self.json_output = True
         self.commands: Dict[str, Module] = dict()
         self._stderr = sys.stderr
         self._stdout = sys.stdout
@@ -302,6 +304,15 @@ class Module(object):
         raise ValueError(
             'The attribute [primehub_config] is access denied, '
             'please use props of the Module to get configurations')
+
+    def get_display(self) -> Displayable:
+        if self.primehub.json_output:
+            return Display()
+        else:
+            return HumanFriendlyDisplay()
+
+    def display(self, action: dict, value: Any):
+        self.get_display().display(action, value, self.primehub.stdout)
 
 
 def has_data_from_stdin():

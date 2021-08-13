@@ -1,4 +1,4 @@
-from typing import Iterator
+from typing import Iterator, Any
 
 from primehub import Helpful, cmd, Module, has_data_from_stdin
 import time
@@ -430,6 +430,13 @@ class Jobs(Helpful, Module):
             return
         self.request_file(endpoint + path, dest + os.path.basename(path))
         return
+
+    def display(self, action: dict, value: Any):
+        if action['func'] == 'list_artifacts' and isinstance(value, dict) and self.get_display().name != 'json':
+            file_list = value.get('items', [])
+            self.get_display().display(action, file_list, self.primehub.stdout)
+        else:
+            super(Jobs, self).display(action, value)
 
     def help_description(self):
         return "Get a job or list jobs"
