@@ -1,5 +1,4 @@
 import json
-import os
 from json import JSONDecodeError
 from typing import Iterator
 
@@ -51,9 +50,6 @@ class Client(object):
     def request_file(self, endpoint, dest):
         headers = {'authorization': 'Bearer {}'.format(self.primehub_config.api_token)}
         with requests.get(endpoint, headers=headers) as r:
-            dir = os.path.dirname(dest)
-            if not os.path.isdir(dir):
-                os.makedirs(dir)
             with open(dest, 'wb') as f:
                 f.write(r.content)
         return
