@@ -102,7 +102,7 @@ def add_global_options(p):
     opts.add_argument('--endpoint', help='Override the GraphQL API endpoint')
     opts.add_argument('--token', help='Override the API Token')
     opts.add_argument('--group', help='Override the current group')
-    opts.add_argument('--json', help='Output the json format (output human-friendly format by default.)',
+    opts.add_argument('--json', help='Output the json format (output human-friendly format by default)',
                       dest='json_output', action='store_true')
 
 
