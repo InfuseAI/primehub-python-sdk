@@ -1,3 +1,6 @@
+from primehub.utils import resource_not_found
+
+
 class GroupResourceOperation(object):
 
     def do_list(self, query, resource_key):
@@ -14,4 +17,4 @@ class GroupResourceOperation(object):
         data = [x for x in resources if x['name'] == resource_name]
         if data:
             return data[0]
-        return None
+        resource_not_found(resource_key, resource_name, 'name')

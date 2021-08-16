@@ -3,7 +3,7 @@ from unittest import mock
 
 from primehub.files import _normalize_user_input_path, _normalize_dest_path
 from tests import BaseTestCase
-from primehub.utils import create_logger
+from primehub.utils import create_logger, SharedFileException
 
 logger = create_logger('primehub-test')
 
@@ -104,10 +104,21 @@ class TestCmdFiles(BaseTestCase):
         self.assertDictListEqual(list_cmd('deep'), [{'name': 'sub/'}, {'name': 'l1.csv'}])
 
         # incomplete or non-exist path
-        self.assertDictListEqual(list_cmd('/l0'), [])
-        self.assertDictListEqual(list_cmd('/l0.csv/'), [])
-        self.assertDictListEqual(list_cmd('/de'), [])
-        self.assertDictListEqual(list_cmd('/none'), [])
+        with self.assertRaises(SharedFileException) as e:
+            self.assertDictListEqual(list_cmd('/l0'), [])
+        self.assertEqual(str(e.exception), 'No such file or directory: /l0')
+
+        with self.assertRaises(SharedFileException) as e:
+            self.assertDictListEqual(list_cmd('/l0.csv/'), [])
+        self.assertEqual(str(e.exception), 'Not a directory: /l0.csv/')
+
+        with self.assertRaises(SharedFileException) as e:
+            self.assertDictListEqual(list_cmd('/de'), [])
+        self.assertEqual(str(e.exception), 'No such file or directory: /de')
+
+        with self.assertRaises(SharedFileException) as e:
+            self.assertDictListEqual(list_cmd('/none'), [])
+        self.assertEqual(str(e.exception), 'No such file or directory: /none')
 
     @mock.patch('os.walk', mock.MagicMock(side_effect=mock_walk_side_effect))
     @mock.patch('os.path.isdir', mock.MagicMock(side_effect=mock_isdir_side_effect))
@@ -123,8 +134,9 @@ class TestCmdFiles(BaseTestCase):
         actual = self.norm_src_dst_list(actual)
         self.assertFileListEqual(actual, expected)
 
-        actual = get_download_src_dst_list('.', '.')
-        self.assertFileListEqual(actual, [])
+        # directory has to downlowd recursively
+        with self.assertRaises(SharedFileException):
+            actual = get_download_src_dst_list('.', '.')
 
     @mock.patch('os.walk', mock.MagicMock(side_effect=mock_walk_side_effect))
     @mock.patch('os.path.isdir', mock.MagicMock(side_effect=mock_isdir_side_effect))
@@ -143,13 +155,13 @@ class TestCmdFiles(BaseTestCase):
         actual = self.norm_src_dst_list(actual)
         self.assertFileListEqual(actual, [])
 
-        actual = get_download_src_dst_list('/deep', './sub', recursive=True)
-        actual = self.norm_src_dst_list(actual)
-        self.assertFileListEqual(actual, [])
+        with self.assertRaises(SharedFileException) as e:
+            actual = get_download_src_dst_list('/deep', './sub', recursive=True)
+        self.assertEqual(str(e.exception), 'Not a directory: ./sub')
 
-        actual = get_download_src_dst_list('/deep', 'not/exist/dir', recursive=True)
-        actual = self.norm_src_dst_list(actual)
-        self.assertFileListEqual(actual, [])
+        with self.assertRaises(SharedFileException) as e:
+            actual = get_download_src_dst_list('/deep', 'not/exist/dir', recursive=True)
+        self.assertEqual(str(e.exception), 'No such file or directory: not/exist')
 
         actual = get_download_src_dst_list('/deep/', '.', recursive=True)
         actual = self.norm_src_dst_list(actual)
@@ -207,17 +219,21 @@ class TestCmdFiles(BaseTestCase):
         actual = self.norm_src_dst_list(actual)
         self.assertFileListEqual(actual, [('/l0.csv', 'l2.csv/local.csv')])
 
-        actual = get_download_src_dst_list('l0.csv/', '.')
-        self.assertFileListEqual(actual, [])
+        with self.assertRaises(SharedFileException) as e:
+            actual = get_download_src_dst_list('l0.csv/', '.')
+        self.assertEqual(str(e.exception), 'Not a directory: /l0.csv/')
 
-        actual = get_download_src_dst_list('l0.csv', 'not_exist/')
-        self.assertFileListEqual(actual, [])
+        with self.assertRaises(SharedFileException) as e:
+            actual = get_download_src_dst_list('l0.csv', 'not_exist/')
+        self.assertEqual(str(e.exception), 'No such file or directory: not_exist')
 
-        actual = get_download_src_dst_list('l0.csv', 'not_exist/local.csv')
-        self.assertFileListEqual(actual, [])
+        with self.assertRaises(SharedFileException) as e:
+            actual = get_download_src_dst_list('l0.csv', 'not_exist/local.csv')
+        self.assertEqual(str(e.exception), 'No such file or directory: not_exist')
 
-        actual = get_download_src_dst_list('ln.csv', '.')
-        self.assertFileListEqual(actual, [])
+        with self.assertRaises(SharedFileException) as e:
+            actual = get_download_src_dst_list('ln.csv', '.')
+        self.assertEqual(str(e.exception), 'No such file or directory: /ln.csv')
 
     def norm_src_dst_list(self, pairs):
         return [(p[0], os.path.normpath(p[1])) for p in pairs]

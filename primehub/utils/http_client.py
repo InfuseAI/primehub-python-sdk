@@ -1,10 +1,11 @@
 import json
 from json import JSONDecodeError
-from typing import Iterator
+from typing import Iterator, Callable
 
 import requests  # type: ignore
 
-from primehub.utils import ResponseException, RequestException, GraphQLException, create_logger
+from primehub.utils import ResponseException, RequestException, GraphQLException, create_logger, \
+    ResourceNotFoundException
 
 logger = create_logger('http')
 
@@ -15,7 +16,7 @@ class Client(object):
         self.primehub_config = primehub_config
         self.timeout = 10
 
-    def request(self, variables: dict, query: str):
+    def request(self, variables: dict, query: str, error_handler: Callable = None):
         request_body = dict(variables=json.dumps(variables), query=query)
         logger.debug('request body: {}'.format(request_body))
         headers = {'authorization': 'Bearer {}'.format(self.primehub_config.api_token)}
@@ -25,10 +26,14 @@ class Client(object):
             logger.debug('response: {}'.format(content))
             result = json.loads(content)
             if 'errors' in result:
+                if error_handler:
+                    error_handler(result)
                 raise GraphQLException(result)
             return result
         except JSONDecodeError:
             raise ResponseException("Response is not valid JSON:\n{}".format(content))
+        except ResourceNotFoundException as e:
+            raise e
         except BaseException as e:
             raise RequestException(e)
 

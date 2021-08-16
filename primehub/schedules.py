@@ -1,10 +1,44 @@
 from typing import Iterator
 
 from primehub import Helpful, cmd, Module, has_data_from_stdin
+from primehub.utils import resource_not_found, PrimeHubException
 from primehub.utils.permission import ask_for_permission
 import os
 import json
 import sys
+
+
+def _error_handler(response):
+    import re
+
+    if 'errors' in response:
+        message = [x for x in response['errors'] if 'message' in x]
+        if message:
+            message = message[0]['message']
+            result = re.findall(r'phschedules.primehub.io "([^"]+)" not found', message)
+            if result:
+                resource_not_found('schedule', result[0], 'id')
+
+
+def invalid_config(message: str):
+    example = """
+    {"instanceType":"cpu-1","image":"base-notebook","displayName":"schedule-example","command":"echo 'good job'","recurrence":{"type":"daily","cron":"0 4 * * *"}}
+    """.strip()  # noqa: E501
+    raise PrimeHubException(message + "\n\nExample:\n" + json.dumps(json.loads(example), indent=2))
+
+
+def verify_config(config):
+    # verify required fields in the config
+    if 'instanceType' not in config:
+        invalid_config('instanceType is required')
+    if 'image' not in config:
+        invalid_config('image is required')
+    if 'displayName' not in config:
+        invalid_config('displayName is required')
+    if 'command' not in config:
+        invalid_config('command is required')
+    if 'recurrence' not in config:
+        invalid_config('recurrence is required')
 
 
 class Schedules(Helpful, Module):
@@ -23,6 +57,10 @@ class Schedules(Helpful, Module):
         }
     }
     """
+
+    def _verify_dependency(self, config):
+        if 'instanceType' in config:
+            self.primehub.instancetypes.get(config['instanceType'])
 
     @cmd(name='list', description='List schedules', optionals=[('page', int)])
     def list(self, **kwargs) -> Iterator[dict]:
@@ -102,7 +140,7 @@ class Schedules(Helpful, Module):
         :param id: The schedule id
 
         :rtype dict
-        :return The detail infromation of a schedule
+        :return The detail information of a schedule
         """
         query = """
         query ($where: PhScheduleWhereUniqueInput!) {
@@ -133,11 +171,10 @@ class Schedules(Helpful, Module):
           }
         }
         """
-        results = self.request({'where': {'id': id}}, query)
+        results = self.request({'where': {'id': id}}, query, _error_handler)
         return results['data']['phSchedule']
 
     # TODO: add -f
-    # TODO: handel invalid config
     @cmd(name='create', description='Create a schedule', optionals=[('file', str)])
     def create_cmd(self, **kwargs):
         """
@@ -147,7 +184,7 @@ class Schedules(Helpful, Module):
         :param file: The file path of schedule configurations
 
         :rtype dict
-        :return The detail infromation of the created schedule
+        :return The detail information of the created schedule
         """
         config = {}
         filename = kwargs.get('file', None)
@@ -158,9 +195,11 @@ class Schedules(Helpful, Module):
         if has_data_from_stdin():
             config = json.loads("".join(sys.stdin.readlines()))
 
+        if not config:
+            invalid_config('Schedule description is required.')
+
         return self.create(config)
 
-    # TODO: add validation for config
     def create(self, config):
         """
         Create a schedules with config
@@ -169,7 +208,7 @@ class Schedules(Helpful, Module):
         :param config: The schedule config
 
         :rtype dict
-        :return The detail infromation of the created schedule
+        :return The detail information of the created schedule
         """
         query = """
         mutation ($data: PhScheduleCreateInput!) {
@@ -201,11 +240,13 @@ class Schedules(Helpful, Module):
         }
         """
         config['groupId'] = self.group_id
+
+        verify_config(config)
+        self._verify_dependency(config)
         results = self.request({'data': config}, query)
         return results['data']['createPhSchedule']
 
     # TODO: add -f
-    # TODO: handel invalid config
     @cmd(name='update', description='Update a schedule by id', optionals=[('file', str)])
     def update_cmd(self, id, **kwargs):
         """
@@ -215,7 +256,7 @@ class Schedules(Helpful, Module):
         :param file: The file path of schedule configurations
 
         :rtype dict
-        :return The detail infromation of the updated schedule
+        :return The detail information of the updated schedule
         """
         config = {}
         filename = kwargs.get('file', None)
@@ -226,9 +267,11 @@ class Schedules(Helpful, Module):
         if has_data_from_stdin():
             config = json.loads("".join(sys.stdin.readlines()))
 
+        if not config:
+            invalid_config('Schedule description is required.')
+
         return self.update(id, config)
 
-    # TODO: add validation for config
     def update(self, id, config):
         """
         Update a schedule with config
@@ -240,7 +283,7 @@ class Schedules(Helpful, Module):
         :param config: The schedule config
 
         :rtype dict
-        :return The detail infromation of the updated schedule
+        :return The detail information of the updated schedule
         """
         query = """
         mutation ($data: PhScheduleUpdateInput!, $where: PhScheduleWhereUniqueInput!) {
@@ -272,12 +315,15 @@ class Schedules(Helpful, Module):
         }
         """
         config['groupId'] = self.group_id
-        results = self.request({'data': config, 'where': {'id': id}}, query)
+        if not config:
+            invalid_config('Schedule description is required.')
+        self._verify_dependency(config)
+        results = self.request({'data': config, 'where': {'id': id}}, query, _error_handler)
         return results['data']['updatePhSchedule']
 
     @ask_for_permission
     @cmd(name='delete', description='Delete a schedule by id')
-    def delete(self, id):
+    def delete(self, id, **kwargs):
         """
         Delete a schedule by id
 
@@ -285,7 +331,7 @@ class Schedules(Helpful, Module):
         :param id: The schedule id
 
         :rtype dict
-        :return The detail infromation of the deleted schedule
+        :return The detail information of the deleted schedule
         """
         query = """
         mutation ($where: PhScheduleWhereUniqueInput!) {
@@ -294,7 +340,7 @@ class Schedules(Helpful, Module):
           }
         }
         """
-        results = self.request({'where': {'id': id}}, query)
+        results = self.request({'where': {'id': id}}, query, _error_handler)
         return results['data']['deletePhSchedule']
 
     def help_description(self):

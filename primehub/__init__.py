@@ -214,8 +214,8 @@ class PrimeHub(object):
         except BaseException:
             pass
 
-    def request(self, variables: dict, query: str):
-        return Client(self.primehub_config).request(variables, query)
+    def request(self, variables: dict, query: str, error_handler: Callable = None):
+        return Client(self.primehub_config).request(variables, query, error_handler)
 
     def request_logs(self, endpint: str, follow: bool, tail: int):
         return Client(self.primehub_config).request_logs(endpint, follow, tail)

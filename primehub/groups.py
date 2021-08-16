@@ -1,6 +1,7 @@
 from typing import Optional
 
 from primehub import Helpful, cmd, Module
+from primehub.utils import resource_not_found
 
 
 class Groups(Helpful, Module):
@@ -53,6 +54,8 @@ class Groups(Helpful, Module):
         group = [x for x in groups if x['name'] == group_name]
         if group:
             return group[0]
+
+        resource_not_found('group', group_name, 'name')
         return None
 
     def help_description(self):
