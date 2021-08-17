@@ -13,6 +13,16 @@ from primehub.utils.http_client import Client
 logger = create_logger('primehub-config')
 
 
+def _get_version():
+    version_file = os.path.normpath(os.path.join(os.path.dirname(__file__), 'VERSION'))
+    with open(version_file) as fh:
+        version = fh.read().strip()
+        return version
+
+
+__version__ = _get_version()
+
+
 class PrimeHubConfig(object):
     """
     PrimeHubConfig load the config from the default path ~/.primehub/config.json
@@ -198,6 +208,7 @@ class PrimeHub(object):
         self.register_command('notebooks', 'Notebooks')
         self.register_command('files', 'Files')
         self.register_command('me', 'Me')
+        self.register_command('version', 'Version')
 
         # initial
         self._ensure_config_details(config)
