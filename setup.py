@@ -1,11 +1,19 @@
 #!/usr/bin/env python
-
+import os
 from distutils.core import setup
 
 from setuptools import find_packages  # type: ignore
 
+
+def _get_version():
+    version_file = os.path.normpath(os.path.join(os.path.dirname(__file__), 'primehub', 'VERSION'))
+    with open(version_file) as fh:
+        version = fh.read().strip()
+        return version
+
+
 setup(name='primehub-python-sdk',
-      version='0.1',
+      version=_get_version(),
       description='PrimeHub SDK',
       author='qrtt1',
       author_email='qrtt1@infuseai.io',
@@ -36,5 +44,5 @@ setup(name='primehub-python-sdk',
           "Development Status :: 2 - Pre-Alpha"
       ],
       package_data={
-          'primehub': ['*.json']
+          'primehub': ['*.json', 'VERSION']
       })
