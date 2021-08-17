@@ -1,12 +1,55 @@
 from typing import Iterator
 
 from primehub import Helpful, cmd, Module, has_data_from_stdin
+from primehub.utils import resource_not_found, PrimeHubException
 from primehub.utils.permission import ask_for_permission
 from primehub.utils.optionals import toggle_flag
 import time
 import os
 import json
 import sys
+
+
+def _error_handler(response):
+    import re
+
+    if 'errors' in response:
+        message = [x for x in response['errors'] if 'message' in x]
+        if message:
+            message = message[0]['message']
+            result = re.findall(r'phdeployments.primehub.io "([^"]+)" not found', message)
+            if result:
+                resource_not_found('schedule', result[0], 'id')
+
+
+def invalid_config(message: str):
+    example = """
+    {"name":"quickstart-iris","modelImage":"infuseai/sklearn-prepackaged:v0.1.0","modelURI":"gs://seldon-models/sklearn/iris","env":[],"metadata":{},"instanceType":"cpu-1","replicas":1,"updateMessage":"","id":"quickstart-iris-ghdgk","endpointAccessType":"public"}
+    """.strip()  # noqa: E501
+
+    import textwrap
+
+    docs = """
+    We take examples from:
+    https://docs.primehub.io/docs/model-deployment-tutorial-prepackaged-image
+
+    Definition example:
+    """
+    docs = textwrap.dedent(docs)
+    explain = f'{message}\n\n{docs}{json.dumps(json.loads(example), indent=2)}'
+    raise PrimeHubException(explain)
+
+
+def verify_requires(config):
+    # verify required fields in the config
+    if not config:
+        invalid_config('Deployment definition is required.')
+    if 'id' not in config:
+        invalid_config('id is required')
+    if 'instanceType' not in config:
+        invalid_config('instanceType is required')
+    if 'modelImage' not in config:
+        invalid_config('modelImage is required')
 
 
 class Deployments(Helpful, Module):
@@ -69,7 +112,7 @@ class Deployments(Helpful, Module):
         :param id: The deployment id
 
         :rtype dict
-        :return The detail infromation of a deployment
+        :return The detail information of a deployment
         """
         query = """
         query ($where: PhDeploymentWhereUniqueInput!) {
@@ -96,7 +139,7 @@ class Deployments(Helpful, Module):
           }
         }
         """
-        results = self.request({'where': {'id': id}}, query)
+        results = self.request({'where': {'id': id}}, query, _error_handler)
         return results['data']['phDeployment']
 
     @cmd(name='get-history', description='Get history of a deployment by id')
@@ -135,11 +178,10 @@ class Deployments(Helpful, Module):
           }
         }
         """
-        results = self.request({'where': {'id': id}}, query)
+        results = self.request({'where': {'id': id}}, query, _error_handler)
         return results['data']['phDeployment']['history']
 
     # TODO: add -f
-    # TODO: handel invalid config
     @cmd(name='create', description='Create a deployment', optionals=[('file', str)])
     def create_cmd(self, **kwargs):
         """
@@ -149,7 +191,7 @@ class Deployments(Helpful, Module):
         :param file: The file path of deployment configurations
 
         :rtype dict
-        :return The detail infromation of the created deployment
+        :return The detail information of the created deployment
         """
         config = {}
         filename = kwargs.get('file', None)
@@ -162,7 +204,6 @@ class Deployments(Helpful, Module):
 
         return self.create(config)
 
-    # TODO: add validation for config
     def create(self, config):
         """
         Create a deployments with config
@@ -171,7 +212,7 @@ class Deployments(Helpful, Module):
         :param config: The deployment config
 
         :rtype dict
-        :return The detail infromation of the created deployment
+        :return The detail information of the created deployment
         """
         query = """
         mutation ($data: PhDeploymentCreateInput!) {
@@ -198,12 +239,18 @@ class Deployments(Helpful, Module):
           }
         }
         """
+
+        verify_requires(config)
         config['groupId'] = self.group_id
+        self.verify_dependency(config)
         results = self.request({'data': config}, query)
         return results['data']['createPhDeployment']
 
+    def verify_dependency(self, config):
+        if 'instanceType' in config:
+            self.primehub.instancetypes.get(config['instanceType'])
+
     # TODO: add -f
-    # TODO: handel invalid config
     @cmd(name='update', description='Update a deployment by id', optionals=[('file', str)])
     def update_cmd(self, id, **kwargs):
         """
@@ -213,7 +260,7 @@ class Deployments(Helpful, Module):
         :param file: The file path of deployment configurations
 
         :rtype dict
-        :return The detail infromation of the updated deployment
+        :return The detail information of the updated deployment
         """
         config = {}
         filename = kwargs.get('file', None)
@@ -226,7 +273,6 @@ class Deployments(Helpful, Module):
 
         return self.update(id, config)
 
-    # TODO: add validation for config
     def update(self, id, config):
         """
         Update a deployment with config
@@ -238,7 +284,7 @@ class Deployments(Helpful, Module):
         :param config: The deployment config
 
         :rtype dict
-        :return The detail infromation of the updated deployment
+        :return The detail information of the updated deployment
         """
         query = """
         mutation ($data: PhDeploymentUpdateInput!, $where: PhDeploymentWhereUniqueInput!) {
@@ -265,7 +311,10 @@ class Deployments(Helpful, Module):
           }
         }
         """
-        results = self.request({'data': config, 'where': {'id': id}}, query)
+        if not config:
+            invalid_config('Deployment definition is required.')
+        self.verify_dependency(config)
+        results = self.request({'data': config, 'where': {'id': id}}, query, _error_handler)
         return results['data']['updatePhDeployment']
 
     @cmd(name='start', description='Start a deployment by id')
@@ -277,7 +326,7 @@ class Deployments(Helpful, Module):
         :param id: The deployment id
 
         :rtype dict
-        :return The detail infromation of the started deployment
+        :return The detail information of the started deployment
         """
         query = """
         mutation ($where:PhDeploymentWhereUniqueInput!) {
@@ -304,7 +353,7 @@ class Deployments(Helpful, Module):
           }
         }
         """
-        results = self.request({'where': {'id': id}}, query)
+        results = self.request({'where': {'id': id}}, query, _error_handler)
         return results['data']['deployPhDeployment']
 
     @cmd(name='stop', description='Stop a deployment by id')
@@ -316,7 +365,7 @@ class Deployments(Helpful, Module):
         :param id: The deployment id
 
         :rtype dict
-        :return The detail infromation of the stopped deployment
+        :return The detail information of the stopped deployment
         """
         query = """
         mutation ($where:PhDeploymentWhereUniqueInput!) {
@@ -340,12 +389,12 @@ class Deployments(Helpful, Module):
           }
         }
         """
-        results = self.request({'where': {'id': id}}, query)
+        results = self.request({'where': {'id': id}}, query, _error_handler)
         return results['data']['stopPhDeployment']
 
     @ask_for_permission
     @cmd(name='delete', description='Delete a deployment by id')
-    def delete(self, id):
+    def delete(self, id, **kwargs):
         """
         Delete a deployment by id
 
@@ -353,7 +402,7 @@ class Deployments(Helpful, Module):
         :param id: The deployment id
 
         :rtype dict
-        :return The detail infromation of the deleted deployment
+        :return The detail information of the deleted deployment
         """
         query = """
         mutation ($where: PhDeploymentWhereUniqueInput!) {
@@ -362,7 +411,7 @@ class Deployments(Helpful, Module):
           }
         }
         """
-        results = self.request({'where': {'id': id}}, query)
+        results = self.request({'where': {'id': id}}, query, _error_handler)
         return results['data']['deletePhDeployment']
 
     # TODO: handle invalid pod
@@ -404,7 +453,7 @@ class Deployments(Helpful, Module):
         follow = kwargs.get('follow', False)
         tail = kwargs.get('tail', 10)
 
-        results = self.primehub.request({'where': {'id': id}}, query)
+        results = self.primehub.request({'where': {'id': id}}, query, _error_handler)
         pods = results['data']['phDeployment']['pods']
         endpoints = [p['logEndpoint'] for p in pods if p['name'].startswith(pod_name)]
         return self.primehub.request_logs(endpoints[0], follow, tail)
@@ -421,7 +470,7 @@ class Deployments(Helpful, Module):
         :param timeout: The timeout in second
 
         :rtype dict
-        :return The detail infromation of the deployment
+        :return The detail information of the deployment
         """
         query = """
         query ($where: PhDeploymentWhereUniqueInput!) {
@@ -434,7 +483,7 @@ class Deployments(Helpful, Module):
         timeout = kwargs.get('timeout', 0)
         start_time = time.time()
         while True:
-            results = self.request({'where': {'id': id}}, query)
+            results = self.request({'where': {'id': id}}, query, _error_handler)
             status = results['data']['phDeployment']['status']
             stop = results['data']['phDeployment']['stop']
             if (not stop and status == 'Deployed') or (stop and status == 'Stopped'):

@@ -31,6 +31,14 @@ class PrimeHubReturnsRequiredException(PrimeHubException):
     pass
 
 
+class ResourceNotFoundException(PrimeHubException):
+    pass
+
+
+class SharedFileException(PrimeHubException):
+    pass
+
+
 def reject_action(action):
     raise UserRejectAction(
         'User rejects action [%s], please use the flag "--yes-i-really-mean-it" to allow the action.' % action)
@@ -42,6 +50,10 @@ def group_required():
 
 def group_not_found(group):
     raise GroupIsRequiredException('No group information for [%s], please check the configuration again.' % group)
+
+
+def resource_not_found(resource_type: str, key: str, key_type: str):
+    raise ResourceNotFoundException(resource_type, key, key_type)
 
 
 def create_logger(name) -> logging.Logger:

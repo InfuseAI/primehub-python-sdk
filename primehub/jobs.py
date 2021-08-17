@@ -6,7 +6,27 @@ import os
 import json
 import sys
 
+from primehub.utils import resource_not_found, PrimeHubException
 from primehub.utils.optionals import toggle_flag
+
+
+def _error_handler(response):
+    import re
+
+    if 'errors' in response:
+        message = [x for x in response['errors'] if 'message' in x]
+        if message:
+            message = message[0]['message']
+            result = re.findall(r'phjobs.primehub.io "([^"]+)" not found', message)
+            if result:
+                resource_not_found('job', result[0], 'id')
+
+
+def invalid_config(message: str):
+    example = """
+    {"instanceType":"cpu-1","image":"base-notebook","displayName":"job-example","command":"echo 'good job'"}
+    """.strip()
+    raise PrimeHubException(message + "\n\nExample:\n" + json.dumps(json.loads(example), indent=2))
 
 
 class Jobs(Helpful, Module):
@@ -18,9 +38,13 @@ class Jobs(Helpful, Module):
         "instanceType": "cpu-1",
         "image": "base-notebook",
         "displayName": "test",
-        "command": "echo \"test\"",
+        "command": "echo \"test\""
     }
     """
+
+    def _verify_dependency(self, config):
+        if 'instanceType' in config:
+            self.primehub.instancetypes.get(config['instanceType'])
 
     @cmd(name='list', description='List jobs', optionals=[('page', int)])
     def list(self, **kwargs) -> Iterator[dict]:
@@ -101,7 +125,7 @@ class Jobs(Helpful, Module):
         :param id: The job id
 
         :rtype dict
-        :return The detail infromation of a job
+        :return The detail information of a job
         """
         query = """
         query ($where: PhJobWhereUniqueInput!) {
@@ -133,11 +157,10 @@ class Jobs(Helpful, Module):
           }
         }
         """
-        results = self.request({'where': {'id': id}}, query)
+        results = self.request({'where': {'id': id}}, query, _error_handler)
         return results['data']['phJob']
 
     # TODO: add -f
-    # TODO: handel invalid config
     @cmd(name='submit', description='Submit a job', optionals=[('file', str), ('from', str)])
     def submit_cmd(self, **kwargs):
         """
@@ -150,7 +173,7 @@ class Jobs(Helpful, Module):
         :param from: The schedule id to submit as a job
 
         :rtype dict
-        :return The detail infromation of the submitted job
+        :return The detail information of the submitted job
         """
         if kwargs.get('from', None):
             return self.submit_from_schedule(kwargs['from'])
@@ -164,10 +187,12 @@ class Jobs(Helpful, Module):
         if has_data_from_stdin():
             config = json.loads("".join(sys.stdin.readlines()))
 
+        if not config:
+            invalid_config('Job description is required.')
+
         config['groupId'] = self.group_id
         return self.submit(config)
 
-    # TODO: Add validation for config
     def submit(self, config):
         """
         Submit a job with config
@@ -176,7 +201,7 @@ class Jobs(Helpful, Module):
         :param config: The job config
 
         :rtype dict
-        :return The detail infromation of the submitted job
+        :return The detail information of the submitted job
         """
         query = """
         mutation ($data: PhJobCreateInput!) {
@@ -208,7 +233,24 @@ class Jobs(Helpful, Module):
           }
         }
         """
+
+        if not config or (len(config) == 1):
+            raise PrimeHubException('config is required')
+        print(config, len(config))
+
         config['groupId'] = self.group_id
+
+        # verify required fields in the config
+        if 'instanceType' not in config:
+            invalid_config('instanceType is required')
+        if 'image' not in config:
+            invalid_config('image is required')
+        if 'displayName' not in config:
+            invalid_config('displayName is required')
+        if 'command' not in config:
+            invalid_config('command is required')
+
+        self._verify_dependency(config)
         results = self.request({'data': config}, query)
         return results['data']['createPhJob']
 
@@ -220,7 +262,7 @@ class Jobs(Helpful, Module):
         :param id: The schedule id
 
         :rtype dict
-        :return The detail infromation of the submitted job
+        :return The detail information of the submitted job
         """
         query = """
         mutation ($where: PhScheduleWhereUniqueInput!) {
@@ -231,10 +273,9 @@ class Jobs(Helpful, Module):
           }
         }
         """
-        results = self.request({'where': {'id': id}}, query)
+        results = self.request({'where': {'id': id}}, query, _error_handler)
         return results['data']['runPhSchedule']
 
-    # TODO: handel id does not exist
     @cmd(name='rerun', description='Rerun a job by id')
     def rerun(self, id):
         """
@@ -244,7 +285,7 @@ class Jobs(Helpful, Module):
         :param id: The job id
 
         :rtype dict
-        :return The detail infromation of the ruran job
+        :return The detail information of the ruran job
         """
         query = """
         mutation ($where: PhJobWhereUniqueInput!) {
@@ -276,10 +317,9 @@ class Jobs(Helpful, Module):
           }
         }
         """
-        results = self.request({'where': {'id': id}}, query)
+        results = self.request({'where': {'id': id}}, query, _error_handler)
         return results['data']['rerunPhJob']
 
-    # TODO: handel id does not exist
     @cmd(name='cancel', description='Cancel a job by id')
     def cancel(self, id):
         """
@@ -289,7 +329,7 @@ class Jobs(Helpful, Module):
         :param id: The job id
 
         :rtype dict
-        :return The detail infromation of the canceled job
+        :return The detail information of the canceled job
         """
         query = """
         mutation ($where: PhJobWhereUniqueInput!) {
@@ -298,7 +338,7 @@ class Jobs(Helpful, Module):
           }
         }
         """
-        self.request({'where': {'id': id}}, query)
+        self.request({'where': {'id': id}}, query, _error_handler)
         return self.get(id)
 
     @cmd(name='wait', description='Wait a job by id', optionals=[('timeout', int)])
@@ -313,7 +353,7 @@ class Jobs(Helpful, Module):
         :param timeout: The timeout in second
 
         :rtype dict
-        :return The detail infromation of the job
+        :return The detail information of the job
         """
         query = """
         query ($where: PhJobWhereUniqueInput!) {
@@ -325,7 +365,7 @@ class Jobs(Helpful, Module):
         timeout = kwargs.get('timeout', 0)
         start_time = time.time()
         while True:
-            results = self.request({'where': {'id': id}}, query)
+            results = self.request({'where': {'id': id}}, query, _error_handler)
             phase = results['data']['phJob']['phase']
             if phase in ['Succeeded', 'Failed', 'Cancelled']:
                 break
@@ -362,7 +402,7 @@ class Jobs(Helpful, Module):
         follow = kwargs.get('follow', False)
         tail = kwargs.get('tail', 10)
 
-        results = self.primehub.request({'where': {'id': id}}, query)
+        results = self.primehub.request({'where': {'id': id}}, query, _error_handler)
         endpoint = results['data']['phJob']['logEndpoint']
         return self.primehub.request_logs(endpoint, follow, tail)
 
@@ -390,10 +430,9 @@ class Jobs(Helpful, Module):
           }
         }
         """
-        results = self.request({'where': {'id': id}}, query)
+        results = self.request({'where': {'id': id}}, query, _error_handler)
         return results['data']['phJob']['artifact']['items']
 
-    # TODO: handel path or dest does not exist
     @cmd(name='download-artifacts', description='Download artifacts', optionals=[('recursive', toggle_flag)])
     def download_artifacts(self, id, path, dest, **kwargs):
         """
@@ -415,6 +454,9 @@ class Jobs(Helpful, Module):
         if path in ['.', '', './']:
             path = '/'
         path = os.path.join('/jobArtifacts', id, path.lstrip('/'))
+
+        # get id to verify existing
+        self.get(id)
         self.primehub.files.download(path, dest, **kwargs)
         return
 

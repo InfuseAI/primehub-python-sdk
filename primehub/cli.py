@@ -3,7 +3,7 @@ import traceback
 
 import primehub as ph
 from primehub.config import CliConfig
-from primehub.utils import create_logger, PrimeHubException, PrimeHubReturnsRequiredException
+from primehub.utils import create_logger, PrimeHubException, PrimeHubReturnsRequiredException, ResourceNotFoundException
 from primehub.utils.argparser import create_command_parser, create_action_parser
 from primehub.utils.decorators import find_actions, find_action_method, find_action_info
 from primehub.utils.permission import has_permission_flag, enable_ask_for_permission_feature
@@ -245,6 +245,13 @@ def main(sdk=None):
         logger.debug('got PrimeHubReturnsRequiredException')
         hide_help = True
         exit_normally = False
+        sys.exit(1)
+    except ResourceNotFoundException as e:
+        logger.debug('got PrimeHubReturnsRequiredException')
+        hide_help = True
+        exit_normally = False
+        type_name, key, key_type = e.args
+        print(f'Cannot find resource type "{type_name}" with [{key_type}: {key}]', file=sdk.stderr)
         sys.exit(1)
     except PrimeHubException as e:
         hide_help = True

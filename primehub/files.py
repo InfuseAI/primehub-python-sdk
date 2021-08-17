@@ -3,9 +3,13 @@ from urllib.parse import urlparse
 import os
 
 from primehub.utils.optionals import toggle_flag
-from primehub.utils import create_logger
+from primehub.utils import create_logger, SharedFileException
 
 logger = create_logger('cmd-files')
+
+
+def invalid(message):
+    raise SharedFileException(message)
 
 
 def _normalize_dest_path(path):
@@ -89,12 +93,12 @@ class Files(Helpful, Module):
 
         items = self._execute_list(path, recursive=True, limit=1)
         if not items or items[0]['name']:
-            logger.warning(f'{path} No such file or directory')
+            invalid(f'No such file or directory: {path}')
             return []
 
         # file
         if not os.path.basename(path):  # trailing slash
-            logger.warning(f'{path} Not a directory')
+            invalid(f'Not a directory: {path}')
             return []
 
         items[0]['name'] = os.path.basename(path)
@@ -138,10 +142,8 @@ class Files(Helpful, Module):
              'options': {'recursive': recursive, 'limit': limit}},
             query)
         items = results['data']['files']['items']
-
         return items
 
-    # TODO: handel path or dest does not exist
     @cmd(name='download', description='Download shared files', optionals=[('recursive', toggle_flag)])
     def download(self, path, dest, **kwargs):
         """
@@ -192,17 +194,17 @@ class Files(Helpful, Module):
         dest_isfile = os.path.isfile(dest_norm)
         dest_dir = os.path.dirname(dest)
         if dest_dir and not os.path.isdir(dest_dir):
-            logger.warning(f'{path} No such file or directory')
+            invalid(f'No such file or directory: {dest_dir}')
             return []
 
         items = self._execute_list(path, limit=1)
         if items:  # directory
             if dest_isfile:
-                logger.warning(f'{dest} Not a directory')
+                invalid(f'Not a directory: {dest}')
                 return []
 
             if not recursive:
-                logger.warning(f'{path} is a directoy (not downloaded)')
+                invalid(f'{path} is a directory, please download it recursively')
                 return []
 
             transform = not any(os.path.basename(path))
@@ -210,11 +212,11 @@ class Files(Helpful, Module):
         else:  # file or not exist
             items = self._execute_list(path, recursive=True, limit=1)
             if not items or items[0]['name']:
-                logger.warning(f'{path} No such file or directory')
+                invalid(f'No such file or directory: {path}')
                 return []
 
             if not os.path.basename(path):  # trailing slash
-                logger.warning(f'{path} Not a directory')
+                invalid(f'Not a directory: {path}')
                 return []
 
             transform = not os.path.isdir(dest)
