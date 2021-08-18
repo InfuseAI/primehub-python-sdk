@@ -12,19 +12,9 @@ The `list` command will show any groups your account belongs to:
 primehub groups list
 ```
 
-```json
-[
-  {
-    "id": "2b080113-e2f1-4b1b-a6ef-eb0ca5e2f376",
-    "name": "phusers",
-    "displayName": "primehub users",
-    "quotaCpu": null,
-    "quotaGpu": 0,
-    "quotaMemory": null,
-    "projectQuotaCpu": null,
-    "projectQuotaGpu": 0,
-    "projectQuotaMemory": null
-  }
-]
+```
+id                                    name     displayName     quotaCpu      quotaGpu  quotaMemory    projectQuotaCpu      projectQuotaGpu  projectQuotaMemory
+------------------------------------  -------  --------------  ----------  ----------  -------------  -----------------  -----------------  --------------------
+2b080113-e2f1-4b1b-a6ef-eb0ca5e2f376  phusers  primehub users                       0                                                    0
 ```
 

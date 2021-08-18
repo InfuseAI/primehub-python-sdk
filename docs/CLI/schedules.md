@@ -147,32 +147,28 @@ EOF
 
 Output:
 
-```json
-{
-  "id": "schedule-moqib3",
-  "displayName": "Do my best job",
-  "recurrence": {
-    "type": "daily",
-    "cron": "0 4 * * *"
-  },
-  "invalid": false,
-  "message": null,
-  "command": "echo \"great job\"",
-  "groupId": "2b080113-e2f1-4b1b-a6ef-eb0ca5e2f376",
-  "groupName": "phusers",
-  "image": "base-notebook",
-  "instanceType": {
-    "id": "cpu-1",
-    "name": "cpu-1",
-    "displayName": "CPU 1",
-    "cpuLimit": 1,
-    "memoryLimit": 2,
-    "gpuLimit": 0
-  },
-  "userId": "a7db12dc-04fa-419c-9cd7-af768575a871",
-  "userName": "phadmin",
-  "nextRunTime": null
-}
+```
+id:             schedule-tdcfta
+displayName:    Do my best job
+recurrence:
+  type:         daily
+  cron:         0 4 * * *
+invalid:        False
+message:        None
+command:        echo "great job"
+groupId:        2b080113-e2f1-4b1b-a6ef-eb0ca5e2f376
+groupName:      phusers
+image:          base-notebook
+instanceType:
+  id:           cpu-1
+  name:         cpu-1
+  displayName:  CPU 1
+  cpuLimit:     0.5
+  memoryLimit:  2
+  gpuLimit:     0
+userId:         a7db12dc-04fa-419c-9cd7-af768575a871
+userName:       phadmin
+nextRunTime:    None
 ```
 
 ### Example: submit a job from a schedule
@@ -181,12 +177,9 @@ Sometimes, the user want a scheduled job getting started right now! It could be 
 with `--from <schedule-id>`
 
 ```
-primehub jobs submit --from schedule-moqib3
+$ primehub jobs submit --from schedule-tdcfta
 ```
-```json
-{
-  "job": {
-    "id": "job-202108040309-3f7bef"
-  }
-}
+```
+job:
+  id:           job-202108180808-8tnk6z
 ```
