@@ -14,7 +14,9 @@ def _get_version():
 
 setup(name='primehub-python-sdk',
       version=_get_version(),
-      description='PrimeHub SDK',
+      description='PrimeHub Python SDK',
+      long_description=open('README.md').read(),
+      long_description_content_type='text/markdown',
       author='qrtt1',
       author_email='qrtt1@infuseai.io',
       url='https://github.com/InfuseAI/primehub-python-sdk',
