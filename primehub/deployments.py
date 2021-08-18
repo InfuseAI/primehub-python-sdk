@@ -23,11 +23,15 @@ def _error_handler(response):
 
 
 def invalid_config(message: str):
-    example = """
-    {"name":"quickstart-iris","modelImage":"infuseai/sklearn-prepackaged:v0.1.0","modelURI":"gs://seldon-models/sklearn/iris","env":[],"metadata":{},"instanceType":"cpu-1","replicas":1,"updateMessage":"","id":"quickstart-iris-ghdgk","endpointAccessType":"public"}
-    """.strip()  # noqa: E501
-
+    import random
+    import string
     import textwrap
+
+    id = 'quickstart-iris-' + ''.join(random.choices(string.ascii_lowercase + string.digits, k=5))
+    example = """
+    {"name":"quickstart-iris","modelImage":"infuseai/sklearn-prepackaged:v0.1.0","modelURI":"gs://seldon-models/sklearn/iris","env":[],"metadata":{},"instanceType":"cpu-1","replicas":1,"updateMessage":"","id":"<id>","endpointAccessType":"public"}
+    """.strip()  # noqa: E501
+    example = example.replace('<id>', id)
 
     docs = """
     We take examples from:

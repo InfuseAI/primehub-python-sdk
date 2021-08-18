@@ -60,47 +60,26 @@ The `datasets` command is a group specific resource. It only works after the `gr
 Using `list` to find all datasets in your group:
 
 ```
-primehub datasets list
+$ primehub datasets list
 ```
 
-```json
-[
-  {
-    "id": "tensorflow-dataset",
-    "name": "tensorflow-dataset",
-    "displayName": "tensorflow-dataset",
-    "description": "",
-    "type": "git"
-  },
-  {
-    "id": "pv-dataset",
-    "name": "pv-dataset",
-    "displayName": "pv-dataset",
-    "description": "",
-    "type": "pv"
-  },
-  {
-    "id": "primehub",
-    "name": "primehub",
-    "displayName": "PrimeHub Config",
-    "description": "PrimeHub Config",
-    "type": "env"
-  }
-]
+```
+id      name    displayName    description    type
+------  ------  -------------  -------------  ------
+kaggle  kaggle  kaggle                        pv
 ```
 
 If you already know the name of a dataset, use the `get` to get a single entry:
 
 ```
-primehub datasets get primehub
+$ primehub datasets get kaggle
 ```
 
-```json
-{
-  "id": "primehub",
-  "name": "primehub",
-  "displayName": "PrimeHub Config",
-  "description": "PrimeHub Config",
-  "type": "env"
-}
+```
+primehub datasets get kaggle
+id:             kaggle
+name:           kaggle
+displayName:    kaggle
+description:
+type:           pv
 ```

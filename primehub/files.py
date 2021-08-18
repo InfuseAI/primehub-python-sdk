@@ -165,7 +165,7 @@ class Files(Helpful, Module):
         src_dst_list = self._generate_download_list(path, dest, **kwargs)
         for src, dst in src_dst_list:
             dir = os.path.dirname(dst)
-            if not os.path.isdir(dir):
+            if dir and not os.path.isdir(dir):
                 os.makedirs(dir)
             self.request_file(endpoint + src, dst)
 

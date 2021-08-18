@@ -2,18 +2,13 @@
 user.
 
 ```
-primehub me
-```
-
-```json
-{
-  "id": "a7db12dc-04fa-419c-9cd7-af768575a871",
-  "username": "phadmin",
-  "firstName": null,
-  "lastName": null,
-  "email": "dev+phadmin@infuseai.io",
-  "isAdmin": true
-}
+$ primehub me
+id:             a7db12dc-04fa-419c-9cd7-af768575a871
+username:       phadmin
+firstName:      None
+lastName:       None
+email:          dev+phadmin@infuseai.io
+isAdmin:        True
 ```
 
 ### Notes

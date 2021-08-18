@@ -101,6 +101,8 @@ def main():
     for k, v in sdk.commands.items():
         if k == 'devlab':
             continue
+        if k == 'version':
+            continue
         generate_help_for_command(sdk, k)
 
 
