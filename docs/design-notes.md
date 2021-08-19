@@ -58,7 +58,7 @@ primehub
 
 We use `me` command group as the example.
 
-- create a `[me.py](http://me.py)` in the primehub package
+- create a `me.py` in the primehub package
     - extends `Helpful` class
         - implement the help description to CLI
     - extends `Module` class
