@@ -97,7 +97,7 @@ In [4]:
 
 ## Docs
 
-There is a [docs](docs) folder in our repository. You could find:
+There is a [docs](https://github.com/InfuseAI/primehub-python-sdk/tree/main/docs) folder in our repository. You could find:
 
-* [CLI](docs/CLI): all commands usage examples
-* [notebook](docs/notebook): examples written in python
+* [CLI](https://github.com/InfuseAI/primehub-python-sdk/tree/main/docs/CLI): all commands usage examples
+* [notebook](https://github.com/InfuseAI/primehub-python-sdk/tree/main/docs/notebook): examples written in python
