@@ -25,7 +25,6 @@ def create_sdk():
     sdk.register_command('config', 'CliConfig')
     sdk.register_command('info', 'CliInformation')
 
-    reconfigure_group(sdk)
     attach_dev_lab(sdk)
     return sdk
 
