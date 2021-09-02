@@ -185,7 +185,7 @@ class Deployments(Helpful, Module):
 
     # TODO: add -f
     @cmd(name='create', description='Create a deployment', optionals=[('file', str)])
-    def create_cmd(self, **kwargs):
+    def _create_cmd(self, **kwargs):
         """
         Create a deployment from commands
 
@@ -246,7 +246,7 @@ class Deployments(Helpful, Module):
 
     # TODO: add -f
     @cmd(name='update', description='Update a deployment by id', optionals=[('file', str)])
-    def update_cmd(self, id, **kwargs):
+    def _update_cmd(self, id, **kwargs):
         """
         Update a deployment from commands
 

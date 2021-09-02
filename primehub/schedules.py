@@ -174,7 +174,7 @@ class Schedules(Helpful, Module):
 
     # TODO: add -f
     @cmd(name='create', description='Create a schedule', optionals=[('file', str)])
-    def create_cmd(self, **kwargs):
+    def _create_cmd(self, **kwargs):
         """
         Submit a schedule from commands
 
@@ -239,7 +239,7 @@ class Schedules(Helpful, Module):
 
     # TODO: add -f
     @cmd(name='update', description='Update a schedule by id', optionals=[('file', str)])
-    def update_cmd(self, id, **kwargs):
+    def _update_cmd(self, id, **kwargs):
         """
         Update a schedule from commands
 

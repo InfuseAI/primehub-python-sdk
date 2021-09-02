@@ -160,7 +160,7 @@ class Jobs(Helpful, Module):
 
     # TODO: add -f
     @cmd(name='submit', description='Submit a job', optionals=[('file', str), ('from', str)])
-    def submit_cmd(self, **kwargs):
+    def _submit_cmd(self, **kwargs):
         """
         Submit a job from commands
 
