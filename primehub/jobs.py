@@ -5,7 +5,7 @@ from typing import Iterator, Any
 
 from primehub import Helpful, cmd, Module, primehub_load_config
 from primehub.utils import resource_not_found, PrimeHubException
-from primehub.utils.optionals import toggle_flag
+from primehub.utils.optionals import toggle_flag, file_flag
 
 
 def _error_handler(response):
@@ -158,8 +158,7 @@ class Jobs(Helpful, Module):
         results = self.request({'where': {'id': id}}, query, _error_handler)
         return results['data']['phJob']
 
-    # TODO: add -f
-    @cmd(name='submit', description='Submit a job', optionals=[('file', str), ('from', str)])
+    @cmd(name='submit', description='Submit a job', optionals=[('file', file_flag), ('from', str)])
     def _submit_cmd(self, **kwargs):
         """
         Submit a job from commands
@@ -226,8 +225,6 @@ class Jobs(Helpful, Module):
 
         if not config or (len(config) == 1):
             raise PrimeHubException('config is required')
-        print(config, len(config))
-
         config['groupId'] = self.group_id
 
         # verify required fields in the config

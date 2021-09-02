@@ -4,7 +4,7 @@ from typing import Iterator
 
 from primehub import Helpful, cmd, Module, primehub_load_config
 from primehub.utils import resource_not_found, PrimeHubException
-from primehub.utils.optionals import toggle_flag
+from primehub.utils.optionals import toggle_flag, file_flag
 from primehub.utils.permission import ask_for_permission
 
 
@@ -183,8 +183,7 @@ class Deployments(Helpful, Module):
         results = self.request({'where': {'id': id}}, query, _error_handler)
         return results['data']['phDeployment']['history']
 
-    # TODO: add -f
-    @cmd(name='create', description='Create a deployment', optionals=[('file', str)])
+    @cmd(name='create', description='Create a deployment', optionals=[('file', file_flag)])
     def _create_cmd(self, **kwargs):
         """
         Create a deployment from commands
@@ -244,8 +243,7 @@ class Deployments(Helpful, Module):
         if 'instanceType' in config:
             self.primehub.instancetypes.get(config['instanceType'])
 
-    # TODO: add -f
-    @cmd(name='update', description='Update a deployment by id', optionals=[('file', str)])
+    @cmd(name='update', description='Update a deployment by id', optionals=[('file', file_flag)])
     def _update_cmd(self, id, **kwargs):
         """
         Update a deployment from commands
@@ -401,7 +399,6 @@ class Deployments(Helpful, Module):
         return results['data']['deletePhDeployment']
 
     # TODO: handle invalid pod
-    # TODO: allow fuzzy pod name
     @cmd(name='logs', description='Get deployment logs by id',
          optionals=[('pod', str), ('follow', toggle_flag), ('tail', int)])
     def logs(self, id, **kwargs) -> Iterator[str]:

@@ -3,6 +3,7 @@ from typing import Iterator
 
 from primehub import Helpful, cmd, Module, primehub_load_config
 from primehub.utils import resource_not_found, PrimeHubException
+from primehub.utils.optionals import file_flag
 from primehub.utils.permission import ask_for_permission
 
 
@@ -172,8 +173,7 @@ class Schedules(Helpful, Module):
         results = self.request({'where': {'id': id}}, query, _error_handler)
         return results['data']['phSchedule']
 
-    # TODO: add -f
-    @cmd(name='create', description='Create a schedule', optionals=[('file', str)])
+    @cmd(name='create', description='Create a schedule', optionals=[('file', file_flag)])
     def _create_cmd(self, **kwargs):
         """
         Submit a schedule from commands
@@ -237,8 +237,7 @@ class Schedules(Helpful, Module):
         results = self.request({'data': config}, query)
         return results['data']['createPhSchedule']
 
-    # TODO: add -f
-    @cmd(name='update', description='Update a schedule by id', optionals=[('file', str)])
+    @cmd(name='update', description='Update a schedule by id', optionals=[('file', file_flag)])
     def _update_cmd(self, id, **kwargs):
         """
         Update a schedule from commands
