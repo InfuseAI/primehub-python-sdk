@@ -339,3 +339,14 @@ def has_data_from_stdin():
         return True
     else:
         return False
+
+
+def primehub_load_config(filename):
+    if has_data_from_stdin():
+        return json.loads("".join(sys.stdin.readlines()))
+
+    if filename and os.path.exists(filename):
+        with open(filename, 'r') as fh:
+            return json.load(fh)
+
+    return {}

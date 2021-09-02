@@ -1,13 +1,11 @@
+import json
+import time
 from typing import Iterator
 
-from primehub import Helpful, cmd, Module, has_data_from_stdin
+from primehub import Helpful, cmd, Module, primehub_load_config
 from primehub.utils import resource_not_found, PrimeHubException
-from primehub.utils.permission import ask_for_permission
 from primehub.utils.optionals import toggle_flag
-import time
-import os
-import json
-import sys
+from primehub.utils.permission import ask_for_permission
 
 
 def _error_handler(response):
@@ -197,15 +195,7 @@ class Deployments(Helpful, Module):
         :rtype dict
         :return The detail information of the created deployment
         """
-        config = {}
-        filename = kwargs.get('file', None)
-        if filename and os.path.exists(filename):
-            with open(filename, 'r') as fh:
-                config = json.load(fh)
-
-        if has_data_from_stdin():
-            config = json.loads("".join(sys.stdin.readlines()))
-
+        config = primehub_load_config(filename=kwargs.get('file', None))
         return self.create(config)
 
     def create(self, config):
@@ -266,15 +256,7 @@ class Deployments(Helpful, Module):
         :rtype dict
         :return The detail information of the updated deployment
         """
-        config = {}
-        filename = kwargs.get('file', None)
-        if filename and os.path.exists(filename):
-            with open(filename, 'r') as fh:
-                config = json.load(fh)
-
-        if has_data_from_stdin():
-            config = json.loads("".join(sys.stdin.readlines()))
-
+        config = primehub_load_config(filename=kwargs.get('file', None))
         return self.update(id, config)
 
     def update(self, id, config):

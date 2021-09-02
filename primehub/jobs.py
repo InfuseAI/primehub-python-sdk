@@ -1,11 +1,9 @@
+import json
+import os
+import time
 from typing import Iterator, Any
 
-from primehub import Helpful, cmd, Module, has_data_from_stdin
-import time
-import os
-import json
-import sys
-
+from primehub import Helpful, cmd, Module, primehub_load_config
 from primehub.utils import resource_not_found, PrimeHubException
 from primehub.utils.optionals import toggle_flag
 
@@ -178,15 +176,7 @@ class Jobs(Helpful, Module):
         if kwargs.get('from', None):
             return self.submit_from_schedule(kwargs['from'])
 
-        config = {}
-        filename = kwargs.get('file', None)
-        if filename and os.path.exists(filename):
-            with open(filename, 'r') as fh:
-                config = json.load(fh)
-
-        if has_data_from_stdin():
-            config = json.loads("".join(sys.stdin.readlines()))
-
+        config = primehub_load_config(filename=kwargs.get('file', None))
         if not config:
             invalid_config('Job description is required.')
 
