@@ -1,13 +1,11 @@
+import json
+import time
 from typing import Iterator
 
-from primehub import Helpful, cmd, Module, has_data_from_stdin
+from primehub import Helpful, cmd, Module, primehub_load_config
 from primehub.utils import resource_not_found, PrimeHubException
+from primehub.utils.optionals import toggle_flag, file_flag
 from primehub.utils.permission import ask_for_permission
-from primehub.utils.optionals import toggle_flag
-import time
-import os
-import json
-import sys
 
 
 def _error_handler(response):
@@ -185,9 +183,8 @@ class Deployments(Helpful, Module):
         results = self.request({'where': {'id': id}}, query, _error_handler)
         return results['data']['phDeployment']['history']
 
-    # TODO: add -f
-    @cmd(name='create', description='Create a deployment', optionals=[('file', str)])
-    def create_cmd(self, **kwargs):
+    @cmd(name='create', description='Create a deployment', optionals=[('file', file_flag)])
+    def _create_cmd(self, **kwargs):
         """
         Create a deployment from commands
 
@@ -197,15 +194,7 @@ class Deployments(Helpful, Module):
         :rtype dict
         :return The detail information of the created deployment
         """
-        config = {}
-        filename = kwargs.get('file', None)
-        if filename and os.path.exists(filename):
-            with open(filename, 'r') as fh:
-                config = json.load(fh)
-
-        if has_data_from_stdin():
-            config = json.loads("".join(sys.stdin.readlines()))
-
+        config = primehub_load_config(filename=kwargs.get('file', None))
         return self.create(config)
 
     def create(self, config):
@@ -254,9 +243,8 @@ class Deployments(Helpful, Module):
         if 'instanceType' in config:
             self.primehub.instancetypes.get(config['instanceType'])
 
-    # TODO: add -f
-    @cmd(name='update', description='Update a deployment by id', optionals=[('file', str)])
-    def update_cmd(self, id, **kwargs):
+    @cmd(name='update', description='Update a deployment by id', optionals=[('file', file_flag)])
+    def _update_cmd(self, id, **kwargs):
         """
         Update a deployment from commands
 
@@ -266,15 +254,7 @@ class Deployments(Helpful, Module):
         :rtype dict
         :return The detail information of the updated deployment
         """
-        config = {}
-        filename = kwargs.get('file', None)
-        if filename and os.path.exists(filename):
-            with open(filename, 'r') as fh:
-                config = json.load(fh)
-
-        if has_data_from_stdin():
-            config = json.loads("".join(sys.stdin.readlines()))
-
+        config = primehub_load_config(filename=kwargs.get('file', None))
         return self.update(id, config)
 
     def update(self, id, config):
@@ -419,7 +399,6 @@ class Deployments(Helpful, Module):
         return results['data']['deletePhDeployment']
 
     # TODO: handle invalid pod
-    # TODO: allow fuzzy pod name
     @cmd(name='logs', description='Get deployment logs by id',
          optionals=[('pod', str), ('follow', toggle_flag), ('tail', int)])
     def logs(self, id, **kwargs) -> Iterator[str]:

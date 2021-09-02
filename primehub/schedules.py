@@ -1,11 +1,10 @@
+import json
 from typing import Iterator
 
-from primehub import Helpful, cmd, Module, has_data_from_stdin
+from primehub import Helpful, cmd, Module, primehub_load_config
 from primehub.utils import resource_not_found, PrimeHubException
+from primehub.utils.optionals import file_flag
 from primehub.utils.permission import ask_for_permission
-import os
-import json
-import sys
 
 
 def _error_handler(response):
@@ -174,9 +173,8 @@ class Schedules(Helpful, Module):
         results = self.request({'where': {'id': id}}, query, _error_handler)
         return results['data']['phSchedule']
 
-    # TODO: add -f
-    @cmd(name='create', description='Create a schedule', optionals=[('file', str)])
-    def create_cmd(self, **kwargs):
+    @cmd(name='create', description='Create a schedule', optionals=[('file', file_flag)])
+    def _create_cmd(self, **kwargs):
         """
         Submit a schedule from commands
 
@@ -186,14 +184,7 @@ class Schedules(Helpful, Module):
         :rtype dict
         :return The detail information of the created schedule
         """
-        config = {}
-        filename = kwargs.get('file', None)
-        if filename and os.path.exists(filename):
-            with open(filename, 'r') as fh:
-                config = json.load(fh)
-
-        if has_data_from_stdin():
-            config = json.loads("".join(sys.stdin.readlines()))
+        config = primehub_load_config(filename=kwargs.get('file', None))
 
         if not config:
             invalid_config('Schedule description is required.')
@@ -246,9 +237,8 @@ class Schedules(Helpful, Module):
         results = self.request({'data': config}, query)
         return results['data']['createPhSchedule']
 
-    # TODO: add -f
-    @cmd(name='update', description='Update a schedule by id', optionals=[('file', str)])
-    def update_cmd(self, id, **kwargs):
+    @cmd(name='update', description='Update a schedule by id', optionals=[('file', file_flag)])
+    def _update_cmd(self, id, **kwargs):
         """
         Update a schedule from commands
 
@@ -258,15 +248,7 @@ class Schedules(Helpful, Module):
         :rtype dict
         :return The detail information of the updated schedule
         """
-        config = {}
-        filename = kwargs.get('file', None)
-        if filename and os.path.exists(filename):
-            with open(filename, 'r') as fh:
-                config = json.load(fh)
-
-        if has_data_from_stdin():
-            config = json.loads("".join(sys.stdin.readlines()))
-
+        config = primehub_load_config(filename=kwargs.get('file', None))
         if not config:
             invalid_config('Schedule description is required.')
 

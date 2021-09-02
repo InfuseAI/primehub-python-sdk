@@ -64,7 +64,7 @@ class E2EForBasicFunction(Helpful, Module):
         with open(path, "w") as fh:
             fh.write(json.dumps(job_spec))
 
-        my_job = self.primehub.jobs.submit_cmd(file=path)
+        my_job = self.primehub.jobs._submit_cmd(file=path)
         my_id = my_job['id']
         print("Job ID:", my_job['id'])
 
