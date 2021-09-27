@@ -10,6 +10,8 @@ class TestAskForPermissionMethods(BaseTestCase):
     def test_verify_ask_for_permissions(self):
         commands = __requires_permission__.keys()
         for cmd in commands:
+            if "test" in cmd:
+                continue
             # cmd will look like 'primehub.schedules.delete'
             package_name, command_name, method_name = cmd.split(".")
 
