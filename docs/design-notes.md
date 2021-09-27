@@ -1,4 +1,4 @@
-# Desgin: PrimeHub Python SDK
+# Design: PrimeHub Python SDK
 
 Objective
 
