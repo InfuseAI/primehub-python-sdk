@@ -158,8 +158,14 @@ class Files(Helpful, Module):
         :type recusive: bool
         :param recusive: Copy recursively, it works when a path is a directory.
         """
+
+        def to_group_path(group_name: str):
+            if not group_name:
+                return group_name
+            return group_name.replace('_', '-').lower()
+
         u = urlparse(self.endpoint)
-        endpoint = u._replace(path='/api/files/groups/' + self.group_name).geturl()
+        endpoint = u._replace(path=f'/api/files/groups/{to_group_path(self.group_name)}').geturl()
 
         # start download
         src_dst_list = self._generate_download_list(path, dest, **kwargs)
