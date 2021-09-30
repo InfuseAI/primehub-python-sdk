@@ -401,7 +401,7 @@ class Deployments(Helpful, Module):
     # TODO: handle invalid pod
     @cmd(name='logs', description='Get deployment logs by id',
          optionals=[('pod', str), ('follow', toggle_flag), ('tail', int)])
-    def logs(self, id, **kwargs) -> Iterator[str]:
+    def logs(self, id, **kwargs) -> Iterator[bytes]:
         """
         Get logs of a deployment
 

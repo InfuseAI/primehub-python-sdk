@@ -84,7 +84,7 @@ def wrapper_generator(gen):
     is_type_sent = False
     for x in gen:
         if not is_type_sent:
-            yield isinstance(x, str)
+            yield isinstance(x, (str, bytes))
             is_type_sent = True
         yield x
 
@@ -125,6 +125,8 @@ class Display(Displayable):
         logger.debug('display-single')
         if isinstance(value, str):
             print(value, file=file)
+        elif isinstance(value, bytes):
+            file.write(value.decode())
         else:
             json.dump(value, file)
 
@@ -182,5 +184,7 @@ class HumanFriendlyDisplay(Displayable):
         logger.debug('display-single')
         if isinstance(value, str):
             print(value, file=file)
+        elif isinstance(value, bytes):
+            file.write(value.decode())
         else:
             display_tree_like_format(value, file)

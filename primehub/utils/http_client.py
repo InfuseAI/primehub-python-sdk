@@ -37,7 +37,7 @@ class Client(object):
         except BaseException as e:
             raise RequestException(e)
 
-    def request_logs(self, endpoint, follow, tail) -> Iterator[str]:
+    def request_logs(self, endpoint, follow, tail) -> Iterator[bytes]:
         params = {'follow': 'false'}
         if follow:
             params['follow'] = 'true'
@@ -46,11 +46,8 @@ class Client(object):
         headers = {'authorization': 'Bearer {}'.format(self.primehub_config.api_token)}
 
         with requests.get(endpoint, headers=headers, params=params, stream=follow) as response:
-            if follow:
-                for line in response.iter_lines():
-                    yield line.decode()
-            else:
-                yield response.text
+            for chunk in response.iter_content(chunk_size=8192):
+                yield chunk
 
     def request_file(self, endpoint, dest):
         headers = {'authorization': 'Bearer {}'.format(self.primehub_config.api_token)}

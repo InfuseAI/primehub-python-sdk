@@ -27,4 +27,4 @@ class TestHttpRequestLogs(BaseTestCase):
         count = 0
         for x in g:
             count = count + 1
-        self.assertEqual(1, count, 'get one result when no following')
+        self.assertTrue(count > 1, 'Generator gives lots of lines')
