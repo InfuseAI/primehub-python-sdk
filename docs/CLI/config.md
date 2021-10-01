@@ -8,9 +8,10 @@ Usage:
 Update the settings of PrimeHub SDK
 
 Available Commands:
-  set-endpoint         set endpoint and save to the config file
-  set-group            set group and save to the config file
-  set-token            set token and save to the config file
+  generate-token       Generate Token Flow
+  set-endpoint         Set endpoint and save to the config file
+  set-group            Set group and save to the config file
+  set-token            Set token and save to the config file
 
 Options:
   -h, --help           Show the help
@@ -25,9 +26,24 @@ Global Options:
 ```
 
 
+### generate-token
+
+Generate Token Flow
+
+
+```
+primehub config generate-token <server_url>
+```
+
+* server_url: PrimeHub's URL
+ 
+
+
+
+
 ### set-endpoint
 
-set endpoint and save to the config file
+Set endpoint and save to the config file
 
 
 ```
@@ -42,7 +58,7 @@ primehub config set-endpoint <endpoint>
 
 ### set-group
 
-set group and save to the config file
+Set group and save to the config file
 
 
 ```
@@ -57,7 +73,7 @@ primehub config set-group <group>
 
 ### set-token
 
-set token and save to the config file
+Set token and save to the config file
 
 
 ```
