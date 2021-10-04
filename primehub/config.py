@@ -95,6 +95,13 @@ class Config(Helpful, Module):
         :type server_url: str
         :param server_url: PrimeHub's URL
         """
+
+        print('=' * 100, file=self.primehub.stdout)
+        print('This action will revoke all token you created before.\n'
+              'It could be stopped by leaving blank in the authorization code',
+              file=self.primehub.stdout)
+        print('=' * 100, file=self.primehub.stdout)
+        print('\n', file=self.primehub.stdout)
         flow = OidcAuthenticationFlow(self.primehub)
         flow.generate(_find_oauth_flow_url(server_url))
 
@@ -168,6 +175,9 @@ class OidcAuthenticationFlow:
         print('Enter your authorization code:', file=self.primehub.stdout)
 
         code = input()
+        if not code or not code.strip():
+            print('Stop the process because the blank code', file=self.primehub.stdout)
+            return
 
         exchange_url = f'{api_token_endpoint}/exchange'
         config_from_console = requests.post(exchange_url, dict(code=code)).text
