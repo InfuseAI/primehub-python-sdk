@@ -96,12 +96,6 @@ class Config(Helpful, Module):
         :param server_url: PrimeHub's URL
         """
 
-        print('=' * 100, file=self.primehub.stdout)
-        print('This action will revoke all token you created before.\n'
-              'It could be stopped by leaving blank in the authorization code',
-              file=self.primehub.stdout)
-        print('=' * 100, file=self.primehub.stdout)
-        print('\n', file=self.primehub.stdout)
         flow = OidcAuthenticationFlow(self.primehub)
         flow.generate(_find_oauth_flow_url(server_url))
 
