@@ -137,3 +137,26 @@ configure with a real api server, the group information would be available:
   }
 }
 ```
+
+### Example: generate API Token with OAuth login
+
+```
+primehub config generate-token http://primehub-python-sdk.primehub.io
+```
+
+The commands will guide you how to get an API token, it will show 2 required actions:
+* visit the URL and login with your account and copy the authorization code from the web page
+* paste the authorization code back to the terminal
+
+
+```
+Go to this URL in the browser http://primehub-python-sdk.primehub.io/console/oidc/auth-flow/request
+Enter your authorization code:
+```
+
+When all actions have done, the configuration got updated:
+
+```
+Found old configuration, backup it to /home/phadmin/.primehub/config-20211001161504.json
+PrimeHub SDK Config has been updated: /home/phadmin/.primehub/config.json
+```
