@@ -210,6 +210,7 @@ class PrimeHub(object):
         self.register_command('me', 'Me')
         self.register_command('version', 'Version')
         self.register_command('apptemplates', 'AppTemplate')
+        self.register_command('apps', 'Apps')
 
         # initial
         self._ensure_config_details(config)
