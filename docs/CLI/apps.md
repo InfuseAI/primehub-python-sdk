@@ -206,12 +206,12 @@ instanceTypeSpec:
   memoryLimit:     2
   gpuLimit:        0
 scope:             primehub
-appUrl:            https://qty0712-microk8s.aws.primehub.io/console/apps/code-server-26fcc
+appUrl:            http://primehub-python-sdk.primehub.io/console/apps/code-server-26fcc
 internalAppUrl:    http://app-code-server-26fcc:8080/console/apps/code-server-26fcc
 svcEndpoints:      ['app-code-server-26fcc:8080']
 env:               [{'name': 'key1', 'value': 'value1'}]
 stop:              False
 status:            Ready
 message:           Deployment is ready
-pods:              [{'logEndpoint': 'https://qty0712-microk8s.aws.primehub.io/api/logs/pods/app-code-server-26fcc-765bf579c5-srcft'}]
+pods:              [{'logEndpoint': 'http://primehub-python-sdk.primehub.io/api/logs/pods/app-code-server-26fcc-765bf579c5-srcft'}]
 ```
