@@ -284,7 +284,7 @@ stop:                False
 endpointAccessType:  public
 endpointClients:     []
 status:              Deployed
-endpoint:            https://qty0712-microk8s.aws.primehub.io/deployment/quickstart-iris-cfmnh/api/v1.0/predictions
+endpoint:            http://primehub-python-sdk.primehub.io/deployment/quickstart-iris-cfmnh/api/v1.0/predictions
 availableReplicas:   1
 message:             Deployment is deployed and available now
 pods:                [{'name': 'deploy-quickstart-iris-cfmnh-68889b97cc-8qgvf'}]
@@ -324,7 +324,7 @@ primehub deployments get quickstart-iris-cfmnh --json | jq
   "endpointAccessType": "public",
   "endpointClients": [],
   "status": "Deployed",
-  "endpoint": "https://qty0712-microk8s.aws.primehub.io/deployment/quickstart-iris-cfmnh/api/v1.0/predictions",
+  "endpoint": "http://primehub-python-sdk.primehub.io/deployment/quickstart-iris-cfmnh/api/v1.0/predictions",
   "availableReplicas": 1,
   "message": "Deployment is deployed and available now",
   "pods": [
@@ -360,7 +360,7 @@ stop:                False
 endpointAccessType:  public
 endpointClients:     []
 status:              Deploying
-endpoint:            https://qty0712-microk8s.aws.primehub.io/deployment/quickstart-iris-cfmnh/api/v1.0/predictions
+endpoint:            http://primehub-python-sdk.primehub.io/deployment/quickstart-iris-cfmnh/api/v1.0/predictions
 availableReplicas:   1
 message:             Deployment is being deployed and not available now
 pods:                [{'name': 'deploy-quickstart-iris-cfmnh-68889b97cc-8qgvf'}, {'name': 'deploy-quickstart-iris-cfmnh-68889b97cc-wxzs8'}]
