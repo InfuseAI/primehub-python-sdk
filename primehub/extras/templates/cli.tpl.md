@@ -1,5 +1,5 @@
 
-# Primehub {{command.capitalize()}}
+# {{role_title}}Primehub {{command.capitalize()}}
 
 ```
 {{command_help}}
@@ -12,11 +12,11 @@
 
 {% if item['required_arguments'] %}
 ```
-primehub {{command}} {{item['name']}} {{item['required_arguments_string']}}
+primehub {{role}}{{command}} {{item['name']}} {{item['required_arguments_string']}}
 ```
 {% else %}
 ```
-primehub {{command}} {{item['name']}}
+primehub {{role}}{{command}} {{item['name']}}
 ```
 {% endif %}
 

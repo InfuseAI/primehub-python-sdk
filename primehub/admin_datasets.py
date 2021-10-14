@@ -76,7 +76,7 @@ class AdminDatasets(Helpful, Module):
         :rtype: dict
         :returns: the dataset
         """
-        return self._update_cmd(name, primehub_load_config(filename=kwargs.get('file', None)))
+        return self.update(name, primehub_load_config(filename=kwargs.get('file', None)))
 
     def update(self, name: str, config: dict) -> list:
         """
@@ -120,7 +120,7 @@ class AdminDatasets(Helpful, Module):
             return waring_if_needed(result['data']['updateDataset'], self.primehub.stderr)
         return result
 
-    @cmd(name='upload_secret', description='Regenerate the secret of the upload server',
+    @cmd(name='regen-upload-secret', description='Regenerate the secret of the upload server',
          return_required=True)
     def regenerate_upload_server_secret(self, id):
         """

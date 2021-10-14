@@ -15,9 +15,12 @@ env = Environment(
 )
 
 
-def get_example(command):
+def get_example(command, role=''):
     try:
-        return env.get_template('examples/{}.md'.format(command)).render()
+        if role:
+            return env.get_template('examples/{}/{}.md'.format(role, command)).render()
+        else:
+            return env.get_template('examples/{}.md'.format(command)).render()
     except BaseException:
         pass
     return "TBD: please write example for [{}]".format(command)
@@ -30,20 +33,31 @@ def get_doc_path():
     return p
 
 
-def create_cli_doc_path(name):
-    doc_path = os.path.join(get_doc_path(), 'CLI', name + ".md")
+def create_cli_doc_path(name, role=''):
+    if role:
+        doc_path = os.path.join(get_doc_path(), 'CLI', role, name + ".md")
+    else:
+        doc_path = os.path.join(get_doc_path(), 'CLI', name + ".md")
     os.makedirs(os.path.dirname(doc_path), exist_ok=True)
     return doc_path
 
 
 def generate_command_document(*args, **kwargs):
+    if kwargs['role']:
+        kwargs['role_title'] = f'<{kwargs["role"].upper()}> '
+        kwargs['role'] = f'{kwargs["role"]} '
+
     return env.get_template('cli.tpl.md').render(*args, **kwargs)
 
 
-def generate_help_for_command(sdk: PrimeHub, name):
+def generate_help_for_command(sdk: PrimeHub, name, role=''):
     sdk.stderr = io.StringIO()
     sdk.stdout = io.StringIO()
-    sys.argv = ['primehub', name, '-h']
+
+    if role:
+        sys.argv = ['primehub', role, name, '-h']
+    else:
+        sys.argv = ['primehub', name, '-h']
     try:
         cli_main(sdk=sdk)
     except SystemExit:
@@ -51,11 +65,11 @@ def generate_help_for_command(sdk: PrimeHub, name):
     command_help = sdk.stderr.getvalue()
     actions = find_actions(sdk.commands[name])
     attach_template_information_to_action(actions, name, sdk)
-    document = generate_command_document(command=name, command_help=command_help,
-                                         actions=actions, examples=get_example(name))
+    document = generate_command_document(command=name, command_help=command_help, role=role,
+                                         actions=actions, examples=get_example(name, role))
 
     print("Generate doc", name)
-    p = create_cli_doc_path(name)
+    p = create_cli_doc_path(name, role)
     with open(p, "w") as fh:
         fh.write(document)
 
@@ -104,6 +118,9 @@ def main():
         if k == 'version':
             continue
         generate_help_for_command(sdk, k)
+
+    for k, v in sdk.admin_commands.items():
+        generate_help_for_command(sdk, k, 'admin')
 
 
 if __name__ == '__main__':
