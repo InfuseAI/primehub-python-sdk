@@ -46,6 +46,8 @@ def create_commands(parser, sdk):
         # Create the group parser
         p = parsers[command_group] = create_command_parser(description=target.help_description())
         p.usage = """primehub {} <command>""".format(command_group)
+        if sdk.usage_role != 'user':
+            p.usage = """primehub {} {} <command>""".format(sdk.usage_role, command_group)
 
         for action in find_actions(target):
             name, description = action['name'], action['description']
@@ -190,11 +192,13 @@ def run_action_noargs(sdk, selected_component, sub_parsers, target, args):
 
 
 def main(sdk=None):
-    main_parser = create_command_parser()
-    main_parser.usage = """primehub <command>"""
-
     if not sdk:
         sdk = create_sdk()
+
+    main_parser = create_command_parser()
+    main_parser.usage = """primehub <command>"""
+    if sdk.usage_role != 'user':
+        main_parser.usage = f"""primehub {sdk.usage_role} <command>"""
 
     # enable @ask_for_permission for command-line
     enable_ask_for_permission_feature()
@@ -204,10 +208,20 @@ def main(sdk=None):
     hide_help = False
     helper = None
     exit_normally = False
+    follow_inner_exit_code = False
     try:
         logger.debug('start to parse {}'.format(sys.argv))
         args, remaining_args = main_parser.parse_known_args()
         command_name = args.command
+
+        # switch commands for different roles
+        if command_name == 'admin':
+            sys.argv.remove('admin')
+            sdk.switch_admin_role()
+            follow_inner_exit_code = True
+            main(sdk)
+            return
+
         logger.debug("args: {}".format(args))
         logger.debug("remaining_args: {}".format(remaining_args))
         reconfigure_primehub_config_if_needed(args, sdk)
@@ -257,7 +271,10 @@ def main(sdk=None):
         exit_normally = False
         print(e, file=sdk.stderr)
         sys.exit(1)
-    except SystemExit:
+    except SystemExit as e:
+        if follow_inner_exit_code:
+            sys.exit(e.args[0])
+
         if not hide_help:
             if helper:
                 helper.print_help(file=sdk.stderr)

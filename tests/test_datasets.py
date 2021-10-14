@@ -1,4 +1,4 @@
-from primehub.datasets import validate, validate_creation
+from primehub.admin_datasets import validate, validate_creation
 from primehub.utils import PrimeHubException
 from tests import BaseTestCase
 

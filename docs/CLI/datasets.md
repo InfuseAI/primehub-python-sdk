@@ -8,12 +8,8 @@ Usage:
 Get a dataset or list datasets
 
 Available Commands:
-  create               Create a dataset
-  delete               Delete a dataset by id
   get                  Get a dataset by name
   list                 List datasets
-  update               Update the dataset
-  upload_secret        Regenerate the secret of the upload server
 
 Options:
   -h, --help           Show the help
@@ -26,36 +22,6 @@ Global Options:
   --json               Output the json format (output human-friendly format by default)
 
 ```
-
-
-### create
-
-Create a dataset
-
-
-```
-primehub datasets create
-```
- 
-
-* *(optional)* file
-
-
-
-
-### delete
-
-Delete a dataset by id
-
-
-```
-primehub datasets delete <id>
-```
-
-* id: The dataset id
- 
-
-
 
 
 ### get
@@ -81,36 +47,6 @@ List datasets
 ```
 primehub datasets list
 ```
- 
-
-
-
-
-### update
-
-Update the dataset
-
-
-```
-primehub datasets update <name>
-```
-
-* name
- 
-
-
-
-
-### upload_secret
-
-Regenerate the secret of the upload server
-
-
-```
-primehub datasets upload_secret <id>
-```
-
-* id: The dataset id or name
  
 
 
