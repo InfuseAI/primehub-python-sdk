@@ -40,10 +40,8 @@ class Datasets(Helpful, Module, GroupResourceOperation):
     def get(self, name) -> Optional[dict]:
         """
         Get a dataset from the current group
-
         :type name: str
         :param name: the name of a dataset
-
         :rtype: Optional[dict]
         :returns: a dataset
         """

@@ -192,7 +192,9 @@ class PrimeHub(object):
     def __init__(self, config: PrimeHubConfig):
         self.primehub_config = config
         self.json_output = True
+        self.usage_role = 'user'
         self.commands: Dict[str, Module] = dict()
+        self.admin_commands: Dict[str, Module] = dict()
         self._stderr = sys.stderr
         self._stdout = sys.stdout
 
@@ -211,6 +213,9 @@ class PrimeHub(object):
         self.register_command('version', 'Version')
         self.register_command('apptemplates', 'AppTemplate')
         self.register_command('apps', 'Apps')
+
+        # register admin commands
+        self.register_admin_command('admin_datasets', 'AdminDatasets', 'datasets')
 
         # initial
         self._ensure_config_details(config)
@@ -236,18 +241,41 @@ class PrimeHub(object):
     def request_file(self, endpint: str, dest: str):
         return Client(self.primehub_config).request_file(endpint, dest)
 
-    def register_command(self, module_name: str, command_class: Union[str, Callable], command_name=None):
-        if not command_name:
-            command_name = module_name
-
+    def _find_command_class(self, command_class, module_name):
         # create command instance
         if isinstance(command_class, str):
             clazz = importlib.import_module('primehub.' + module_name).__getattribute__(command_class)
         else:
             clazz = command_class
+        return clazz
+
+    def register_command(self, module_name: str, command_class: Union[str, Callable], command_name=None):
+        if not command_name:
+            command_name = module_name
+
+        clazz = self._find_command_class(command_class, module_name)
 
         # register to the commands table
         self.commands[command_name] = clazz(self)
+
+    def register_admin_command(self, module_name: str, command_class: Union[str, Callable], command_name=None):
+        if not command_name:
+            command_name = module_name
+
+        clazz = self._find_command_class(command_class, module_name)
+
+        # register to the commands table
+        self.admin_commands[command_name] = clazz(self)
+
+    def switch_admin_role(self):
+        self.usage_role = 'admin'
+        self.commands = self.admin_commands
+
+    @property
+    def admin(self):
+        admin_primehub = PrimeHub(self.primehub_config)
+        admin_primehub.commands = self.admin_commands
+        return admin_primehub
 
     def __getattr__(self, item):
         if item in self.commands:
