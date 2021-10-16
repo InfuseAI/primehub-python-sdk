@@ -3,11 +3,11 @@ import importlib
 import json
 import os
 import sys
-from typing import Union, Callable, Dict, Any
+from typing import Any, Callable, Dict, Union
 
-from primehub.utils import group_required, create_logger
+from primehub.utils import create_logger, group_required
 from primehub.utils.decorators import cmd  # noqa: F401
-from primehub.utils.display import Display, HumanFriendlyDisplay, Displayable
+from primehub.utils.display import Display, Displayable, HumanFriendlyDisplay
 from primehub.utils.http_client import Client
 
 logger = create_logger('primehub-config')
@@ -216,6 +216,7 @@ class PrimeHub(object):
 
         # register admin commands
         self.register_admin_command('admin_datasets', 'AdminDatasets', 'datasets')
+        self.register_admin_command('admin_images', 'AdminImages', 'images')
 
         # initial
         self._ensure_config_details(config)
@@ -362,8 +363,8 @@ def has_data_from_stdin():
 
     :return: True if there are data from stdin, otherwise False
     """
-    import sys
     import select
+    import sys
 
     if select.select([sys.stdin, ], [], [], 0.0)[0]:
         return True
