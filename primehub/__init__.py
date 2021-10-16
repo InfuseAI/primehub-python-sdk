@@ -217,6 +217,7 @@ class PrimeHub(object):
         # register admin commands
         self.register_admin_command('admin_datasets', 'AdminDatasets', 'datasets')
         self.register_admin_command('admin_images', 'AdminImages', 'images')
+        self.register_admin_command('admin_users', 'AdminUsers', 'users')
 
         # initial
         self._ensure_config_details(config)
