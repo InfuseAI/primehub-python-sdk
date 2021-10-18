@@ -1,8 +1,8 @@
 import json
 import re
-from typing import Optional, Union, Any, Dict
+from typing import Any, Dict, Optional, Union
 
-from primehub import Helpful, cmd, Module, primehub_load_config
+from primehub import Helpful, Module, cmd, primehub_load_config
 from primehub.utils import PrimeHubException
 from primehub.utils.optionals import file_flag
 
@@ -150,7 +150,7 @@ class AdminDatasets(Helpful, Module):
             return waring_if_needed(result['data']['regenerateUploadServerSecret'], self.primehub.stderr)
         return result
 
-    @cmd(name='list', description='Delete a dataset by id', return_required=True, optionals=[('page', int)])
+    @cmd(name='list', description='List a dataset by id', return_required=True, optionals=[('page', int)])
     def list(self, **kwargs):
         query = """
         query GetDatasets($page: Int, $orderBy: DatasetOrderByInput, $where: DatasetWhereInput) {
