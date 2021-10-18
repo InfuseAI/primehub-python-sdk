@@ -213,6 +213,7 @@ class PrimeHub(object):
         self.register_command('version', 'Version')
         self.register_command('apptemplates', 'AppTemplate')
         self.register_command('apps', 'Apps')
+        self.register_command('models', 'Models')
 
         # register admin commands
         self.register_admin_command('admin_datasets', 'AdminDatasets', 'datasets')
