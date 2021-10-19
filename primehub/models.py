@@ -70,7 +70,6 @@ class Models(Helpful, Module):
           }
           modelVersions(where: {group: $group, name: $name}) {
             ...ModelVersionInfo
-            run
           }
         }
 
@@ -105,9 +104,66 @@ class Models(Helpful, Module):
         results = results['data']
         return results
 
+    @cmd(name='list-versions', description='List versions of the model', return_required=True)
+    def list_versions(self, model: str) -> dict:
+        query = """
+        query QueryModel($group: String!, $name: String!) {
+          modelVersions(where: {group: $group, name: $name}) {
+            ...ModelVersionInfo
+          }
+        }
+
+        fragment ModelVersionInfo on ModelVersion {
+          name
+          version
+          creationTimestamp
+          lastUpdatedTimestamp
+          deployedBy
+        }
+        """
+
+        results = self.request({'group': self.group_name, 'name': model}, query)
+        if 'data' not in results:
+            return results
+        results = results['data']
+        for m in results['modelVersions']:
+            m['creationTimestamp'] = timestamp_to_isoformat(m['creationTimestamp'])
+            m['lastUpdatedTimestamp'] = timestamp_to_isoformat(m['lastUpdatedTimestamp'])
+            yield m
+        return results
+
     @cmd(name='get-version', description='Get a version of the model', return_required=True)
     def get_version(self, model: str, version: str) -> dict:
-        return {}
+        query = """
+        query QueryModelVersion($group: String!, $name: String!, $version: String!) {
+          mlflow(where: {group: $group}) {
+            ...MLflowSettingInfo
+          }
+          modelVersion(where: {group: $group, name: $name, version: $version}) {
+            ...ModelVersionInfo
+            run
+          }
+        }
+
+        fragment MLflowSettingInfo on MLflowSetting {
+          trackingUri
+          uiUrl
+        }
+
+        fragment ModelVersionInfo on ModelVersion {
+          name
+          version
+          creationTimestamp
+          lastUpdatedTimestamp
+          deployedBy
+        }
+        """
+
+        results = self.request({'group': self.group_name, 'name': model, 'version': version}, query)
+        if 'data' not in results:
+            return results
+        results = results['data']['modelVersion']
+        return results
 
     def help_description(self):
         return "Manage models"
@@ -116,29 +172,51 @@ class Models(Helpful, Module):
         from io import StringIO
 
         if action['func'] == 'get' and self.get_display().name != 'json':
-            model = value
+            value['model']['creationTimestamp'] = timestamp_to_isoformat(value['model']['creationTimestamp'])
+            value['model']['lastUpdatedTimestamp'] = timestamp_to_isoformat(value['model']['lastUpdatedTimestamp'])
+
             versions = value.pop('modelVersions')
-            self.get_display().display(action, model, self.primehub.stdout)
-            self.get_display().display(action, "models:", self.primehub.stdout)
-            for versioned in versions:
-                data = versioned['run'].pop('data')
-                display_tree_like_format(versioned, self.primehub.stdout, 0, 2)
+            self.get_display().display(action, value, self.primehub.stdout)
+            self.get_display().display(action, "versions:", self.primehub.stdout)
+            for version in versions:
+                version['creationTimestamp'] = timestamp_to_isoformat(version['creationTimestamp'])
+                version['lastUpdatedTimestamp'] = timestamp_to_isoformat(version['lastUpdatedTimestamp'])
 
-                # print metrics table
-                self.get_display().display(action, "    metrics:", self.primehub.stdout)
-                metrics_io = StringIO()
-                self.get_display().display(action, data['metrics'], metrics_io)
-                self.get_display().display(action,
-                                           textwrap.indent(metrics_io.getvalue().strip(), ' ' * 6),
-                                           self.primehub.stdout)
+                self.get_display().display(action, "  -", self.primehub.stdout)
+                display_tree_like_format(version, self.primehub.stdout, 0, 2)
 
-                # print params table
-                self.get_display().display(action, "    params:", self.primehub.stdout)
-                s = StringIO()
-                self.get_display().display(action, data['params'], s)
-                self.get_display().display(action,
-                                           textwrap.indent(s.getvalue().strip(), ' ' * 6),
-                                           self.primehub.stdout)
+        elif action['func'] == 'get_version' and self.get_display().name != 'json':
+            version = value
+            version['creationTimestamp'] = timestamp_to_isoformat(version['creationTimestamp'])
+            version['lastUpdatedTimestamp'] = timestamp_to_isoformat(version['lastUpdatedTimestamp'])
+
+            run = value.pop('run')
+            run['info']['startTime'] = timestamp_to_isoformat(run['info']['startTime'])
+            run['info']['endTime'] = timestamp_to_isoformat(run['info']['endTime'])
+
+            data = run.pop('data')
+            self.get_display().display(action, version, self.primehub.stdout)
+            self.get_display().display(action, "run:", self.primehub.stdout)
+            display_tree_like_format(run, self.primehub.stdout, 0, 2)
+            self.get_display().display(action, "  data:", self.primehub.stdout)
+
+            # print metrics table
+            for metric in data['metrics']:
+                metric['timestamp'] = timestamp_to_isoformat(metric['timestamp'])
+            self.get_display().display(action, "    metrics:", self.primehub.stdout)
+            metrics_io = StringIO()
+            self.get_display().display(action, data['metrics'], metrics_io)
+            self.get_display().display(action,
+                                       textwrap.indent(metrics_io.getvalue().strip(), ' ' * 6),
+                                       self.primehub.stdout)
+
+            # print params table
+            self.get_display().display(action, "    params:", self.primehub.stdout)
+            s = StringIO()
+            self.get_display().display(action, data['params'], s)
+            self.get_display().display(action,
+                                       textwrap.indent(s.getvalue().strip(), ' ' * 6),
+                                       self.primehub.stdout)
 
         else:
             super(Models, self).display(action, value)
