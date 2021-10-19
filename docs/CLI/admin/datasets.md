@@ -11,7 +11,7 @@ Available Commands:
   create               Create a dataset
   delete               Delete a dataset by id
   get                  Get a dataset by name
-  list                 Delete a dataset by id
+  list                 List a dataset by id
   regen-upload-secret  Regenerate the secret of the upload server
   update               Update the dataset
 
@@ -75,7 +75,7 @@ primehub admin datasets get <name>
 
 ### list
 
-Delete a dataset by id
+List a dataset by id
 
 
 ```

@@ -1,10 +1,10 @@
 import json
-import re
-from typing import Any, Dict, Optional, Union
+from typing import Optional
 
 from primehub import Helpful, Module, cmd, primehub_load_config
 from primehub.utils import PrimeHubException
 from primehub.utils.optionals import file_flag
+from primehub.utils.validator import validate_name, validate_pv_groups
 
 
 def waring_if_needed(data: dict, stderr):
@@ -283,19 +283,9 @@ def invalid_config(message: str):
 def validate(payload: dict, for_update=False):
     # check required fields
     if not for_update:
-        if 'name' not in payload:
-            raise PrimeHubException('name is required')
+        validate_name(payload)
         if 'type' not in payload:
             raise PrimeHubException('type is required')
-
-        matched: Union[str, Any, None] = re.match(
-            r'^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*',
-            payload.get('name'))
-
-        # check formats
-        if not matched:
-            raise PrimeHubException("[name] should be lower case alphanumeric characters, '-' or '.', "
-                                    "and must start and end with an alphanumeric character.")
 
         # check type values
         valid_types = ['pv', 'nfs', 'hostPath', 'git', 'env']
@@ -308,23 +298,7 @@ def validate(payload: dict, for_update=False):
             raise PrimeHubException(f'[enableUploadServer] only can use with should be one of {writable_types} types')
 
     # check groups format
-    if 'groups' in payload:
-        groups: Optional[Dict[Any, Any]] = payload.get('groups')
-        if groups:
-            for g in groups.get('connect', []):
-                if not isinstance(g, dict):
-                    raise PrimeHubException('group connect should be a pair {id, writable}')
-                if 'id' in g and 'writable' in g:
-                    continue
-                raise PrimeHubException('group connect should be a pair {id, writable}')
-
-            for g in groups.get('disconnect', []):
-                if not isinstance(g, dict):
-                    raise PrimeHubException('disconnect connect should be an entry {id}')
-                if 'id' in g and len(g) == 1:
-                    continue
-                raise PrimeHubException('disconnect connect should be an entry {id}')
-
+    validate_pv_groups(payload)
     return payload
 
 
