@@ -59,7 +59,7 @@ class Models(Helpful, Module):
         return results
 
     @cmd(name='get', description='Get the model', return_required=True)
-    def get(self, name):
+    def get(self, name) -> dict:
         query = """
         query QueryModel($group: String!, $name: String!) {
           mlflow(where: {group: $group}) {
@@ -105,7 +105,7 @@ class Models(Helpful, Module):
         return results
 
     @cmd(name='list-versions', description='List versions of the model', return_required=True)
-    def list_versions(self, model: str) -> dict:
+    def list_versions(self, model: str) -> Iterator:
         query = """
         query QueryModel($group: String!, $name: String!) {
           modelVersions(where: {group: $group, name: $name}) {
