@@ -14,7 +14,7 @@ def timestamp_to_isoformat(timestamp):
 class Models(Helpful, Module):
 
     @cmd(name='list', description='List models', return_required=True)
-    def list(self) -> list:
+    def list(self) -> Iterator:
         """
         List models
 
@@ -115,7 +115,7 @@ class Models(Helpful, Module):
         return results
 
     @cmd(name='list-versions', description='List versions of the model', return_required=True)
-    def list_versions(self, model: str) -> list:
+    def list_versions(self, model: str) -> Iterator:
         """
         List versions of the model
 
