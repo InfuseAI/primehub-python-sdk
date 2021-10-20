@@ -198,6 +198,26 @@ class Models(Helpful, Module):
         results = results['data']['modelVersion']
         return results
 
+    @cmd(name='deploy', description='Deploy the model version to the speific deployment', return_required=True)
+    def deploy(self, model: str, version: str, deploy_id: str) -> dict:
+        """
+        Deploy the model version to the speific deployment
+
+        :type model: str
+        :param model: The model name
+
+        :type version: str
+        :param version: Verson number
+
+        :type deploy_id: str
+        :param deploy_id: Deployment id
+
+        :rtype: dict
+        :return: The detail information of the updated deployment
+        """
+
+        return self.primehub.deployments.update(deploy_id, {'modelURI': f'models:/{model}/{version}'})
+
     def help_description(self):
         return "Manage models"
 
