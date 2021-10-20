@@ -61,7 +61,7 @@ class Models(Helpful, Module):
     @cmd(name='get', description='Get the model', return_required=True)
     def get(self, name: str) -> dict:
         """
-        Get model information
+        Get the model
 
         :type name: str
         :param name: The model name
@@ -117,7 +117,7 @@ class Models(Helpful, Module):
     @cmd(name='list-versions', description='List versions of the model', return_required=True)
     def list_versions(self, model: str) -> Iterator:
         """
-        List model versions
+        List versions of the model
 
         :type model: str
         :param model: The model name
@@ -155,7 +155,7 @@ class Models(Helpful, Module):
     @cmd(name='get-version', description='Get a version of the model', return_required=True)
     def get_version(self, model: str, version: str) -> dict:
         """
-        Get model version information
+        Get a version of the model
 
         :type model: str
         :param model: The model name
