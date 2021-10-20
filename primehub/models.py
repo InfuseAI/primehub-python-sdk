@@ -59,7 +59,17 @@ class Models(Helpful, Module):
         return results
 
     @cmd(name='get', description='Get the model', return_required=True)
-    def get(self, name) -> dict:
+    def get(self, name: str) -> dict:
+        """
+        Get model information
+
+        :type name: str
+        :param name: The model name
+
+        :rtype: dict
+        :return: The detail information of a model
+        """
+
         query = """
         query QueryModel($group: String!, $name: String!) {
           mlflow(where: {group: $group}) {
@@ -106,6 +116,16 @@ class Models(Helpful, Module):
 
     @cmd(name='list-versions', description='List versions of the model', return_required=True)
     def list_versions(self, model: str) -> Iterator:
+        """
+        List model versions
+
+        :type model: str
+        :param model: The model name
+
+        :rtype: Iterator
+        :returns: All versions of a model
+        """
+
         query = """
         query QueryModel($group: String!, $name: String!) {
           modelVersions(where: {group: $group, name: $name}) {
@@ -134,6 +154,19 @@ class Models(Helpful, Module):
 
     @cmd(name='get-version', description='Get a version of the model', return_required=True)
     def get_version(self, model: str, version: str) -> dict:
+        """
+        Get model version information
+
+        :type model: str
+        :param model: The model name
+
+        :type version: str
+        :param version: Verson number
+
+        :rtype: dict
+        :return: The detail information of a model version
+        """
+
         query = """
         query QueryModelVersion($group: String!, $name: String!, $version: String!) {
           mlflow(where: {group: $group}) {
