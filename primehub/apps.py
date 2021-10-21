@@ -190,6 +190,9 @@ class Apps(Helpful, Module):
         variables = {'where': {'groupName_in': [self.group_name]}}
         results = self.request({'first': page_size, **variables}, _query_ph_applications)
 
+        if 'data' not in results:
+            return results
+
         while True:
             for e in results['data']['phApplicationsConnection']['edges']:
                 yield e['node']
