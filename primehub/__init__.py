@@ -218,6 +218,7 @@ class PrimeHub(object):
         # register admin commands
         self.register_admin_command('admin_datasets', 'AdminDatasets', 'datasets')
         self.register_admin_command('admin_instancetypes', 'AdminInstanceTypes', 'instancetypes')
+        self.register_admin_command('admin_users', 'AdminUsers', 'users')
 
         # initial
         self._ensure_config_details(config)
@@ -310,20 +311,9 @@ class PrimeHub(object):
             return False
         return True
 
-
-class Module(object):
-
-    def __init__(self, primehub: PrimeHub, **kwargs):
-        self.primehub = primehub
-
-        # attach request method
-        self.request = primehub.request
-        self.request_logs = primehub.request_logs
-        self.request_file = primehub.request_file
-
     @property
     def current_group(self) -> dict:
-        g = self.primehub.primehub_config.current_group
+        g = self.primehub_config.current_group
         if not g:
             group_required()
         if not g.get('id', None):
@@ -337,6 +327,29 @@ class Module(object):
     @property
     def group_name(self) -> str:
         return self.current_group['name']
+
+
+class Module(object):
+
+    def __init__(self, primehub: PrimeHub, **kwargs):
+        self.primehub = primehub
+
+        # attach request method
+        self.request = primehub.request
+        self.request_logs = primehub.request_logs
+        self.request_file = primehub.request_file
+
+    @property
+    def current_group(self) -> dict:
+        return self.primehub.current_group
+
+    @property
+    def group_id(self) -> str:
+        return self.primehub.group_id
+
+    @property
+    def group_name(self) -> str:
+        return self.primehub.group_name
 
     @property
     def endpoint(self) -> str:

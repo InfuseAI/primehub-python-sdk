@@ -21,11 +21,11 @@ class CliInformation(Helpful, Module):
   Name: %(name)s
   Display Name: %(displayName)s
   Group Quota:
-    CPU_LIMIT_ERROR: %(projectQuotaCpu)s
+    CPU: %(projectQuotaCpu)s
     GPU: %(projectQuotaGpu)s
     Memory: %(projectQuotaMemory)s
   User Quota:
-    CPU_LIMIT_ERROR: %(quotaCpu)s
+    CPU: %(quotaCpu)s
     GPU: %(quotaGpu)s
     Memory: %(quotaMemory)s
             """ % current_group
