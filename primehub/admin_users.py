@@ -3,7 +3,7 @@ import re
 from typing import Iterator, Union, Any
 
 from primehub import Helpful, Module, cmd, primehub_load_config
-from primehub.utils import PrimeHubException, resource_not_found
+from primehub.utils import PrimeHubException
 from primehub.utils.optionals import file_flag, toggle_flag
 from primehub.utils.validator import validate_groups
 
@@ -11,18 +11,6 @@ EMAIL_FORMAT_ERROR = 'Please fill a valid email address format.'
 
 USERNAME_FORMAT_ERROR = r'''[username] Only lower case alphanumeric characters, '-', '.', '''
 USERNAME_FORMAT_ERROR += r'''and underscores ("_") are allowed, and must start with a letter or numeric.'''
-
-
-def _error_handler(response):
-    import re
-
-    if 'errors' in response:
-        message = [x for x in response['errors'] if 'message' in x]
-        if message:
-            message = message[0]['message']
-            result = re.findall(r'instancetypes.primehub.io "([^"]+)" not found', message)
-            if result:
-                resource_not_found('instancetypes', result[0], 'id')
 
 
 def invalid_config(message: str):
@@ -110,7 +98,6 @@ class AdminUsers(Helpful, Module):
                 firstName
                 lastName
                 enabled
-                totp
                 isAdmin
               }
             }
@@ -227,7 +214,7 @@ class AdminUsers(Helpful, Module):
         }
         """
 
-        results = self.request({'where': {'id': id}, 'payload': config}, query, _error_handler)
+        results = self.request({'where': {'id': id}, 'payload': config}, query)
         if 'data' not in results:
             return results
 
@@ -253,7 +240,6 @@ class AdminUsers(Helpful, Module):
             firstName
             lastName
             enabled
-            totp
             isAdmin
             volumeCapacity
             groups {
