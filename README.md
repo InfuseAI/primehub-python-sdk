@@ -11,6 +11,12 @@ Assuming that you have Python, you can install the library using pip:
 $ pip install primehub-python-sdk
 ```
 
+Or trying the latest from our source code:
+
+```
+$ pip install git+https://github.com/InfuseAI/primehub-python-sdk.git@main
+```
+
 ## Using CLI
 
 After installing PrimeHub Python SDK
