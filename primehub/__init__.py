@@ -214,6 +214,7 @@ class PrimeHub(object):
         self.register_command('apptemplates', 'AppTemplate')
         self.register_command('apps', 'Apps')
         self.register_command('models', 'Models')
+        self.register_dummy_command('admin', 'Commands for system administrator')
 
         # register admin commands
         self.register_admin_command('admin_datasets', 'AdminDatasets', 'datasets')
@@ -260,6 +261,11 @@ class PrimeHub(object):
 
         # register to the commands table
         self.commands[command_name] = clazz(self)
+
+    def register_dummy_command(self, command_name, command_help):
+
+        # register to the commands table
+        self.commands[command_name] = Dummy(self, command_help)
 
     def register_admin_command(self, module_name: str, command_class: Union[str, Callable], command_name=None):
         if not command_name:
@@ -369,6 +375,20 @@ class Module(object):
 
     def display(self, action: dict, value: Any):
         self.get_display().display(action, value, self.primehub.stdout)
+
+
+class Dummy(Helpful, Module):
+    """
+    Dummy subcommand
+    """
+    description = None
+
+    def __init__(self, primehub: PrimeHub, description):
+        super(Dummy, self).__init__(primehub)
+        self.description = description
+
+    def help_description(self):
+        return self.description
 
 
 def has_data_from_stdin():

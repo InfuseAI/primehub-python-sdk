@@ -70,6 +70,8 @@ class TestDocumentation(BaseTestCase):
             # skip version command
             if command == 'version':
                 continue
+            if command == 'admin':
+                continue
 
             notebook, cli, cli_example = generate_doc_paths(command)
 
