@@ -390,6 +390,7 @@ class Dummy(Helpful, Module):
     def help_description(self):
         return self.description
 
+
 def has_data_from_stdin():
     """
     Check if any data comes from stdin.
