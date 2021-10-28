@@ -294,52 +294,51 @@ class Apps(Helpful, Module):
 
         query = """
         mutation StartPhApplication($where: PhApplicationWhereUniqueInput!) {
-            startPhApplication(where: $where) {
-              ...PhApplicationInfo
-            }
+          startPhApplication(where: $where) {
+            ...PhApplicationInfo
           }
-
-          fragment PhApplicationInfo on PhApplication {
-            id
+        }
+        fragment PhApplicationInfo on PhApplication {
+          id
+          displayName
+          appVersion
+          appName
+          appIcon
+          appDefaultEnv {
+            name
+            defaultValue
+            optional
+            description
+          }
+          appTemplate {
+            name
+            docLink
+            description
+          }
+          groupName
+          instanceType
+          instanceTypeSpec {
+            name
             displayName
-            appVersion
-            appName
-            appIcon
-            appDefaultEnv {
-              name
-              defaultValue
-              optional
-              description
-            }
-            appTemplate {
-              name
-              docLink
-              description
-            }
-            groupName
-            instanceType
-            instanceTypeSpec {
-              name
-              displayName
-              cpuLimit
-              memoryLimit
-              gpuLimit
-            }
-            scope
-            appUrl
-            internalAppUrl
-            svcEndpoints
-            env {
-              name
-              value
-            }
-            stop
-            status
-            message
-            pods {
-              logEndpoint
-            }
+            cpuLimit
+            memoryLimit
+            gpuLimit
           }
+          scope
+          appUrl
+          internalAppUrl
+          svcEndpoints
+          env {
+            name
+            value
+          }
+          stop
+          status
+          message
+          pods {
+            logEndpoint
+          }
+        }
         """
         results = self.request({'where': {'id': id}}, query)
         if 'data' in results and 'startPhApplication' in results['data']:

@@ -24,10 +24,10 @@ class Models(Helpful, Module):
 
         query = """
         query QueryModels($group: String!) {
-          mlflow(where: {group: $group}) {
+          mlflow(where: { group: $group }) {
             ...MLflowSettingInfo
           }
-          models(where: {group: $group}) {
+          models(where: { group: $group }) {
             ...ModelInfo
           }
         }
@@ -72,22 +72,20 @@ class Models(Helpful, Module):
 
         query = """
         query QueryModel($group: String!, $name: String!) {
-          mlflow(where: {group: $group}) {
+          mlflow(where: { group: $group }) {
             ...MLflowSettingInfo
           }
-          model(where: {group: $group, name: $name}) {
+          model(where: { group: $group, name: $name }) {
             ...ModelInfo
           }
-          modelVersions(where: {group: $group, name: $name}) {
+          modelVersions(where: { group: $group, name: $name }) {
             ...ModelVersionInfo
           }
         }
-
         fragment MLflowSettingInfo on MLflowSetting {
           trackingUri
           uiUrl
         }
-
         fragment ModelInfo on Model {
           name
           creationTimestamp
@@ -98,7 +96,6 @@ class Models(Helpful, Module):
             version
           }
         }
-
         fragment ModelVersionInfo on ModelVersion {
           name
           version
@@ -128,11 +125,10 @@ class Models(Helpful, Module):
 
         query = """
         query QueryModel($group: String!, $name: String!) {
-          modelVersions(where: {group: $group, name: $name}) {
+          modelVersions(where: { group: $group, name: $name }) {
             ...ModelVersionInfo
           }
         }
-
         fragment ModelVersionInfo on ModelVersion {
           name
           version
@@ -169,20 +165,18 @@ class Models(Helpful, Module):
 
         query = """
         query QueryModelVersion($group: String!, $name: String!, $version: String!) {
-          mlflow(where: {group: $group}) {
+          mlflow(where: { group: $group }) {
             ...MLflowSettingInfo
           }
-          modelVersion(where: {group: $group, name: $name, version: $version}) {
+          modelVersion(where: { group: $group, name: $name, version: $version }) {
             ...ModelVersionInfo
             run
           }
         }
-
         fragment MLflowSettingInfo on MLflowSetting {
           trackingUri
           uiUrl
         }
-
         fragment ModelVersionInfo on ModelVersion {
           name
           version

@@ -121,8 +121,8 @@ class Files(Helpful, Module):
         :return The detail information of files in the path
         """
         query = """
-        query files($where: StoreFileWhereInput!, , $options: StoreFileListOptionInput) {
-          files (where: $where, options: $options) {
+        query files($where: StoreFileWhereInput!, $options: StoreFileListOptionInput) {
+          files(where: $where, options: $options) {
             phfsPrefix
             items {
               name

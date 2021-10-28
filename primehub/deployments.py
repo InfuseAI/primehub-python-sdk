@@ -78,7 +78,7 @@ class Deployments(Helpful, Module):
         :return The list of deployments
         """
         query = """
-        query($where: PhDeploymentWhereInput) {
+        query ($where: PhDeploymentWhereInput) {
           phDeployments(where: $where) {
             id
             name
@@ -118,7 +118,7 @@ class Deployments(Helpful, Module):
         """
         query = """
         query ($where: PhDeploymentWhereUniqueInput!) {
-          phDeployment (where: $where) {
+          phDeployment(where: $where) {
             id
             name
             modelImage
@@ -157,7 +157,7 @@ class Deployments(Helpful, Module):
         """
         query = """
         query ($where: PhDeploymentWhereUniqueInput!) {
-          phDeployment (where: $where) {
+          phDeployment(where: $where) {
             history {
               time
               deployment {
@@ -271,7 +271,10 @@ class Deployments(Helpful, Module):
         :return The detail information of the updated deployment
         """
         query = """
-        mutation ($data: PhDeploymentUpdateInput!, $where: PhDeploymentWhereUniqueInput!) {
+        mutation (
+          $data: PhDeploymentUpdateInput!
+          $where: PhDeploymentWhereUniqueInput!
+        ) {
           updatePhDeployment(data: $data, where: $where) {
             id
             name
@@ -313,8 +316,8 @@ class Deployments(Helpful, Module):
         :return The detail information of the started deployment
         """
         query = """
-        mutation ($where:PhDeploymentWhereUniqueInput!) {
-          deployPhDeployment (where: $where) {
+        mutation ($where: PhDeploymentWhereUniqueInput!) {
+          deployPhDeployment(where: $where) {
             id
             name
             modelImage
@@ -352,8 +355,8 @@ class Deployments(Helpful, Module):
         :return The detail information of the stopped deployment
         """
         query = """
-        mutation ($where:PhDeploymentWhereUniqueInput!) {
-          stopPhDeployment (where: $where) {
+        mutation ($where: PhDeploymentWhereUniqueInput!) {
+          stopPhDeployment(where: $where) {
             id
             name
             modelImage
@@ -422,7 +425,7 @@ class Deployments(Helpful, Module):
         """
         query = """
         query ($where: PhDeploymentWhereUniqueInput!) {
-          phDeployment (where: $where) {
+          phDeployment(where: $where) {
             pods {
               name
               phase
@@ -457,7 +460,7 @@ class Deployments(Helpful, Module):
         """
         query = """
         query ($where: PhDeploymentWhereUniqueInput!) {
-          phDeployment (where: $where) {
+          phDeployment(where: $where) {
             stop
             status
           }

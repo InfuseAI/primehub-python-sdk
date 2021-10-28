@@ -96,7 +96,10 @@ class AdminInstanceTypes(Helpful, Module):
         self._valid_update(config, id)
 
         query = """
-        mutation UpdateInstanceTypeMutation($payload: InstanceTypeUpdateInput!, $where: InstanceTypeWhereUniqueInput!) {
+        mutation UpdateInstanceTypeMutation(
+          $payload: InstanceTypeUpdateInput!
+          $where: InstanceTypeWhereUniqueInput!
+        ) {
           updateInstanceType(data: $payload, where: $where) {
             id
             global
@@ -234,7 +237,11 @@ class AdminInstanceTypes(Helpful, Module):
         :return instance type iterator
         """
         query = """
-        query InstanceTypesQuery($page: Int, $where: InstanceTypeWhereInput, $orderBy: InstanceTypeOrderByInput) {
+        query InstanceTypesQuery(
+          $page: Int
+          $where: InstanceTypeWhereInput
+          $orderBy: InstanceTypeOrderByInput
+        ) {
           instanceTypesConnection(page: $page, where: $where, orderBy: $orderBy) {
             edges {
               cursor
@@ -249,7 +256,6 @@ class AdminInstanceTypes(Helpful, Module):
             }
           }
         }
-
         fragment InstanceTypeInfo on InstanceType {
           id
           name
