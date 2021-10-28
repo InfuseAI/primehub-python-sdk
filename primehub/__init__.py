@@ -217,6 +217,7 @@ class PrimeHub(object):
         self.register_dummy_command('admin', 'Commands for system administrator')
 
         # register admin commands
+        self.register_admin_command('admin_images', 'AdminImages', 'images')
         self.register_admin_command('admin_datasets', 'AdminDatasets', 'datasets')
         self.register_admin_command('admin_instancetypes', 'AdminInstanceTypes', 'instancetypes')
         self.register_admin_command('admin_users', 'AdminUsers', 'users')
