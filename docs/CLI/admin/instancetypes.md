@@ -39,8 +39,6 @@ primehub admin instancetypes create
 
 * *(optional)* file: The file path of the configurations
 
-* *(optional)* from
-
 
 
 

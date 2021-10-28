@@ -139,7 +139,7 @@ class AdminUsers(Helpful, Module):
             else:
                 break
 
-    @cmd(name='create', description='Create a user', optionals=[('file', file_flag), ('from', str)])
+    @cmd(name='create', description='Create a user', optionals=[('file', file_flag)])
     def _create_cmd(self, **kwargs):
         """
         Create a user
@@ -150,8 +150,6 @@ class AdminUsers(Helpful, Module):
         :rtype dict
         :return The user
         """
-        if kwargs.get('from', None):
-            return self.submit_from_schedule(kwargs['from'])
 
         config = primehub_load_config(filename=kwargs.get('file', None))
         if not config:
