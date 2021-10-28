@@ -103,12 +103,44 @@ class AdminImages(Helpful, Module):
         :return an image
         """
         query = """
+        query ImageQuery($where: ImageWhereUniqueInput!) {
+          image(where: $where) {
+            id
+            name
+            displayName
+            description
+            type
+            url
+            urlForGpu
+            useImagePullSecret
+            global
+            groups {
+              id
+              name
+              displayName
+            }
+            isReady
+            imageSpec {
+              baseImage
+              pullSecret
+              packages {
+                apt
+                conda
+                pip
+              }
+            }
+            jobStatus {
+              phase
+            }
+            logEndpoint
+          }
+        }
         """
 
         results = self.request({'where': {'id': id}}, query)
         if 'data' not in results:
             return results
-        return
+        return results['data']['image']
 
     @cmd(name='delete', description='Delete an image by id', return_required=True)
     def delete(self, id):
@@ -123,11 +155,16 @@ class AdminImages(Helpful, Module):
         """
 
         query = """
+        mutation DeleteImageMutation($where: ImageWhereUniqueInput!) {
+          deleteImage(where: $where) {
+            id
+          }
+        }
         """
         results = self.request({'where': {'id': id}}, query)
         if 'data' not in results:
             return results
-        return
+        return results['data']['deleteImage']
 
     @cmd(name='list', description='List images', return_required=True, optionals=[('page', int)])
     def list(self, **kwargs) -> Iterator:
@@ -141,6 +178,30 @@ class AdminImages(Helpful, Module):
         :return image iterator
         """
         query = """
+        query ImagesQuery($page: Int, $where: ImageWhereInput, $orderBy: ImageOrderByInput) {
+          imagesConnection(
+            page: $page
+            orderBy: $orderBy
+            where: $where
+            mode: SYSTEM_ONLY
+          ) {
+            edges {
+              cursor
+              node {
+                id
+                name
+                displayName
+                description
+                type
+                isReady
+              }
+            }
+            pageInfo {
+              currentPage
+              totalPage
+            }
+          }
+        }
         """
         variables = {'page': 1}
         page = kwargs.get('page', 0)
