@@ -1,0 +1,40 @@
+name: GraphQL format checker
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Cache lint metadata
+        uses: actions/cache@v2
+        with:
+          path: /tmp/graphql_lint
+          key: graphql-lint-data
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Run graphql format checker
+        run: |
+          npm install -g prettier
+          echo "go testing"
+          make test-gql

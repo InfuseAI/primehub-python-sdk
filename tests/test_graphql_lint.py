@@ -7,6 +7,10 @@ from unittest import TestCase
 from tests.graphql_formatter import is_formatter_available, format_graphql
 
 
+def is_run_in_ci():
+    return os.environ.get('CI', 'false') == 'true'
+
+
 class GraphQLQueryFormatChecker(ast.NodeTransformer):
 
     def __init__(self, testutil: TestCase, filename: str):
@@ -20,28 +24,31 @@ class GraphQLQueryFormatChecker(ast.NodeTransformer):
             if not hasattr(n, 'id'):
                 return node
 
-            if n.id == 'query':
-                first_line_indent = 0
-                for line in node.value.s.split('\n'):
-                    if line.strip() == '':
-                        continue
-                    m = re.search(r'^(\s+).*', line)
-                    if m:
-                        first_line_indent = len(m.group(1))
-                        break
-                gql = strip_blank_line(node.value.s)
-                if has_checkpoint(f'{self.filename}:{n.lineno}', gql):
-                    # skip by checkpoint
-                    return node
+            if n.id != 'query':
+                return node
 
-                formatted = textwrap.indent(format_graphql(gql), ' ' * first_line_indent)
-                formatted = strip_blank_line(formatted)
-                if gql != formatted:
-                    print(f'check {self.filename}:{n.lineno}')
-                    print(f'please replace the content by this:\n\n>>>>\n{formatted}\n<<<<\n')
-                else:
-                    save_checkpoint(f'{self.filename}:{n.lineno}', gql)
-                self.testutil.assertEqual(gql, formatted)
+            first_line_indent = self.get_indent(node)
+
+            # show progress in CI mode
+            if is_run_in_ci():
+                print(f'check {self.filename}:{n.lineno}')
+
+            gql = strip_blank_line(node.value.s)
+            if has_checkpoint(f'{self.filename}:{n.lineno}', gql):
+                # skip by checkpoint
+                if is_run_in_ci():
+                    print('skip by checkpoint')
+
+                return node
+
+            formatted = textwrap.indent(format_graphql(gql), ' ' * first_line_indent)
+            formatted = strip_blank_line(formatted)
+            if gql != formatted:
+                print(f'check {self.filename}:{n.lineno}')
+                print(f'please replace the content by this:\n\n>>>>\n{formatted}\n<<<<\n')
+            else:
+                save_checkpoint(f'{self.filename}:{n.lineno}', gql)
+            self.testutil.assertEqual(gql, formatted)
         except BaseException as e:
             if isinstance(e, AssertionError):
                 raise e
@@ -49,19 +56,36 @@ class GraphQLQueryFormatChecker(ast.NodeTransformer):
 
         return node
 
+    def get_indent(self, node):
+        first_line_indent = 0
+        for line in node.value.s.split('\n'):
+            if line.strip() == '':
+                continue
+            m = re.search(r'^(\s+).*', line)
+            if m:
+                first_line_indent = len(m.group(1))
+                break
+        return first_line_indent
+
 
 def strip_blank_line(formatted):
     return '\n'.join([x for x in formatted.split('\n') if x.strip() != ''])
 
 
+def cache_location(content, file_loc):
+    os.makedirs('/tmp/graphql_lint', 0o777, exist_ok=True)
+    filepath = os.path.join('/tmp/graphql_lint', f'._gql_check_{checksum(file_loc)}.{checksum(content)}')
+    return filepath
+
+
 def save_checkpoint(file_loc, content):
-    filepath = os.path.join('/tmp', f'._gql_check_{checksum(file_loc)}.{checksum(content)}')
+    filepath = cache_location(content, file_loc)
     with open(filepath, 'w') as fh:
         fh.write('')
 
 
 def has_checkpoint(file_loc, content):
-    filepath = os.path.join('/tmp', f'._gql_check_{checksum(file_loc)}.{checksum(content)}')
+    filepath = cache_location(content, file_loc)
     return os.path.exists(filepath)
 
 
