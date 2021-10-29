@@ -79,8 +79,14 @@ class AdminUsers(Helpful, Module):
         :return user iterator
         """
         query = """
-        query UsersConnection($userAfter: String, $userBefore: String, $userLast: Int, $userFirst: Int,
-            $where: UserWhereInput, $userOrderBy: UsersOrderBy) {
+        query UsersConnection(
+          $userAfter: String
+          $userBefore: String
+          $userLast: Int
+          $userFirst: Int
+          $where: UserWhereInput
+          $userOrderBy: UsersOrderBy
+        ) {
           users: usersConnection(
             after: $userAfter
             before: $userBefore

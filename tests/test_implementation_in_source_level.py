@@ -54,7 +54,7 @@ class TestDocumentation(BaseTestCase):
     ./primehub/extras/templates/examples/{command}.ipynb
     """
 
-    def test_verify_ask_for_permissions(self):
+    def test_docs(self):
         project_dir = os.path.normpath(os.path.join(os.path.dirname(__file__), '..'))
 
         def generate_doc_paths(command):

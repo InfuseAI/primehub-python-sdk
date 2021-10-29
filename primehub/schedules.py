@@ -73,7 +73,11 @@ class Schedules(Helpful, Module):
         :return The list of schedules
         """
         query = """
-        query ($where: PhScheduleWhereInput, $page: Int, $orderBy: PhScheduleOrderByInput) {
+        query (
+          $where: PhScheduleWhereInput
+          $page: Int
+          $orderBy: PhScheduleOrderByInput
+        ) {
           phSchedulesConnection(where: $where, page: $page, orderBy: $orderBy) {
             pageInfo {
               totalPage

@@ -90,7 +90,10 @@ class AdminDatasets(Helpful, Module):
         """
 
         query = """
-        mutation UpdateDatasetMutation($payload: DatasetUpdateInput!, $where: DatasetWhereUniqueInput!) {
+        mutation UpdateDatasetMutation(
+          $payload: DatasetUpdateInput!
+          $where: DatasetWhereUniqueInput!
+        ) {
           updateDataset(data: $payload, where: $where) {
             id
           }
@@ -102,7 +105,10 @@ class AdminDatasets(Helpful, Module):
 
         if config.get('enableUploadServer', False):
             query = """
-            mutation UpdateDatasetMutation($payload: DatasetUpdateInput!, $where: DatasetWhereUniqueInput!) {
+            mutation UpdateDatasetMutation(
+              $payload: DatasetUpdateInput!
+              $where: DatasetWhereUniqueInput!
+            ) {
               updateDataset(data: $payload, where: $where) {
                 id
                 uploadServerSecret {
@@ -134,7 +140,9 @@ class AdminDatasets(Helpful, Module):
         """
 
         query = """
-        mutation RegenerateUploadServerSecretMutation($where: DatasetWhereUniqueInput!) {
+        mutation RegenerateUploadServerSecretMutation(
+          $where: DatasetWhereUniqueInput!
+        ) {
           regenerateUploadServerSecret(where: $where) {
             id
             uploadServerSecret {
@@ -153,7 +161,11 @@ class AdminDatasets(Helpful, Module):
     @cmd(name='list', description='List a dataset by id', return_required=True, optionals=[('page', int)])
     def list(self, **kwargs):
         query = """
-        query GetDatasets($page: Int, $orderBy: DatasetOrderByInput, $where: DatasetWhereInput) {
+        query GetDatasets(
+          $page: Int
+          $orderBy: DatasetOrderByInput
+          $where: DatasetWhereInput
+        ) {
           datasetsConnection(page: $page, orderBy: $orderBy, where: $where) {
             edges {
               cursor
