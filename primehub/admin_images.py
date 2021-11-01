@@ -21,7 +21,7 @@ def _error_handler(response):
 
 class AdminImages(Helpful, Module):
 
-    @cmd(name='create', description='Create an image', optionals=[('file', file_flag), ('from', str)])
+    @cmd(name='create', description='Create an image', optionals=[('file', file_flag)])
     def _create_cmd(self, **kwargs):
         """
         Create an image
@@ -32,9 +32,6 @@ class AdminImages(Helpful, Module):
         :rtype dict
         :return The image
         """
-        if kwargs.get('from', None):
-            return self.submit_from_schedule(kwargs['from'])
-
         config = primehub_load_config(filename=kwargs.get('file', None))
         if not config:
             invalid_config('The configuration is required.')
@@ -54,9 +51,14 @@ class AdminImages(Helpful, Module):
         payload = validate(config)
 
         query = """
+        mutation CreateImageMutation($data: ImageCreateInput!) {
+          createImage(data: $data) {
+            id
+          }
+        }
         """
 
-        results = self.request({'payload': validate(payload)}, query)
+        results = self.request({'data': validate(payload)}, query)
         if 'data' not in results:
             return results
         return
@@ -78,9 +80,41 @@ class AdminImages(Helpful, Module):
         self._valid_update(config, id)
 
         query = """
+        mutation UpdateImageMutation($data: ImageUpdateInput!, $where: ImageWhereUniqueInput!) {
+          updateImage(data: $data, where: $where) {
+            id
+            name
+            displayName
+            description
+            type
+            url
+            urlForGpu
+            useImagePullSecret
+            global
+            groups {
+              id
+              name
+              displayName
+            }
+            isReady
+            imageSpec {
+              baseImage
+              pullSecret
+              packages {
+                apt
+                conda
+                pip
+              }
+            }
+            jobStatus {
+              phase
+            }
+            logEndpoint
+          }
+        }
         """
 
-        results = self.request({'where': {'id': id}, 'payload': config}, query, _error_handler)
+        results = self.request({'where': {'id': id}, 'data': config}, query, _error_handler)
         if 'data' not in results:
             return results
 
@@ -257,5 +291,8 @@ def validate(payload: dict, for_update=False):
 
 def invalid_config(message: str):
     example = """
+    {
+      "name": "test"
+    }
     """.strip()
     raise PrimeHubException(message + "\n\nExample:\n" + json.dumps(json.loads(example), indent=2))
