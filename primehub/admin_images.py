@@ -284,9 +284,46 @@ def required_str_lengths_3_63(field):
 def validate(payload: dict, for_update=False):
     if not for_update:
         validate_name(payload)
+
+    validate_image_type(payload)
+    validate_image_spec(payload)
     validate_groups(payload)
 
     return payload
+
+
+def validate_image_spec(payload):
+    image_spec: dict = payload.get('imageSpec', None)
+    if image_spec is None:
+        return
+
+    if payload.get('url') is not None or payload.get('urlForGpu') is not None:
+        raise PrimeHubException("imageSpec cannot use with url and urlForGpu")
+
+    if not image_spec or not image_spec.get('baseImage'):
+        raise PrimeHubException("Invalid imageSpec: baseImage is required")
+
+    packages: dict = image_spec.get('packages')
+    if not packages:
+        raise PrimeHubException("Invalid imageSpec: packages is required")
+
+    if not isinstance(packages, dict):
+        raise PrimeHubException(
+            "Invalid imageSpec: packages is a dict with {apt, pip, conda} keys and you have use at least one")
+
+    if not set(packages.keys()).issubset(set(['apt', 'pip', 'conda'])):
+        raise PrimeHubException(
+            "Invalid imageSpec: packages is a dict with {apt, pip, conda} keys and you have use at least one")
+
+    for k, v in packages.items():
+        if not isinstance(v, list):
+            raise PrimeHubException("Invalid imageSpec: packages values should be a list")
+
+
+def validate_image_type(payload):
+    image_type = payload.get('type')
+    if image_type is not None and image_type not in ['cpu', 'gpu', 'both']:
+        raise PrimeHubException("type should be one of ['cpu', 'gpu', 'both']")
 
 
 def invalid_config(message: str):
