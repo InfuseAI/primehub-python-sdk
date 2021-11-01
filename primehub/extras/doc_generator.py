@@ -117,6 +117,8 @@ def main():
             continue
         if k == 'version':
             continue
+        if k == 'admin':
+            continue
         generate_help_for_command(sdk, k)
 
     for k, v in sdk.admin_commands.items():
