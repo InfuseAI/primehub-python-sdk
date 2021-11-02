@@ -5,7 +5,7 @@ import os
 import sys
 from typing import Union, Callable, Dict, Any
 
-from primehub.utils import group_required, create_logger
+from primehub.utils import group_required, create_logger, PrimeHubException
 from primehub.utils.decorators import cmd  # noqa: F401
 from primehub.utils.display import Display, HumanFriendlyDisplay, Displayable
 from primehub.utils.http_client import Client
@@ -375,6 +375,24 @@ class Module(object):
 
     def display(self, action: dict, value: Any):
         self.get_display().display(action, value, self.primehub.stdout)
+
+    @staticmethod
+    def output(result: dict, object_path: str):
+        """
+        Give a dict {'data': {'a': {'b': 'c'}}}
+        we could get the c by the path a.b
+        """
+        if 'data' not in result:
+            return result
+
+        root = result.get('data')
+        paths = object_path.split('.')
+        for p in paths:
+            if p not in root:
+                raise PrimeHubException(f'Cannot access to the path {object_path}')
+            root = root[p]
+
+        return root
 
 
 class Dummy(Helpful, Module):
