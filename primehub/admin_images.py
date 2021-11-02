@@ -61,7 +61,7 @@ class AdminImages(Helpful, Module):
         results = self.request({'data': validate(payload)}, query)
         if 'data' not in results:
             return results
-        return
+        return results['data']['createImage']
 
     @cmd(name='update', description='Update the image', optionals=[('file', file_flag)])
     def _update_cmd(self, id: str, **kwargs):
@@ -118,7 +118,7 @@ class AdminImages(Helpful, Module):
         if 'data' not in results:
             return results
 
-        return
+        return results['data']['updateImage']
 
     def _valid_update(self, config, id):
         existing_config = self.get(id)
@@ -329,7 +329,13 @@ def validate_image_type(payload):
 def invalid_config(message: str):
     example = """
     {
-      "name": "test"
+      "name": "base",
+      "displayName": "Base image",
+      "description": "base-notebook with python 3.7",
+      "type": "both",
+      "url": "infuseai/docker-stacks:base-notebook-63fdf50a",
+      "urlForGpu": "infuseai/docker-stacks:base-notebook-63fdf50a-gpu",
+      "global": true
     }
     """.strip()
     raise PrimeHubException(message + "\n\nExample:\n" + json.dumps(json.loads(example), indent=2))
