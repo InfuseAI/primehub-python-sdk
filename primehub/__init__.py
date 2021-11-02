@@ -385,7 +385,16 @@ class Module(object):
         if 'data' not in result:
             return result
 
-        root = result.get('data')
+        data = result.get('data')
+        if not data:
+            return result
+
+        root: dict = dict()
+        if isinstance(data, dict):
+            root = data
+        else:
+            raise PrimeHubException('Unsupported data format')
+
         paths = object_path.split('.')
         for p in paths:
             if p not in root:
