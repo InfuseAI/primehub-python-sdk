@@ -123,6 +123,11 @@ class AdminImages(Helpful, Module):
     def _valid_update(self, config, id):
         existing_config = self.get(id)
         if existing_config is not None:
+
+            # avoid updating 'urlForGpu' when no 'urlForGpu' in request
+            if existing_config.get('urlForGpu') and not config.get('urlForGpu'):
+                config['urlForGpu'] = existing_config['urlForGpu']
+
             validate(existing_config, True)
 
     @cmd(name='get', description='Get an image by id', return_required=True)
