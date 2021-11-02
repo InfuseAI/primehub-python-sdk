@@ -36,11 +36,11 @@ class TestAdminImages(BaseTestCase):
 
         # check url* and imageSpec
         self.check_required({'name': 'image-1', 'url': 'image', 'imageSpec': {
-            'baseImage': 'jupyter/base-notebook', 'packages': {'pip': 'pytest'}
+            'baseImage': 'jupyter/base-notebook', 'packages': {'pip': ['pytest']}
         }}, "imageSpec cannot use with url and urlForGpu")
 
         self.check_required({'name': 'image-1', 'urlForGpu': 'image-for-gpu', 'imageSpec': {
-            'baseImage': 'jupyter/base-notebook', 'packages': {'pip': 'pytest'}
+            'baseImage': 'jupyter/base-notebook', 'packages': {'pip': ['pytest']}
         }}, "imageSpec cannot use with url and urlForGpu")
 
         # pass with valid configuration
@@ -51,7 +51,7 @@ class TestAdminImages(BaseTestCase):
 
         # pass with imageSpec
         validate({'name': 'my-image', 'imageSpec': {
-            'baseImage': 'jupyter/base-notebook', 'packages': {'pip': 'pytest'}
+            'baseImage': 'jupyter/base-notebook', 'packages': {'pip': ['pytest']}
         }})
 
     def test_image_spec_validator(self):
