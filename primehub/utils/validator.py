@@ -13,7 +13,7 @@ def validate_name(payload: dict):
         raise PrimeHubException('name is required')
 
     matched: Union[str, Any, None] = re.match(
-        r'^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*',
+        r'^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$',
         payload.get('name'))
 
     # check formats
