@@ -80,7 +80,10 @@ class AdminImages(Helpful, Module):
         self._valid_update(config, id)
 
         query = """
-        mutation UpdateImageMutation($data: ImageUpdateInput!, $where: ImageWhereUniqueInput!) {
+        mutation UpdateImageMutation(
+          $data: ImageUpdateInput!
+          $where: ImageWhereUniqueInput!
+        ) {
           updateImage(data: $data, where: $where) {
             id
             name
@@ -217,7 +220,11 @@ class AdminImages(Helpful, Module):
         :return image iterator
         """
         query = """
-        query ImagesQuery($page: Int, $where: ImageWhereInput, $orderBy: ImageOrderByInput) {
+        query ImagesQuery(
+          $page: Int
+          $where: ImageWhereInput
+          $orderBy: ImageOrderByInput
+        ) {
           imagesConnection(
             page: $page
             orderBy: $orderBy
