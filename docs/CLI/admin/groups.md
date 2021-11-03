@@ -121,8 +121,7 @@ primehub admin groups update <id>
 | projectQuotaCpu | optional | float |  how many CPU can be shared by all users in the group, default: unlimited |
 | projectQuotaGpu | optional | int | how many GPU can be shared by all users in the group, default: unlimited |
 | projectQuotaMemory| optional | float | how many memory can be shared by all users in the group, default: unlimited GB |
-| admins | optional | string | assign admin user of the group, multiple users are able to be assigned (see [also]
-(https://docs.primehub.io/docs/guide_manual/admin-group#group-admin)) |
+| admins | optional | string | assign admin user of the group, multiple users are able to be assigned (see [also](https://docs.primehub.io/docs/guide_manual/admin-group#group-admin)) |
 | users | optional | assign / dissociate users to the group | please see the connect / disconnect examples |
 
 `maxDeploy` is used when `enabledDeployment` is enable:
