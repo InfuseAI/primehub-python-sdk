@@ -5,18 +5,28 @@
 | name | required | string | must start with a letter or numeric, '-' and '_' are allowed, and the length should be more than 2. |
 | displayName | optional | string | display name |
 | enabledDeployment | optional | boolean | groups with enabled model deployment are able to deploy/serve models |
-| maxDeploy | optional | int | limit on the amount of deployments for this group |
 | enabledSharedVolume | optional | boolean | the shared volume is shared among members in the group. |
-| sharedVolumeCapacity | optional | int | the capacity of the shared volume in GB |
-| launchGroupOnly | optional | boolean | if the shared volume is only mounted in the launch group |
 | quotaCpu | optional | float | how many CPU can be used by the user within this group, default: 0.5 |
 | quotaGpu | optional | int | how many GPU can be used by the user within this group, default: 0 |
 | quotaMemory | optional | float | how many memory can be used by the user within this group, default: unlimited GB | 
 | projectQuotaCpu | optional | float |  how many CPU can be shared by all users in the group, default: unlimited |
 | projectQuotaGpu | optional | int | how many GPU can be shared by all users in the group, default: unlimited |
 | projectQuotaMemory| optional | float | how many memory can be shared by all users in the group, default: unlimited GB |
-| admins | optional | string | assign admin user of the group, multiple users are able to be assigned |
+| admins | optional | string | assign admin user of the group, multiple users are able to be assigned (see [also]
+(https://docs.primehub.io/docs/guide_manual/admin-group#group-admin)) |
 | users | optional | assign / dissociate users to the group | please see the connect / disconnect examples |
+
+`maxDeploy` is used when `enabledDeployment` is enable:
+
+| field | required | type | description |
+| --- | --- | --- | --- |
+| maxDeploy | optional | int | limit on the amount of deployments for this group |
+
+`sharedVolumeCapacity` is used when `enabledSharedVolume` is enable:
+
+| field | required | type | description |
+| --- | --- | --- | --- |
+| sharedVolumeCapacity | optional | int | the capacity of the shared volume in GB |
 
 ### Create a group
 

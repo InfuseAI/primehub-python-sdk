@@ -40,39 +40,39 @@ class TestAdminUsers(BaseTestCase):
 
         # check invalid user quota
         self.check_exception(
-            {'quotaCpu': -1.5}, 'quotaCpu should be non-negtive value', validate_cpu_resource)
+            {'quotaCpu': -1.5}, 'quotaCpu should be non-negative value', validate_cpu_resource)
         self.check_exception(
-            {'quotaCpu': -1}, 'quotaCpu should be non-negtive value', validate_cpu_resource)
+            {'quotaCpu': -1}, 'quotaCpu should be non-negative value', validate_cpu_resource)
 
         self.check_exception(
             {'quotaGpu': -1.5}, 'quotaGpu should be int value', validate_gpu_resource)
         self.check_exception(
-            {'quotaGpu': -1}, 'quotaGpu should be non-negtive value', validate_gpu_resource)
+            {'quotaGpu': -1}, 'quotaGpu should be non-negative value', validate_gpu_resource)
         self.check_exception(
             {'quotaGpu': 1.5}, 'quotaGpu should be int value', validate_gpu_resource)
 
         self.check_exception(
-            {'quotaMemory': -1.5}, 'quotaMemory should be non-negtive value', validate_memory_resource)
+            {'quotaMemory': -1.5}, 'quotaMemory should be non-negative value', validate_memory_resource)
         self.check_exception(
-            {'quotaMemory': -1}, 'quotaMemory should be non-negtive value', validate_memory_resource)
+            {'quotaMemory': -1}, 'quotaMemory should be non-negative value', validate_memory_resource)
 
         # check invalid group quota
         self.check_exception({'projectQuotaCpu': -1.5},
-                             'projectQuotaCpu should be non-negtive value', validate_cpu_resource)
+                             'projectQuotaCpu should be non-negative value', validate_cpu_resource)
         self.check_exception(
-            {'projectQuotaCpu': -1}, 'projectQuotaCpu should be non-negtive value', validate_cpu_resource)
+            {'projectQuotaCpu': -1}, 'projectQuotaCpu should be non-negative value', validate_cpu_resource)
 
         self.check_exception({'projectQuotaGpu': -1.5},
                              'projectQuotaGpu should be int value', validate_gpu_resource)
         self.check_exception(
-            {'projectQuotaGpu': -1}, 'projectQuotaGpu should be non-negtive value', validate_gpu_resource)
+            {'projectQuotaGpu': -1}, 'projectQuotaGpu should be non-negative value', validate_gpu_resource)
         self.check_exception(
             {'projectQuotaGpu': 1.5}, 'projectQuotaGpu should be int value', validate_gpu_resource)
 
         self.check_exception({'projectQuotaMemory': -1.5},
-                             'projectQuotaMemory should be non-negtive value', validate_memory_resource)
+                             'projectQuotaMemory should be non-negative value', validate_memory_resource)
         self.check_exception({'projectQuotaMemory': -1},
-                             'projectQuotaMemory should be non-negtive value', validate_memory_resource)
+                             'projectQuotaMemory should be non-negative value', validate_memory_resource)
 
         # check invalid user and group quota
         self.check_exception({'quotaCpu': 1, 'projectQuotaCpu': 0.5},
@@ -116,7 +116,7 @@ class TestAdminUsers(BaseTestCase):
         self.check_exception({'enabledDeployment': True, 'maxDeploy': 1.5},
                              'maxDeploy should be integer value', validate_model_deployment)
         self.check_exception({'enabledDeployment': True, 'maxDeploy': -1},
-                             'maxDeploy should be non-negtive value', validate_model_deployment)
+                             'maxDeploy should be non-negative value', validate_model_deployment)
 
         # pass with valid model deployment
         validate_model_deployment({'enabledDeployment': False})
@@ -136,7 +136,7 @@ class TestAdminUsers(BaseTestCase):
         self.check_exception({'enabledSharedVolume': True, 'sharedVolumeCapacity': 1.5, 'launchGroupOnly': 1},
                              'sharedVolumeCapacity should be integer value', validate_shared_volume)
         self.check_exception({'enabledSharedVolume': True, 'sharedVolumeCapacity': -1, 'launchGroupOnly': 1},
-                             'sharedVolumeCapacity should be non-negtive value', validate_shared_volume)
+                             'sharedVolumeCapacity should be non-negative value', validate_shared_volume)
         self.check_exception({'enabledSharedVolume': True, 'sharedVolumeCapacity': 1, 'launchGroupOnly': 1},
                              'launchGroupOnly should be bool value', validate_shared_volume)
 

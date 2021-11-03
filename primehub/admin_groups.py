@@ -50,7 +50,7 @@ def validate_model_deployment(data: dict):
     if not isinstance(max_deploy, int):
         raise PrimeHubException('maxDeploy should be integer value')
     if max_deploy < 0:
-        raise PrimeHubException('maxDeploy should be non-negtive value')
+        raise PrimeHubException('maxDeploy should be non-negative value')
 
 
 def validate_shared_volume(data: dict):
@@ -72,7 +72,7 @@ def validate_shared_volume(data: dict):
                 'sharedVolumeCapacity should be integer value')
         if shared_volume_capacity < 0:
             raise PrimeHubException(
-                'sharedVolumeCapacity should be non-negtive value')
+                'sharedVolumeCapacity should be non-negative value')
 
     # check launchGroupOnly
     launch_group_only = data.get('launchGroupOnly', None)
@@ -95,14 +95,14 @@ def validate_cpu_resource(data: dict):
         if not isinstance(user_quota, float) and not isinstance(user_quota, int):
             raise PrimeHubException('quotaCpu should be float value')
         if user_quota < 0:
-            raise PrimeHubException('quotaCpu should be non-negtive value')
+            raise PrimeHubException('quotaCpu should be non-negative value')
 
     if group_quota is not None:
         if not isinstance(group_quota, float) and not isinstance(group_quota, int):
             raise PrimeHubException('projectQuotaCpu should be float value')
         if group_quota < 0:
             raise PrimeHubException(
-                'projectQuotaCpu should be non-negtive value')
+                'projectQuotaCpu should be non-negative value')
 
     # check limit
     if user_quota is not None and group_quota is not None:
@@ -120,14 +120,14 @@ def validate_gpu_resource(data: dict):
         if not isinstance(user_quota, int):
             raise PrimeHubException('quotaGpu should be int value')
         if user_quota < 0:
-            raise PrimeHubException('quotaGpu should be non-negtive value')
+            raise PrimeHubException('quotaGpu should be non-negative value')
 
     if group_quota is not None:
         if not isinstance(group_quota, int):
             raise PrimeHubException('projectQuotaGpu should be int value')
         if group_quota < 0:
             raise PrimeHubException(
-                'projectQuotaGpu should be non-negtive value')
+                'projectQuotaGpu should be non-negative value')
 
     # check limit
     if user_quota is not None and group_quota is not None:
@@ -145,14 +145,14 @@ def validate_memory_resource(data: dict):
         if not isinstance(user_quota, float) and not isinstance(user_quota, int):
             raise PrimeHubException('quotaMemory should be int value')
         if user_quota < 0:
-            raise PrimeHubException('quotaMemory should be non-negtive value')
+            raise PrimeHubException('quotaMemory should be non-negative value')
 
     if group_quota is not None:
         if not isinstance(group_quota, float) and not isinstance(group_quota, int):
             raise PrimeHubException('projectQuotaMemory should be int value')
         if group_quota < 0:
             raise PrimeHubException(
-                'projectQuotaMemory should be non-negtive value')
+                'projectQuotaMemory should be non-negative value')
 
     # check limit
     if user_quota is not None and group_quota is not None:
