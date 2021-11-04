@@ -114,7 +114,7 @@ class TestAdminUsers(BaseTestCase):
         self.check_exception({'enabledDeployment': False, 'maxDeploy': 1},
                              'enabledDeployment should be set for maxDeploy', validate_model_deployment)
         self.check_exception({'enabledDeployment': True, 'maxDeploy': 1.5},
-                             'maxDeploy should be integer value', validate_model_deployment)
+                             'maxDeploy should be int value', validate_model_deployment)
         self.check_exception({'enabledDeployment': True, 'maxDeploy': -1},
                              'maxDeploy should be non-negative value', validate_model_deployment)
 
@@ -134,7 +134,7 @@ class TestAdminUsers(BaseTestCase):
         self.check_exception({'enabledSharedVolume': False, 'launchGroupOnly': False},
                              'enabledSharedVolume should be set for launchGroupOnly', validate_shared_volume)
         self.check_exception({'enabledSharedVolume': True, 'sharedVolumeCapacity': 1.5, 'launchGroupOnly': 1},
-                             'sharedVolumeCapacity should be integer value', validate_shared_volume)
+                             'sharedVolumeCapacity should be int value', validate_shared_volume)
         self.check_exception({'enabledSharedVolume': True, 'sharedVolumeCapacity': -1, 'launchGroupOnly': 1},
                              'sharedVolumeCapacity should be non-negative value', validate_shared_volume)
         self.check_exception({'enabledSharedVolume': True, 'sharedVolumeCapacity': 1, 'launchGroupOnly': 1},

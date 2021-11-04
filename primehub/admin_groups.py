@@ -33,57 +33,43 @@ def validate_name(data: dict):
 
 
 def validate_model_deployment(data: dict):
-    # check enabledDeployment
-    enabled_deployment = data.get('enabledDeployment', False)
-    if not isinstance(enabled_deployment, bool):
-        raise PrimeHubException('enabledDeployment should be bool value')
-
-    # check maxDeploy
-    max_deploy = data.get('maxDeploy', None)
-    if max_deploy is None:
-        return
-
-    if not enabled_deployment:
-        raise PrimeHubException(
-            'enabledDeployment should be set for maxDeploy')
-
-    if not isinstance(max_deploy, int):
-        raise PrimeHubException('maxDeploy should be integer value')
-    if max_deploy < 0:
-        raise PrimeHubException('maxDeploy should be non-negative value')
+    flag = 'enabledDeployment'
+    depends = [dict(key='maxDeploy', type=int)]
+    validate_depends_fields(data, flag, depends)
 
 
 def validate_shared_volume(data: dict):
-    # check enabledSharedVolume
-    enable_shared_volume = data.get('enabledSharedVolume', False)
-    if not isinstance(enable_shared_volume, bool):
-        raise PrimeHubException('enabledSharedVolume should be bool value')
+    flag = 'enabledSharedVolume'
+    depends = [dict(key='sharedVolumeCapacity', type=int), dict(key='launchGroupOnly', type=bool)]
+    validate_depends_fields(data, flag, depends)
 
-    # check sharedVolumeCapacity
-    shared_volume_capacity = data.get('sharedVolumeCapacity', None)
-    if shared_volume_capacity is not None:
 
-        if not enable_shared_volume:
+def validate_depends_fields(data: dict, flag: str, depends: list):
+    depends_result = [(x['key'], data.get(x['key']) is not None, data.get(x['key']), x['type']) for x in depends]
+    is_enabled = data.get(flag, False)
+
+    # validate flag type
+    if not isinstance(is_enabled, bool):
+        raise PrimeHubException(f'{flag} should be bool value')
+
+    # check options should not set, when flag is not enabled
+    if not is_enabled:
+        for field_name, has_value, _, _ in depends_result:
+            if has_value:
+                raise PrimeHubException(
+                    f'{flag} should be set for {field_name}')
+        return
+
+    # check options with pre-condition when it has a value
+    for field_name, has_value, value, value_type in depends_result:
+        if not has_value:
+            continue
+        if not isinstance(value, value_type):
             raise PrimeHubException(
-                'enabledSharedVolume should be set for sharedVolumeCapacity')
-
-        if not isinstance(shared_volume_capacity, int):
+                f'{field_name} should be {value_type.__name__} value')
+        if value_type == int and value < 0:
             raise PrimeHubException(
-                'sharedVolumeCapacity should be integer value')
-        if shared_volume_capacity < 0:
-            raise PrimeHubException(
-                'sharedVolumeCapacity should be non-negative value')
-
-    # check launchGroupOnly
-    launch_group_only = data.get('launchGroupOnly', None)
-    if launch_group_only is not None:
-
-        if not enable_shared_volume:
-            raise PrimeHubException(
-                'enabledSharedVolume should be set for launchGroupOnly')
-
-        if not isinstance(launch_group_only, bool):
-            raise PrimeHubException('launchGroupOnly should be bool value')
+                f'{field_name} should be non-negative value')
 
 
 def validate_cpu_resource(data: dict):
