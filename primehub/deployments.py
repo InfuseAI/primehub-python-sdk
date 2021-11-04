@@ -17,7 +17,7 @@ def _error_handler(response):
             message = message[0]['message']
             result = re.findall(r'phdeployments.primehub.io "([^"]+)" not found', message)
             if result:
-                resource_not_found('schedule', result[0], 'id')
+                resource_not_found('deployments', result[0], 'id')
 
 
 def invalid_config(message: str):
