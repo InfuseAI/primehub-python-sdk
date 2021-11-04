@@ -152,7 +152,6 @@ primehub admin groups create <<EOF
   "quotaMemory": 2,
   "maxDeploy": 3,
   "sharedVolumeCapacity": 1,
-  "launchGroupOnly": true,
   "admins": "test_user_1,test_user_2",
   "users": {
     "connect": [
