@@ -135,7 +135,7 @@ class Deployments(Helpful, Module):
             availableReplicas
             imagePullSecret
             instanceType {
-                name
+              name
             }
             creationTime
             lastUpdatedTime
