@@ -120,22 +120,30 @@ class Deployments(Helpful, Module):
         query ($where: PhDeploymentWhereUniqueInput!) {
           phDeployment(where: $where) {
             id
-            name
-            modelImage
-            imagePullSecret
-            description
-            replicas
-            stop
-            endpointAccessType
-            endpointClients {
-              name
-            }
             status
+            message
+            name
+            description
+            updateMessage
+            stop
+            userName
+            groupName
             endpoint
+            modelImage
+            modelURI
             replicas
             availableReplicas
-            message
+            imagePullSecret
+            instanceType {
+                name
+            }
+            creationTime
+            lastUpdatedTime
             pods {
+              name
+            }
+            endpointAccessType
+            endpointClients {
               name
             }
           }
