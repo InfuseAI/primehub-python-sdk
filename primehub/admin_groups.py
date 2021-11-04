@@ -111,6 +111,35 @@ def validate_cpu_resource(data: dict):
                 'quotaCpu less than or equal to projectQuotaCpu')
 
 
+def validate_memory_resource(data: dict):
+    validate_resource_type(data, 'quotaMemory', 'projectQuotaMemory')
+
+
+def validate_resource_type(data: dict, user_field: str, project_field: str):
+    user_quota = data.get(f'{user_field}', None)
+    group_quota = data.get(f'{project_field}', None)
+
+    # check type
+    if user_quota is not None:
+        if not isinstance(user_quota, float) and not isinstance(user_quota, int):
+            raise PrimeHubException(f'{user_field} should be int value')
+        if user_quota < 0:
+            raise PrimeHubException(f'{user_field} should be non-negative value')
+
+    if group_quota is not None:
+        if not isinstance(group_quota, float) and not isinstance(group_quota, int):
+            raise PrimeHubException(f'{project_field} should be int value')
+        if group_quota < 0:
+            raise PrimeHubException(
+                f'{project_field} should be non-negative value')
+
+    # check limit
+    if user_quota is not None and group_quota is not None:
+        if user_quota > group_quota:
+            raise PrimeHubException(
+                f'{user_field} less than or equal to {project_field}')
+
+
 def validate_gpu_resource(data: dict):
     user_quota = data.get('quotaGpu', None)
     group_quota = data.get('projectQuotaGpu', None)
@@ -136,33 +165,7 @@ def validate_gpu_resource(data: dict):
                 'quotaGpu less than or equal to projectQuotaGpu')
 
 
-def validate_memory_resource(data: dict):
-    user_quota = data.get('quotaMemory', None)
-    group_quota = data.get('projectQuotaMemory', None)
-
-    # check type
-    if user_quota is not None:
-        if not isinstance(user_quota, float) and not isinstance(user_quota, int):
-            raise PrimeHubException('quotaMemory should be int value')
-        if user_quota < 0:
-            raise PrimeHubException('quotaMemory should be non-negative value')
-
-    if group_quota is not None:
-        if not isinstance(group_quota, float) and not isinstance(group_quota, int):
-            raise PrimeHubException('projectQuotaMemory should be int value')
-        if group_quota < 0:
-            raise PrimeHubException(
-                'projectQuotaMemory should be non-negative value')
-
-    # check limit
-    if user_quota is not None and group_quota is not None:
-        if user_quota > group_quota:
-            raise PrimeHubException(
-                'quotaMemory less than or equal to projectQuotaMemory')
-
-
 def validate_admins(data: dict):
-
     admins = data.get('admins', '')
 
     if not isinstance(admins, str):
