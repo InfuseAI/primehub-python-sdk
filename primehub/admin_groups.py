@@ -33,136 +33,90 @@ def validate_name(data: dict):
 
 
 def validate_model_deployment(data: dict):
-    # check enabledDeployment
-    enabled_deployment = data.get('enabledDeployment', False)
-    if not isinstance(enabled_deployment, bool):
-        raise PrimeHubException('enabledDeployment should be bool value')
-
-    # check maxDeploy
-    max_deploy = data.get('maxDeploy', None)
-    if max_deploy is None:
-        return
-
-    if not enabled_deployment:
-        raise PrimeHubException(
-            'enabledDeployment should be set for maxDeploy')
-
-    if not isinstance(max_deploy, int):
-        raise PrimeHubException('maxDeploy should be integer value')
-    if max_deploy < 0:
-        raise PrimeHubException('maxDeploy should be non-negative value')
+    flag = 'enabledDeployment'
+    depends = [dict(key='maxDeploy', type=int)]
+    validate_depends_fields(data, flag, depends)
 
 
 def validate_shared_volume(data: dict):
-    # check enabledSharedVolume
-    enable_shared_volume = data.get('enabledSharedVolume', False)
-    if not isinstance(enable_shared_volume, bool):
-        raise PrimeHubException('enabledSharedVolume should be bool value')
+    flag = 'enabledSharedVolume'
+    depends = [dict(key='sharedVolumeCapacity', type=int), dict(key='launchGroupOnly', type=bool)]
+    validate_depends_fields(data, flag, depends)
 
-    # check sharedVolumeCapacity
-    shared_volume_capacity = data.get('sharedVolumeCapacity', None)
-    if shared_volume_capacity is not None:
 
-        if not enable_shared_volume:
+def validate_depends_fields(data: dict, flag: str, depends: list):
+    def to_entry(x: dict):
+        return dict(field_name=x['key'],
+                    has_value=data.get(x['key']) is not None,
+                    value=data.get(x['key']),
+                    type=x['type'])
+
+    requirements = [to_entry(x) for x in depends]
+    is_enabled = data.get(flag, False)
+
+    # validate flag type
+    if not isinstance(is_enabled, bool):
+        raise PrimeHubException(f'{flag} should be bool value')
+
+    # check options should not set, when flag is not enabled
+    if not is_enabled:
+        for entry in requirements:
+            if entry.get('has_value'):
+                raise PrimeHubException(
+                    f'{flag} should be set for {entry.get("field_name")}')
+        return
+
+    # check options with pre-condition when it has a value
+    for entry in requirements:
+        if not entry.get("has_value"):
+            continue
+        if not isinstance(entry.get('value'), entry.get('type')):
             raise PrimeHubException(
-                'enabledSharedVolume should be set for sharedVolumeCapacity')
-
-        if not isinstance(shared_volume_capacity, int):
+                f'{entry.get("field_name")} should be {entry.get("type").__name__} value')
+        if entry.get('type') == int and entry.get('value') < 0:
             raise PrimeHubException(
-                'sharedVolumeCapacity should be integer value')
-        if shared_volume_capacity < 0:
-            raise PrimeHubException(
-                'sharedVolumeCapacity should be non-negative value')
-
-    # check launchGroupOnly
-    launch_group_only = data.get('launchGroupOnly', None)
-    if launch_group_only is not None:
-
-        if not enable_shared_volume:
-            raise PrimeHubException(
-                'enabledSharedVolume should be set for launchGroupOnly')
-
-        if not isinstance(launch_group_only, bool):
-            raise PrimeHubException('launchGroupOnly should be bool value')
+                f'{entry.get("field_name")} should be non-negative value')
 
 
 def validate_cpu_resource(data: dict):
-    user_quota = data.get('quotaCpu', None)
-    group_quota = data.get('projectQuotaCpu', None)
-
-    # check type
-    if user_quota is not None:
-        if not isinstance(user_quota, float) and not isinstance(user_quota, int):
-            raise PrimeHubException('quotaCpu should be float value')
-        if user_quota < 0:
-            raise PrimeHubException('quotaCpu should be non-negative value')
-
-    if group_quota is not None:
-        if not isinstance(group_quota, float) and not isinstance(group_quota, int):
-            raise PrimeHubException('projectQuotaCpu should be float value')
-        if group_quota < 0:
-            raise PrimeHubException(
-                'projectQuotaCpu should be non-negative value')
-
-    # check limit
-    if user_quota is not None and group_quota is not None:
-        if user_quota > group_quota:
-            raise PrimeHubException(
-                'quotaCpu less than or equal to projectQuotaCpu')
-
-
-def validate_gpu_resource(data: dict):
-    user_quota = data.get('quotaGpu', None)
-    group_quota = data.get('projectQuotaGpu', None)
-
-    # check type
-    if user_quota is not None:
-        if not isinstance(user_quota, int):
-            raise PrimeHubException('quotaGpu should be int value')
-        if user_quota < 0:
-            raise PrimeHubException('quotaGpu should be non-negative value')
-
-    if group_quota is not None:
-        if not isinstance(group_quota, int):
-            raise PrimeHubException('projectQuotaGpu should be int value')
-        if group_quota < 0:
-            raise PrimeHubException(
-                'projectQuotaGpu should be non-negative value')
-
-    # check limit
-    if user_quota is not None and group_quota is not None:
-        if user_quota > group_quota:
-            raise PrimeHubException(
-                'quotaGpu less than or equal to projectQuotaGpu')
+    validate_resource_type(data, 'quotaCpu', 'projectQuotaCpu', [float, int])
 
 
 def validate_memory_resource(data: dict):
-    user_quota = data.get('quotaMemory', None)
-    group_quota = data.get('projectQuotaMemory', None)
+    validate_resource_type(data, 'quotaMemory', 'projectQuotaMemory', [float, int])
+
+
+def validate_gpu_resource(data: dict):
+    validate_resource_type(data, 'quotaGpu', 'projectQuotaGpu', [int])
+
+
+def validate_resource_type(data: dict, user_field: str, project_field: str, acceptable_types: list):
+    user_quota = data.get(f'{user_field}', None)
+    group_quota = data.get(f'{project_field}', None)
+    acceptable_type_names = [x.__name__ for x in acceptable_types]
 
     # check type
     if user_quota is not None:
-        if not isinstance(user_quota, float) and not isinstance(user_quota, int):
-            raise PrimeHubException('quotaMemory should be int value')
+        if True not in [isinstance(user_quota, x) for x in acceptable_types]:
+            raise PrimeHubException(f'{user_field} should be a value in {acceptable_type_names} types')
         if user_quota < 0:
-            raise PrimeHubException('quotaMemory should be non-negative value')
+            raise PrimeHubException(f'{user_field} should be non-negative value')
 
     if group_quota is not None:
-        if not isinstance(group_quota, float) and not isinstance(group_quota, int):
-            raise PrimeHubException('projectQuotaMemory should be int value')
+        if True not in [isinstance(group_quota, x) for x in acceptable_types]:
+            raise PrimeHubException(f'{project_field} should be a value in {acceptable_type_names} types')
         if group_quota < 0:
             raise PrimeHubException(
-                'projectQuotaMemory should be non-negative value')
+                f'{project_field} should be non-negative value')
 
     # check limit
     if user_quota is not None and group_quota is not None:
         if user_quota > group_quota:
             raise PrimeHubException(
-                'quotaMemory less than or equal to projectQuotaMemory')
+                f'{user_field} less than or equal to {project_field}')
 
 
 def validate_admins(data: dict):
-
     admins = data.get('admins', '')
 
     if not isinstance(admins, str):

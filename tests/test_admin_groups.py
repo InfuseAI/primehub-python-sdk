@@ -43,13 +43,15 @@ class TestAdminUsers(BaseTestCase):
             {'quotaCpu': -1.5}, 'quotaCpu should be non-negative value', validate_cpu_resource)
         self.check_exception(
             {'quotaCpu': -1}, 'quotaCpu should be non-negative value', validate_cpu_resource)
+        self.check_exception(
+            {'quotaCpu': '1'}, "quotaCpu should be a value in ['float', 'int'] types", validate_cpu_resource)
 
         self.check_exception(
-            {'quotaGpu': -1.5}, 'quotaGpu should be int value', validate_gpu_resource)
+            {'quotaGpu': -1.5}, "quotaGpu should be a value in ['int'] types", validate_gpu_resource)
         self.check_exception(
             {'quotaGpu': -1}, 'quotaGpu should be non-negative value', validate_gpu_resource)
         self.check_exception(
-            {'quotaGpu': 1.5}, 'quotaGpu should be int value', validate_gpu_resource)
+            {'quotaGpu': 1.5}, "quotaGpu should be a value in ['int'] types", validate_gpu_resource)
 
         self.check_exception(
             {'quotaMemory': -1.5}, 'quotaMemory should be non-negative value', validate_memory_resource)
@@ -62,12 +64,10 @@ class TestAdminUsers(BaseTestCase):
         self.check_exception(
             {'projectQuotaCpu': -1}, 'projectQuotaCpu should be non-negative value', validate_cpu_resource)
 
-        self.check_exception({'projectQuotaGpu': -1.5},
-                             'projectQuotaGpu should be int value', validate_gpu_resource)
         self.check_exception(
             {'projectQuotaGpu': -1}, 'projectQuotaGpu should be non-negative value', validate_gpu_resource)
         self.check_exception(
-            {'projectQuotaGpu': 1.5}, 'projectQuotaGpu should be int value', validate_gpu_resource)
+            {'projectQuotaGpu': 1.5}, "projectQuotaGpu should be a value in ['int'] types", validate_gpu_resource)
 
         self.check_exception({'projectQuotaMemory': -1.5},
                              'projectQuotaMemory should be non-negative value', validate_memory_resource)
@@ -114,7 +114,7 @@ class TestAdminUsers(BaseTestCase):
         self.check_exception({'enabledDeployment': False, 'maxDeploy': 1},
                              'enabledDeployment should be set for maxDeploy', validate_model_deployment)
         self.check_exception({'enabledDeployment': True, 'maxDeploy': 1.5},
-                             'maxDeploy should be integer value', validate_model_deployment)
+                             'maxDeploy should be int value', validate_model_deployment)
         self.check_exception({'enabledDeployment': True, 'maxDeploy': -1},
                              'maxDeploy should be non-negative value', validate_model_deployment)
 
@@ -134,7 +134,7 @@ class TestAdminUsers(BaseTestCase):
         self.check_exception({'enabledSharedVolume': False, 'launchGroupOnly': False},
                              'enabledSharedVolume should be set for launchGroupOnly', validate_shared_volume)
         self.check_exception({'enabledSharedVolume': True, 'sharedVolumeCapacity': 1.5, 'launchGroupOnly': 1},
-                             'sharedVolumeCapacity should be integer value', validate_shared_volume)
+                             'sharedVolumeCapacity should be int value', validate_shared_volume)
         self.check_exception({'enabledSharedVolume': True, 'sharedVolumeCapacity': -1, 'launchGroupOnly': 1},
                              'sharedVolumeCapacity should be non-negative value', validate_shared_volume)
         self.check_exception({'enabledSharedVolume': True, 'sharedVolumeCapacity': 1, 'launchGroupOnly': 1},
