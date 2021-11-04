@@ -43,13 +43,15 @@ class TestAdminUsers(BaseTestCase):
             {'quotaCpu': -1.5}, 'quotaCpu should be non-negative value', validate_cpu_resource)
         self.check_exception(
             {'quotaCpu': -1}, 'quotaCpu should be non-negative value', validate_cpu_resource)
+        self.check_exception(
+            {'quotaCpu': '1'}, "quotaCpu should be a value in ['float', 'int'] types", validate_cpu_resource)
 
         self.check_exception(
-            {'quotaGpu': -1.5}, 'quotaGpu should be int value', validate_gpu_resource)
+            {'quotaGpu': -1.5}, "quotaGpu should be a value in ['int'] types", validate_gpu_resource)
         self.check_exception(
             {'quotaGpu': -1}, 'quotaGpu should be non-negative value', validate_gpu_resource)
         self.check_exception(
-            {'quotaGpu': 1.5}, 'quotaGpu should be int value', validate_gpu_resource)
+            {'quotaGpu': 1.5}, "quotaGpu should be a value in ['int'] types", validate_gpu_resource)
 
         self.check_exception(
             {'quotaMemory': -1.5}, 'quotaMemory should be non-negative value', validate_memory_resource)
@@ -62,12 +64,10 @@ class TestAdminUsers(BaseTestCase):
         self.check_exception(
             {'projectQuotaCpu': -1}, 'projectQuotaCpu should be non-negative value', validate_cpu_resource)
 
-        self.check_exception({'projectQuotaGpu': -1.5},
-                             'projectQuotaGpu should be int value', validate_gpu_resource)
         self.check_exception(
             {'projectQuotaGpu': -1}, 'projectQuotaGpu should be non-negative value', validate_gpu_resource)
         self.check_exception(
-            {'projectQuotaGpu': 1.5}, 'projectQuotaGpu should be int value', validate_gpu_resource)
+            {'projectQuotaGpu': 1.5}, "projectQuotaGpu should be a value in ['int'] types", validate_gpu_resource)
 
         self.check_exception({'projectQuotaMemory': -1.5},
                              'projectQuotaMemory should be non-negative value', validate_memory_resource)
