@@ -87,28 +87,7 @@ def validate_shared_volume(data: dict):
 
 
 def validate_cpu_resource(data: dict):
-    user_quota = data.get('quotaCpu', None)
-    group_quota = data.get('projectQuotaCpu', None)
-
-    # check type
-    if user_quota is not None:
-        if not isinstance(user_quota, float) and not isinstance(user_quota, int):
-            raise PrimeHubException('quotaCpu should be float value')
-        if user_quota < 0:
-            raise PrimeHubException('quotaCpu should be non-negative value')
-
-    if group_quota is not None:
-        if not isinstance(group_quota, float) and not isinstance(group_quota, int):
-            raise PrimeHubException('projectQuotaCpu should be float value')
-        if group_quota < 0:
-            raise PrimeHubException(
-                'projectQuotaCpu should be non-negative value')
-
-    # check limit
-    if user_quota is not None and group_quota is not None:
-        if user_quota > group_quota:
-            raise PrimeHubException(
-                'quotaCpu less than or equal to projectQuotaCpu')
+    validate_resource_type(data, 'quotaCpu', 'projectQuotaCpu')
 
 
 def validate_memory_resource(data: dict):
