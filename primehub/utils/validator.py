@@ -64,3 +64,36 @@ def validate_groups(payload: dict):
             if 'id' in g and len(g) == 1:
                 continue
             raise PrimeHubException(GROUP_DISCONNECT_ERROR)
+
+
+def validate_connection(payload: dict, field_name: str):
+    CONNECT_ERROR = f'{field_name} connection payload should be an entry {{id}}'
+    DISCONNECT_ERROR = f'{field_name} disconnection payload should be an entry {{id}}'
+
+    if field_name not in payload:
+        return
+
+    # check connection format
+    connection: Optional[Dict[Any, Any]] = payload.get(field_name)
+    if connection:
+        connection_payload = connection.get('connect', [])
+        if not isinstance(connection_payload, list):
+            raise PrimeHubException('connection should be list type')
+
+        for entry in connection_payload:
+            if not isinstance(entry, dict):
+                raise PrimeHubException(CONNECT_ERROR)
+            if 'id' in entry and len(entry) == 1:
+                continue
+            raise PrimeHubException(CONNECT_ERROR)
+
+        disconnection_payload = connection.get('disconnect', [])
+        if not isinstance(disconnection_payload, list):
+            raise PrimeHubException('disconnection should be list type')
+
+        for entry in disconnection_payload:
+            if not isinstance(entry, dict):
+                raise PrimeHubException(DISCONNECT_ERROR)
+            if 'id' in entry and len(entry) == 1:
+                continue
+            raise PrimeHubException(DISCONNECT_ERROR)

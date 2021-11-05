@@ -34,7 +34,7 @@ def _error_handler(response):
 
 class AdminInstanceTypes(Helpful, Module):
 
-    @cmd(name='create', description='Create an instance type', optionals=[('file', file_flag), ('from', str)])
+    @cmd(name='create', description='Create an instance type', optionals=[('file', file_flag)])
     def _create_cmd(self, **kwargs):
         """
         Create an instance type
@@ -45,8 +45,6 @@ class AdminInstanceTypes(Helpful, Module):
         :rtype dict
         :return The instance type
         """
-        if kwargs.get('from', None):
-            return self.submit_from_schedule(kwargs['from'])
 
         config = primehub_load_config(filename=kwargs.get('file', None))
         if not config:

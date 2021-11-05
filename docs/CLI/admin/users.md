@@ -40,8 +40,6 @@ primehub admin users create
 
 * *(optional)* file: The file path of the configurations
 
-* *(optional)* from
-
 
 
 

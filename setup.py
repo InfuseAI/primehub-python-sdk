@@ -30,6 +30,7 @@ setup(name='primehub-python-sdk',
           'dev': [
               'pytest>=4.6',
               'pytest-flake8',
+              'flake8==3.9.2',
               'pytest-mypy',
               'pytest-cov',
               'Jinja2',
