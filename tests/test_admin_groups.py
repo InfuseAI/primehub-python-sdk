@@ -1,5 +1,6 @@
 from primehub.admin_groups import validate, validate_cpu_resource, validate_gpu_resource, validate_memory_resource
 from primehub.admin_groups import validate_model_deployment, validate_shared_volume, validate_admins, validate_users
+from primehub.admin_groups import requirement_field_type, requirement_field_ge_zero
 from primehub.utils import PrimeHubException
 from tests import BaseTestCase
 
@@ -40,49 +41,49 @@ class TestAdminUsers(BaseTestCase):
 
         # check invalid user quota
         self.check_exception(
-            {'quotaCpu': -1.5}, 'quotaCpu should be non-negative value', validate_cpu_resource)
+            {'quotaCpu': -1.5}, requirement_field_ge_zero('quotaCpu'), validate_cpu_resource)
         self.check_exception(
-            {'quotaCpu': -1}, 'quotaCpu should be non-negative value', validate_cpu_resource)
+            {'quotaCpu': -1}, requirement_field_ge_zero('quotaCpu'), validate_cpu_resource)
         self.check_exception(
-            {'quotaCpu': '1'}, "quotaCpu should be a value in ['float', 'int'] types", validate_cpu_resource)
+            {'quotaCpu': '1'}, requirement_field_type('quotaCpu', "['float', 'int']"), validate_cpu_resource)
 
         self.check_exception(
-            {'quotaGpu': -1.5}, "quotaGpu should be a value in ['int'] types", validate_gpu_resource)
+            {'quotaGpu': -1.5}, requirement_field_type('quotaGpu', "['int']"), validate_gpu_resource)
         self.check_exception(
-            {'quotaGpu': -1}, 'quotaGpu should be non-negative value', validate_gpu_resource)
+            {'quotaGpu': -1}, requirement_field_ge_zero('quotaGpu'), validate_gpu_resource)
         self.check_exception(
-            {'quotaGpu': 1.5}, "quotaGpu should be a value in ['int'] types", validate_gpu_resource)
+            {'quotaGpu': 1.5}, requirement_field_type('quotaGpu', "['int']"), validate_gpu_resource)
 
         self.check_exception(
-            {'quotaMemory': -1.5}, 'quotaMemory should be non-negative value', validate_memory_resource)
+            {'quotaMemory': -1.5}, requirement_field_ge_zero('quotaMemory'), validate_memory_resource)
         self.check_exception(
-            {'quotaMemory': -1}, 'quotaMemory should be non-negative value', validate_memory_resource)
+            {'quotaMemory': -1}, requirement_field_ge_zero('quotaMemory'), validate_memory_resource)
 
         # check invalid group quota
-        self.check_exception({'projectQuotaCpu': -1.5},
-                             'projectQuotaCpu should be non-negative value', validate_cpu_resource)
         self.check_exception(
-            {'projectQuotaCpu': -1}, 'projectQuotaCpu should be non-negative value', validate_cpu_resource)
+            {'projectQuotaCpu': -1.5}, requirement_field_ge_zero('projectQuotaCpu'), validate_cpu_resource)
+        self.check_exception(
+            {'projectQuotaCpu': -1}, requirement_field_ge_zero('projectQuotaCpu'), validate_cpu_resource)
 
         self.check_exception(
-            {'projectQuotaGpu': -1}, 'projectQuotaGpu should be non-negative value', validate_gpu_resource)
+            {'projectQuotaGpu': -1}, requirement_field_ge_zero('projectQuotaGpu'), validate_gpu_resource)
         self.check_exception(
-            {'projectQuotaGpu': 1.5}, "projectQuotaGpu should be a value in ['int'] types", validate_gpu_resource)
+            {'projectQuotaGpu': 1.5}, requirement_field_type('projectQuotaGpu', "['int']"), validate_gpu_resource)
 
-        self.check_exception({'projectQuotaMemory': -1.5},
-                             'projectQuotaMemory should be non-negative value', validate_memory_resource)
-        self.check_exception({'projectQuotaMemory': -1},
-                             'projectQuotaMemory should be non-negative value', validate_memory_resource)
+        self.check_exception(
+            {'projectQuotaMemory': -1.5}, requirement_field_ge_zero('projectQuotaMemory'), validate_memory_resource)
+        self.check_exception(
+            {'projectQuotaMemory': -1}, requirement_field_ge_zero('projectQuotaMemory'), validate_memory_resource)
 
         # check invalid user and group quota
         self.check_exception({'quotaCpu': 1, 'projectQuotaCpu': 0.5},
-                             'quotaCpu less than or equal to projectQuotaCpu', validate_cpu_resource)
+                             'quotaCpu should be less than or equal to projectQuotaCpu', validate_cpu_resource)
 
         self.check_exception({'quotaGpu': 2, 'projectQuotaGpu': 1},
-                             'quotaGpu less than or equal to projectQuotaGpu', validate_gpu_resource)
+                             'quotaGpu should be less than or equal to projectQuotaGpu', validate_gpu_resource)
 
         self.check_exception({'quotaMemory': 2, 'projectQuotaMemory': 1.5},
-                             'quotaMemory less than or equal to projectQuotaMemory', validate_memory_resource)
+                             'quotaMemory should be less than or equal to projectQuotaMemory', validate_memory_resource)
 
         # pass with valid user quota
         validate_cpu_resource({'quotaCpu': 0.5})
@@ -110,13 +111,13 @@ class TestAdminUsers(BaseTestCase):
 
         # check invalid model deployment
         self.check_exception({'enabledDeployment': 1},
-                             'enabledDeployment should be bool value', validate_model_deployment)
+                             requirement_field_type('enabledDeployment', 'bool'), validate_model_deployment)
         self.check_exception({'enabledDeployment': False, 'maxDeploy': 1},
                              'enabledDeployment should be set for maxDeploy', validate_model_deployment)
         self.check_exception({'enabledDeployment': True, 'maxDeploy': 1.5},
-                             'maxDeploy should be int value', validate_model_deployment)
+                             requirement_field_type('maxDeploy', 'int'), validate_model_deployment)
         self.check_exception({'enabledDeployment': True, 'maxDeploy': -1},
-                             'maxDeploy should be non-negative value', validate_model_deployment)
+                             requirement_field_ge_zero('maxDeploy'), validate_model_deployment)
 
         # pass with valid model deployment
         validate_model_deployment({'enabledDeployment': False})
@@ -128,17 +129,17 @@ class TestAdminUsers(BaseTestCase):
 
         # check invalid shared volume
         self.check_exception({'enabledSharedVolume': 1},
-                             'enabledSharedVolume should be bool value', validate_shared_volume)
+                             requirement_field_type('enabledSharedVolume', 'bool'), validate_shared_volume)
         self.check_exception({'enabledSharedVolume': False, 'sharedVolumeCapacity': 1},
                              'enabledSharedVolume should be set for sharedVolumeCapacity', validate_shared_volume)
         self.check_exception({'enabledSharedVolume': False, 'launchGroupOnly': False},
                              'enabledSharedVolume should be set for launchGroupOnly', validate_shared_volume)
         self.check_exception({'enabledSharedVolume': True, 'sharedVolumeCapacity': 1.5, 'launchGroupOnly': 1},
-                             'sharedVolumeCapacity should be int value', validate_shared_volume)
+                             requirement_field_type('sharedVolumeCapacity', 'int'), validate_shared_volume)
         self.check_exception({'enabledSharedVolume': True, 'sharedVolumeCapacity': -1, 'launchGroupOnly': 1},
-                             'sharedVolumeCapacity should be non-negative value', validate_shared_volume)
+                             requirement_field_ge_zero('sharedVolumeCapacity'), validate_shared_volume)
         self.check_exception({'enabledSharedVolume': True, 'sharedVolumeCapacity': 1, 'launchGroupOnly': 1},
-                             'launchGroupOnly should be bool value', validate_shared_volume)
+                             requirement_field_type('launchGroupOnly', 'bool'), validate_shared_volume)
 
         # pass with valid shared volume
         validate_shared_volume({'enabledSharedVolume': False})
@@ -154,7 +155,7 @@ class TestAdminUsers(BaseTestCase):
 
         # check invalid admin
         self.check_exception(
-            {'admins': 123}, 'admins should be string type', validate_admins)
+            {'admins': 123}, requirement_field_type('admins', 'string'), validate_admins)
 
         # check invalid users connection
         self.check_exception({'users': {'connect': [{'name': 'user1'}, {'name': 'user2'}], 'disconnect': []}},

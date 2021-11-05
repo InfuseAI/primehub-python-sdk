@@ -18,6 +18,14 @@ def invalid_config(message: str):
     raise PrimeHubException(message + "\n\nExample:\n" + json.dumps(json.loads(example), indent=2))
 
 
+def requirement_field_type(field_name: str, type_name: Union[str, list[Any]]) -> str:
+    return f'{field_name} should be a value in {type_name} type(s)'
+
+
+def requirement_field_ge_zero(field_name: str) -> str:
+    return f'{field_name} should be a non-negative value'
+
+
 def validate_name(data: dict):
     if 'name' not in data:
         raise PrimeHubException('name is required')
@@ -56,7 +64,7 @@ def validate_depends_fields(data: dict, flag: str, depends: list):
 
     # validate flag type
     if not isinstance(is_enabled, bool):
-        raise PrimeHubException(f'{flag} should be bool value')
+        raise PrimeHubException(requirement_field_type(flag, 'bool'))
 
     # check options should not set, when flag is not enabled
     if not is_enabled:
@@ -68,14 +76,12 @@ def validate_depends_fields(data: dict, flag: str, depends: list):
 
     # check options with pre-condition when it has a value
     for entry in requirements:
-        if not entry.get("has_value"):
+        if not entry.get('has_value'):
             continue
         if not isinstance(entry.get('value'), entry.get('type')):
-            raise PrimeHubException(
-                f'{entry.get("field_name")} should be {entry.get("type").__name__} value')
+            raise PrimeHubException(requirement_field_type(entry.get('field_name'), entry.get('type').__name__))
         if entry.get('type') == int and entry.get('value') < 0:
-            raise PrimeHubException(
-                f'{entry.get("field_name")} should be non-negative value')
+            raise PrimeHubException(requirement_field_ge_zero(entry.get('field_name')))
 
 
 def validate_cpu_resource(data: dict):
@@ -98,29 +104,28 @@ def validate_resource_type(data: dict, user_field: str, project_field: str, acce
     # check type
     if user_quota is not None:
         if True not in [isinstance(user_quota, x) for x in acceptable_types]:
-            raise PrimeHubException(f'{user_field} should be a value in {acceptable_type_names} types')
+            raise PrimeHubException(requirement_field_type(user_field, acceptable_type_names))
         if user_quota < 0:
-            raise PrimeHubException(f'{user_field} should be non-negative value')
+            raise PrimeHubException(requirement_field_ge_zero(user_field))
 
     if group_quota is not None:
         if True not in [isinstance(group_quota, x) for x in acceptable_types]:
-            raise PrimeHubException(f'{project_field} should be a value in {acceptable_type_names} types')
+            raise PrimeHubException(requirement_field_type(project_field, acceptable_type_names))
         if group_quota < 0:
-            raise PrimeHubException(
-                f'{project_field} should be non-negative value')
+            raise PrimeHubException(requirement_field_ge_zero(project_field))
 
     # check limit
     if user_quota is not None and group_quota is not None:
         if user_quota > group_quota:
             raise PrimeHubException(
-                f'{user_field} less than or equal to {project_field}')
+                f'{user_field} should be less than or equal to {project_field}')
 
 
 def validate_admins(data: dict):
     admins = data.get('admins', '')
 
     if not isinstance(admins, str):
-        raise PrimeHubException('admins should be string type')
+        raise PrimeHubException(requirement_field_type('admins', 'string'))
 
 
 def validate_users(data: dict):
