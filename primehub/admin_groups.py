@@ -45,7 +45,13 @@ def validate_shared_volume(data: dict):
 
 
 def validate_depends_fields(data: dict, flag: str, depends: list):
-    depends_result = [(x['key'], data.get(x['key']) is not None, data.get(x['key']), x['type']) for x in depends]
+    def to_entry(x: dict):
+        return dict(field_name=x['key'],
+                    has_value=data.get(x['key']) is not None,
+                    value=data.get(x['key']),
+                    type=x['type'])
+
+    requirements = [to_entry(x) for x in depends]
     is_enabled = data.get(flag, False)
 
     # validate flag type
@@ -54,22 +60,22 @@ def validate_depends_fields(data: dict, flag: str, depends: list):
 
     # check options should not set, when flag is not enabled
     if not is_enabled:
-        for field_name, has_value, _, _ in depends_result:
-            if has_value:
+        for entry in requirements:
+            if entry.get('has_value'):
                 raise PrimeHubException(
-                    f'{flag} should be set for {field_name}')
+                    f'{flag} should be set for {entry.get("field_name")}')
         return
 
     # check options with pre-condition when it has a value
-    for field_name, has_value, value, value_type in depends_result:
-        if not has_value:
+    for entry in requirements:
+        if not entry.get("has_value"):
             continue
-        if not isinstance(value, value_type):
+        if not isinstance(entry.get('value'), entry.get('type')):
             raise PrimeHubException(
-                f'{field_name} should be {value_type.__name__} value')
-        if value_type == int and value < 0:
+                f'{entry.get("field_name")} should be {entry.get("type").__name__} value')
+        if entry.get('type') == int and entry.get('value') < 0:
             raise PrimeHubException(
-                f'{field_name} should be non-negative value')
+                f'{entry.get("field_name")} should be non-negative value')
 
 
 def validate_cpu_resource(data: dict):
