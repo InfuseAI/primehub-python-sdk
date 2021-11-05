@@ -18,8 +18,8 @@ def invalid_config(message: str):
     raise PrimeHubException(message + "\n\nExample:\n" + json.dumps(json.loads(example), indent=2))
 
 
-def requirement_field_type(field_name: str, type_name: Union[str, list[Any]]) -> str:
-    return f'{field_name} should be a value in {type_name} type(s)'
+def requirement_field_type(field_name: str, type_name: str) -> str:
+    return f'{field_name} should be a value in {type_name} type'
 
 
 def requirement_field_ge_zero(field_name: str) -> str:
@@ -104,13 +104,13 @@ def validate_resource_type(data: dict, user_field: str, project_field: str, acce
     # check type
     if user_quota is not None:
         if True not in [isinstance(user_quota, x) for x in acceptable_types]:
-            raise PrimeHubException(requirement_field_type(user_field, acceptable_type_names))
+            raise PrimeHubException(requirement_field_type(user_field, ', '.join(acceptable_type_names)))
         if user_quota < 0:
             raise PrimeHubException(requirement_field_ge_zero(user_field))
 
     if group_quota is not None:
         if True not in [isinstance(group_quota, x) for x in acceptable_types]:
-            raise PrimeHubException(requirement_field_type(project_field, acceptable_type_names))
+            raise PrimeHubException(requirement_field_type(project_field, ', '.join(acceptable_type_names)))
         if group_quota < 0:
             raise PrimeHubException(requirement_field_ge_zero(project_field))
 

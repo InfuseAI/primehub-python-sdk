@@ -45,14 +45,14 @@ class TestAdminUsers(BaseTestCase):
         self.check_exception(
             {'quotaCpu': -1}, requirement_field_ge_zero('quotaCpu'), validate_cpu_resource)
         self.check_exception(
-            {'quotaCpu': '1'}, requirement_field_type('quotaCpu', "['float', 'int']"), validate_cpu_resource)
+            {'quotaCpu': '1'}, requirement_field_type('quotaCpu', 'float, int'), validate_cpu_resource)
 
         self.check_exception(
-            {'quotaGpu': -1.5}, requirement_field_type('quotaGpu', "['int']"), validate_gpu_resource)
+            {'quotaGpu': -1.5}, requirement_field_type('quotaGpu', 'int'), validate_gpu_resource)
         self.check_exception(
             {'quotaGpu': -1}, requirement_field_ge_zero('quotaGpu'), validate_gpu_resource)
         self.check_exception(
-            {'quotaGpu': 1.5}, requirement_field_type('quotaGpu', "['int']"), validate_gpu_resource)
+            {'quotaGpu': 1.5}, requirement_field_type('quotaGpu', 'int'), validate_gpu_resource)
 
         self.check_exception(
             {'quotaMemory': -1.5}, requirement_field_ge_zero('quotaMemory'), validate_memory_resource)
@@ -68,7 +68,7 @@ class TestAdminUsers(BaseTestCase):
         self.check_exception(
             {'projectQuotaGpu': -1}, requirement_field_ge_zero('projectQuotaGpu'), validate_gpu_resource)
         self.check_exception(
-            {'projectQuotaGpu': 1.5}, requirement_field_type('projectQuotaGpu', "['int']"), validate_gpu_resource)
+            {'projectQuotaGpu': 1.5}, requirement_field_type('projectQuotaGpu', 'int'), validate_gpu_resource)
 
         self.check_exception(
             {'projectQuotaMemory': -1.5}, requirement_field_ge_zero('projectQuotaMemory'), validate_memory_resource)
