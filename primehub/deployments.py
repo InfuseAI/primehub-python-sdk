@@ -125,6 +125,7 @@ class Deployments(Helpful, Module):
             name
             description
             updateMessage
+            metadata
             stop
             userName
             groupName
@@ -141,6 +142,10 @@ class Deployments(Helpful, Module):
             lastUpdatedTime
             pods {
               name
+            }
+            env {
+              name
+              value
             }
             endpointAccessType
             endpointClients {
