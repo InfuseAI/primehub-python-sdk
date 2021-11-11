@@ -313,7 +313,7 @@ class Files(Helpful, Module):
                 else:
                     phfs_path = os.path.join(path, os.path.relpath(filepath, os.path.dirname(src)))
                     pass
-                print( '[Uploading] ' + filepath + ' -> phfs://' + phfs_path)
+                print('[Uploading] ' + filepath + ' -> phfs://' + phfs_path)
                 response = self._execute_upload(endpoint, filepath, phfs_path)
                 response['phfs'] = phfs_path
                 response['file'] = filepath
@@ -327,10 +327,7 @@ class Files(Helpful, Module):
         return result
 
     def _execute_upload(self, endpoint, src, path):
-
         return self.upload_file(endpoint + path, src)
-        pass
-
 
     def help_description(self):
         return "List and download shared files"
