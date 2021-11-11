@@ -56,6 +56,11 @@ class Client(object):
                 f.write(r.content)
         return
 
+    def upload_file(self, endpoint, src):
+        headers = {'authorization': 'Bearer {}'.format(self.primehub_config.api_token)}
+        with open(src, 'rb') as f:
+            r = requests.post(endpoint, headers=headers, data=f)
+        return r.json()
 
 if __name__ == '__main__':
     print(Client.__module__)
