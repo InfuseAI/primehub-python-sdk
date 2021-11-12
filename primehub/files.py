@@ -1,6 +1,7 @@
 from primehub import Helpful, cmd, Module
 from urllib.parse import urlparse
 import os
+import sys
 
 from primehub.utils.optionals import toggle_flag
 from primehub.utils import create_logger, SharedFileException
@@ -144,6 +145,17 @@ class Files(Helpful, Module):
         items = results['data']['files']['items']
         return items
 
+    def _primehub_store_endpoint(self):
+        def to_group_path(group_name: str):
+            if not group_name:
+                return group_name
+            return group_name.replace('_', '-').lower()
+
+        u = urlparse(self.endpoint)
+        endpoint = u._replace(path=f'/api/files/groups/{to_group_path(self.group_name)}').geturl()
+
+        return endpoint
+
     @cmd(name='download', description='Download shared files', optionals=[('recursive', toggle_flag)])
     def download(self, path, dest, **kwargs):
         """
@@ -159,13 +171,7 @@ class Files(Helpful, Module):
         :param recusive: Copy recursively, it works when a path is a directory.
         """
 
-        def to_group_path(group_name: str):
-            if not group_name:
-                return group_name
-            return group_name.replace('_', '-').lower()
-
-        u = urlparse(self.endpoint)
-        endpoint = u._replace(path=f'/api/files/groups/{to_group_path(self.group_name)}').geturl()
+        endpoint = self._primehub_store_endpoint()
 
         # start download
         src_dst_list = self._generate_download_list(path, dest, **kwargs)
@@ -256,6 +262,72 @@ class Files(Helpful, Module):
             src_dst_list.append((src, dst))
 
         return src_dst_list
+
+    @cmd(name='upload', description='Upload shared files', optionals=[('recursive', toggle_flag)])
+    def upload(self, src, path, **kwargs):
+        """
+        Upload files
+
+        :type path: str
+        :param path: The path of file or folder
+
+        :type src: str
+        :param src: The local path to save artifacts
+
+        :type recusive: bool
+        :param recusive: Upload recursively, it works when a src is a directory.
+        """
+        path = _normalize_user_input_path(path)
+        recursive = kwargs.get('recursive', False)
+
+        # check src
+        if not os.path.exists(src):
+            invalid(f'No such file or directory: {src}')
+            return []
+
+        file_paths = []
+        if recursive is True:
+            if os.path.isfile(src):
+                file_paths.append(os.path.abspath(src))
+            else:
+                for (dirpath, dirnames, filenames) in os.walk(src):
+                    for filename in filenames:
+                        file_paths.append(os.path.join(dirpath, filename))
+            pass
+        else:
+            if os.path.isfile(src):
+                filename = os.path.abspath(src)
+                file_paths.append(filename)
+            else:
+                invalid(f'{src} is not a file')
+                return []
+            pass
+
+        endpoint = self._primehub_store_endpoint()
+        result = []
+        for filepath in file_paths:
+            try:
+                phfs_path = path
+                if os.path.isfile(src):
+                    phfs_path = os.path.join(path, os.path.basename(src))
+                else:
+                    phfs_path = os.path.join(path, os.path.relpath(filepath, os.path.dirname(src)))
+                    pass
+                print('[Uploading] ' + filepath + ' -> phfs://' + phfs_path)
+                response = self._execute_upload(endpoint, filepath, phfs_path)
+                response['phfs'] = phfs_path
+                response['file'] = filepath
+                result.append(response)
+            except Exception as e:
+                print(e, file=sys.stderr)
+                result.append({
+                    'success': False,
+                    'message': e
+                })
+        return result
+
+    def _execute_upload(self, endpoint, src, path):
+        return self.upload_file(endpoint + path, src)
 
     def help_description(self):
         return "List and download shared files"

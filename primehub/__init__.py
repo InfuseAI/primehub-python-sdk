@@ -247,6 +247,9 @@ class PrimeHub(object):
     def request_file(self, endpint: str, dest: str):
         return Client(self.primehub_config).request_file(endpint, dest)
 
+    def upload_file(self, endpoint: str, src: str):
+        return Client(self.primehub_config).upload_file(endpoint, src)
+
     def _find_command_class(self, command_class, module_name):
         # create command instance
         if isinstance(command_class, str):
@@ -346,6 +349,7 @@ class Module(object):
         self.request = primehub.request
         self.request_logs = primehub.request_logs
         self.request_file = primehub.request_file
+        self.upload_file = primehub.upload_file
 
     @property
     def current_group(self) -> dict:
