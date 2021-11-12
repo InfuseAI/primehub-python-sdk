@@ -55,19 +55,27 @@ primehub files list <path>
 * path: The path to list
  
 
-### Upload
+
+
+
+### upload
 
 Upload shared files
+
 
 ```
 primehub files upload <src> <path>
 ```
 
-* src: The local path to upload artifacts
+* src: The local path to save artifacts
 * path: The path of file or folder
  
 
 * *(optional)* recursive
+
+
+
+ 
 
 ## Examples
 

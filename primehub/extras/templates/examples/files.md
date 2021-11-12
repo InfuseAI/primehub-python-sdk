@@ -29,3 +29,9 @@ $ tree ./my-download
 ./my-download
 `-- job-202107290838-aoq173
 ```
+
+Uses `upload` to upload a file or a directory with `--recursive` options.
+
+```
+$ primehub files upload ./my-download /jobArtifacts/job-202107290838-aoq173 --recursive
+```
