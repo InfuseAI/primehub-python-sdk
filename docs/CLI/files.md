@@ -10,6 +10,7 @@ List and download shared files
 Available Commands:
   download             Download shared files
   list                 List shared files
+  upload               Upload shared files
 
 Options:
   -h, --help           Show the help
@@ -54,9 +55,19 @@ primehub files list <path>
 * path: The path to list
  
 
+### Upload
 
+Upload shared files
 
+```
+primehub files upload <src> <path>
+```
+
+* src: The local path to upload artifacts
+* path: The path of file or folder
  
+
+* *(optional)* recursive
 
 ## Examples
 
@@ -90,4 +101,10 @@ $ primehub files download /jobArtifacts/job-202107290838-aoq173 ./my-download --
 $ tree ./my-download
 ./my-download
 `-- job-202107290838-aoq173
+```
+
+Uses `upload` to upload a file or a directory with `--recursive` options.
+
+```
+$ primehub files upload ./my-download /jobArtifacts/job-202107290838-aoq173 --recursive
 ```
