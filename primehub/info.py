@@ -11,7 +11,7 @@ class CliInformation(Helpful, Module):
         current_group = self.primehub.groups.get(self.group_name)
         images = [x['name'] for x in self.primehub.images.list()]
         instance_types = [x['name'] for x in self.primehub.instancetypes.list()]
-        datasets = [x['name'] for x in self.primehub.datasets.list()]
+        volumes = [x['name'] for x in self.primehub.datasets.list()]
 
         if not current_group:
             group_status = " (No matched group for name %s)" % self.group_name
@@ -34,7 +34,7 @@ class CliInformation(Helpful, Module):
             return "\n  ".join(lines)
 
         args = dict(endpoint=self.endpoint, group_status=group_status.strip(),
-                    images=indent2(images), instance_types=indent2(instance_types), datasets=indent2(datasets))
+                    images=indent2(images), instance_types=indent2(instance_types), volumes=indent2(volumes))
         output = """Endpoint: %(endpoint)s
 User:
   Id: %(user_id)s
@@ -49,8 +49,8 @@ Images:
   %(images)s
 InstanceTypes:
   %(instance_types)s
-Datasets:
-  %(datasets)s
+Volumes:
+  %(volumes)s
 """ % ({**me, **args})
         return output
 
