@@ -4,7 +4,7 @@ from primehub import Helpful, cmd, Module
 from primehub.resource_operations import GroupResourceOperation
 
 
-class Datasets(Helpful, Module, GroupResourceOperation):
+class Volumes(Helpful, Module, GroupResourceOperation):
     """
     List datasets or get a dataset entry from the list
     """
@@ -34,7 +34,7 @@ class Datasets(Helpful, Module, GroupResourceOperation):
         :rtype: list
         :returns: all datasets in the current group
         """
-        return self.do_list(Datasets.query, Datasets.resource_name)
+        return self.do_list(Volumes.query, Volumes.resource_name)
 
     @cmd(name='get', description='Get a dataset by name', return_required=True)
     def get(self, name) -> Optional[dict]:
@@ -45,7 +45,7 @@ class Datasets(Helpful, Module, GroupResourceOperation):
         :rtype: Optional[dict]
         :returns: a dataset
         """
-        return self.do_get(Datasets.query, Datasets.resource_name, name)
+        return self.do_get(Volumes.query, Volumes.resource_name, name)
 
     def help_description(self):
         return "Get a dataset or list datasets"

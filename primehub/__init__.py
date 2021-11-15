@@ -202,7 +202,7 @@ class PrimeHub(object):
         self.register_command('config', 'Config')
         self.register_command('groups', 'Groups')
         self.register_command('images', 'Images')
-        self.register_command('datasets', 'Datasets')
+        self.register_command('volumes', 'Volumes')
         self.register_command('instancetypes', 'InstanceTypes')
         self.register_command('jobs', 'Jobs')
         self.register_command('schedules', 'Schedules')
@@ -218,7 +218,7 @@ class PrimeHub(object):
 
         # register admin commands
         self.register_admin_command('admin_images', 'AdminImages', 'images')
-        self.register_admin_command('admin_datasets', 'AdminDatasets', 'datasets')
+        self.register_admin_command('admin_volumes', 'AdminVolumes', 'volumes')
         self.register_admin_command('admin_instancetypes', 'AdminInstanceTypes', 'instancetypes')
         self.register_admin_command('admin_users', 'AdminUsers', 'users')
         self.register_admin_command('admin_groups', 'AdminGroups', 'groups')

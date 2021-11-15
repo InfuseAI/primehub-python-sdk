@@ -41,7 +41,7 @@ primehub
 ├── __init__.py
 ├── cli.py
 ├── config.py
-├── datasets.py
+├── volumes.py
 ├── files.py
 ├── group.py
 ├── images.py
@@ -164,7 +164,7 @@ class PrimeHub(object):
         self.register_command('config', 'Config')
         self.register_command('group', 'Group')
         self.register_command('images', 'Images')
-        self.register_command('datasets', 'Datasets')
+        self.register_command('volumes', 'Volumes')
         self.register_command('instancetypes', 'InstanceTypes')
         self.register_command('jobs', 'Jobs')
         self.register_command('schedules', 'Schedules')

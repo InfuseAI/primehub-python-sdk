@@ -16,7 +16,7 @@ def waring_if_needed(data: dict, stderr):
     return data
 
 
-class AdminDatasets(Helpful, Module):
+class AdminVolumes(Helpful, Module):
 
     @cmd(name='create', description='Create a dataset', optionals=[('file', file_flag)])
     def _create_cmd(self, **kwargs) -> list:
