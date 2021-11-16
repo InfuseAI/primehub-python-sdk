@@ -244,7 +244,7 @@ class AdminVolumes(Helpful, Module):
 
         query = """
         query DatasetQuery($where: DatasetWhereUniqueInput!) {
-          volume(where: $where) {
+          dataset(where: $where) {
             id
             name
             displayName
@@ -274,7 +274,7 @@ class AdminVolumes(Helpful, Module):
         """
 
         result = self.request({'where': {'id': name}}, query)
-        if 'data' in result and 'volume' in result['data']:
+        if 'data' in result and 'dataset' in result['data']:
             return volume_output(result['data']['dataset'])
 
         return result

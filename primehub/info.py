@@ -11,7 +11,7 @@ class CliInformation(Helpful, Module):
         current_group = self.primehub.groups.get(self.group_name)
         images = [x['name'] for x in self.primehub.images.list()]
         instance_types = [x['name'] for x in self.primehub.instancetypes.list()]
-        volumes = [x['name'] for x in self.primehub.datasets.list()]
+        volumes = [x['name'] for x in self.primehub.volumes.list()]
 
         if not current_group:
             group_status = " (No matched group for name %s)" % self.group_name
