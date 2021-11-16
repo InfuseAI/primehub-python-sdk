@@ -3,13 +3,13 @@
 
 ```
 Usage: 
-  primehub datasets <command>
+  primehub volumes <command>
 
-Get a dataset or list datasets
+Get a volume or list volumes
 
 Available Commands:
-  get                  Get a dataset by name
-  list                 List datasets
+  get                  Get a volume by name
+  list                 List volumes
 
 Options:
   -h, --help           Show the help
@@ -26,14 +26,14 @@ Global Options:
 
 ### get
 
-Get a dataset by name
+Get a volume by name
 
 
 ```
-primehub datasets get <name>
+primehub volumes get <name>
 ```
 
-* name: the name of a dataset
+* name: the name of a volume
  
 
 
@@ -41,11 +41,11 @@ primehub datasets get <name>
 
 ### list
 
-List datasets
+List volumes
 
 
 ```
-primehub datasets list
+primehub volumes list
 ```
  
 
@@ -55,12 +55,12 @@ primehub datasets list
 
 ## Examples
 
-The `datasets` command is a group specific resource. It only works after the `group` assigned.
+The `volumes` command is a group specific resource. It only works after the `group` assigned.
 
-Using `list` to find all datasets in your group:
+Using `list` to find all volumes in your group:
 
 ```
-$ primehub datasets list
+$ primehub volumes list
 ```
 
 ```
@@ -69,14 +69,14 @@ id      name    displayName    description    type
 kaggle  kaggle  kaggle                        pv
 ```
 
-If you already know the name of a dataset, use the `get` to get a single entry:
+If you already know the name of a volume, use the `get` to get a single entry:
 
 ```
-$ primehub datasets get kaggle
+$ primehub volumes get kaggle
 ```
 
 ```
-primehub datasets get kaggle
+primehub volumes get kaggle
 id:             kaggle
 name:           kaggle
 displayName:    kaggle
