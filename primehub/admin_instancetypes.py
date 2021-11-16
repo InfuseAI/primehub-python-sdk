@@ -86,7 +86,7 @@ class AdminInstanceTypes(Helpful, Module):
         :param id: the id of the instance type
 
         :rtype: dict
-        :returns: the dataset
+        :returns: the instance type
         """
         return self.update(id, primehub_load_config(filename=kwargs.get('file', None)))
 

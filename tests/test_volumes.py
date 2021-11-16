@@ -3,10 +3,10 @@ from primehub.utils import PrimeHubException
 from tests import BaseTestCase
 
 
-class TestDatasets(BaseTestCase):
+class TestVolumes(BaseTestCase):
 
     def setUp(self) -> None:
-        super(TestDatasets, self).setUp()
+        super(TestVolumes, self).setUp()
 
     def check_required(self, input: dict, message: str):
         with self.assertRaises(PrimeHubException) as context:
@@ -18,7 +18,7 @@ class TestDatasets(BaseTestCase):
     def test_validator(self):
         # check required fields
         self.check_required({}, 'name is required')
-        self.check_required({'name': 'dataset-name'}, 'type is required')
+        self.check_required({'name': 'volume-name'}, 'type is required')
 
         # check formats
         self.check_required({'name': '-name', 'type': 'pv'},

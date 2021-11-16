@@ -6,7 +6,7 @@ from primehub.resource_operations import GroupResourceOperation
 
 class Volumes(Helpful, Module, GroupResourceOperation):
     """
-    List datasets or get a dataset entry from the list
+    List volumes or get a volume entry from the list
     """
     resource_name = 'datasets'
     query = """
@@ -26,26 +26,26 @@ class Volumes(Helpful, Module, GroupResourceOperation):
     }
     """
 
-    @cmd(name='list', description='List datasets')
+    @cmd(name='list', description='List volumes')
     def list(self) -> list:
         """
-        List datasets
+        List volumes
 
         :rtype: list
-        :returns: all datasets in the current group
+        :returns: all volumes in the current group
         """
         return self.do_list(Volumes.query, Volumes.resource_name)
 
-    @cmd(name='get', description='Get a dataset by name', return_required=True)
+    @cmd(name='get', description='Get a volume by name', return_required=True)
     def get(self, name) -> Optional[dict]:
         """
-        Get a dataset from the current group
+        Get a volume from the current group
         :type name: str
-        :param name: the name of a dataset
+        :param name: the name of a volume
         :rtype: Optional[dict]
-        :returns: a dataset
+        :returns: a volume
         """
         return self.do_get(Volumes.query, Volumes.resource_name, name)
 
     def help_description(self):
-        return "Get a dataset or list datasets"
+        return "Get a volume or list volumes"
