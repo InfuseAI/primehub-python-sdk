@@ -55,8 +55,10 @@ Usage:
   primehub <command>
 
 Available Commands:
+  admin                Commands for system administrator
+  apps                 Manage PrimeHub Applications
+  apptemplates         Get PhAppTemplates
   config               Update the settings of PrimeHub SDK
-  datasets             Get a dataset or list datasets
   deployments          Get a deployment or list deployments
   files                List and download shared files
   groups               Get a group or list groups
@@ -65,9 +67,11 @@ Available Commands:
   instancetypes        Get an instance types of list instance types
   jobs                 Get a job or list jobs
   me                   Show user account
+  models               Manage models
   notebooks            Get notebooks logs
   schedules            Get a schedule or list schedules
   version              Display the version of PrimeHub Python SDK
+  volumes              Get a volume or list volumes
 
 Options:
   -h, --help           Show the help

@@ -36,7 +36,7 @@ InstanceTypes:
   gpu-2
   cpu-2
   gpu-1
-Datasets:
+Volumes:
 ```
 
 ### Notes

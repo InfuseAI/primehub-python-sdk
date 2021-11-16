@@ -1,19 +1,19 @@
 
-# <ADMIN> Primehub Datasets
+# <ADMIN> Primehub Volumes
 
 ```
 Usage: 
-  primehub admin datasets <command>
+  primehub admin volumes <command>
 
-Manage datasets
+Manage volumes
 
 Available Commands:
-  create               Create a dataset
-  delete               Delete a dataset by id
-  get                  Get a dataset by name
-  list                 List a dataset by id
+  create               Create a volume
+  delete               Delete a volume by id
+  get                  Get a volume by name
+  list                 List volumes
   regen-upload-secret  Regenerate the secret of the upload server
-  update               Update the dataset
+  update               Update the volume
 
 Options:
   -h, --help           Show the help
@@ -30,11 +30,11 @@ Global Options:
 
 ### create
 
-Create a dataset
+Create a volume
 
 
 ```
-primehub admin datasets create
+primehub admin volumes create
 ```
  
 
@@ -45,14 +45,14 @@ primehub admin datasets create
 
 ### delete
 
-Delete a dataset by id
+Delete a volume by id
 
 
 ```
-primehub admin datasets delete <id>
+primehub admin volumes delete <id>
 ```
 
-* id: The dataset id
+* id: The volume id
  
 
 
@@ -60,14 +60,14 @@ primehub admin datasets delete <id>
 
 ### get
 
-Get a dataset by name
+Get a volume by name
 
 
 ```
-primehub admin datasets get <name>
+primehub admin volumes get <name>
 ```
 
-* name: the name of a dataset
+* name: the name of a volume
  
 
 
@@ -75,11 +75,11 @@ primehub admin datasets get <name>
 
 ### list
 
-List a dataset by id
+List volumes
 
 
 ```
-primehub admin datasets list
+primehub admin volumes list
 ```
  
 
@@ -94,10 +94,10 @@ Regenerate the secret of the upload server
 
 
 ```
-primehub admin datasets regen-upload-secret <id>
+primehub admin volumes regen-upload-secret <id>
 ```
 
-* id: The dataset id or name
+* id: The volume id or name
  
 
 
@@ -105,11 +105,11 @@ primehub admin datasets regen-upload-secret <id>
 
 ### update
 
-Update the dataset
+Update the volume
 
 
 ```
-primehub admin datasets update <name>
+primehub admin volumes update <name>
 ```
 
 * name
@@ -121,44 +121,44 @@ primehub admin datasets update <name>
 
 ## Examples
 
-### Query datasets
+### Query volumes
 
-The `datasets` command is a group specific resource. It only works after the `group` assigned.
+The `volumes` command is a group specific resource. It only works after the `group` assigned.
 
-Using `list` to find all datasets in your group:
+Using `list` to find all volumes in your group:
 
 ```
-$ primehub admin datasets list
+$ primehub admin volumes list
 ```
 
 ```
 id           name         displayName                 description                      type
 -----------  -----------  --------------------------  -------------------------------  ------
-pv-dataset   pv-dataset   the dataset created by SDK  It is a PV dataset               pv
-env-dataset  env-dataset  env-dataset                 make changes to the description  env
+pv-volume   pv-volume   the volume created by SDK  It is a PV volume               pv
+env-volume  env-volume  env-volume                 make changes to the description  env
 ```
 
-If you already know the name of a dataset, use the `get` to get a single entry:
+If you already know the name of a volume, use the `get` to get a single entry:
 
 ```
-$ primehub admin datasets get dataset
+$ primehub admin volumes get volume
 ```
 
 ```
-id:                  pv-dataset
-name:                pv-dataset
-displayName:         the dataset created by SDK
-description:         It is a PV dataset
+id:                  pv-volume
+name:                pv-volume
+displayName:         the volume created by SDK
+description:         It is a PV volume
 type:                pv
 pvProvisioning:      auto
 volumeSize:          1
 enableUploadServer:  True
-uploadServerLink:    http://primehub-python-sdk.primehub.io/dataset/hub/pv-dataset/browse
+uploadServerLink:    http://primehub-python-sdk.primehub.io/dataset/hub/pv-volume/browse
 global:              False
 groups:              [{'id': 'a962305b-c884-4413-9358-ef56373b287c', 'name': 'foobarbar', 'displayName': '', 'writable': False}, {'id': 'a7a283b5-c0e2-4b79-a78c-39c630324762', 'name': 'phusers', 'displayName': 'primehub users', 'writable': False}]
 ```
 
-### Admin actions for datasets
+### Admin actions for volumes
 
 These actions only can be used by administrators:
 
@@ -166,16 +166,16 @@ These actions only can be used by administrators:
 * update
 * delete
 
-For `create` and `update` require a dataset configuration, please see above examples.
+For `create` and `update` require a volume configuration, please see above examples.
 
 ### Fields for creating or updating
 
 | field | required | type | description |
 | --- | --- | --- | --- |
 | name | required | string | it should be a valid resource name for kubernetes |
-| displayName | optional | string | display name for this dataset |
+| displayName | optional | string | display name for this volume |
 | description | optional | string | |
-| global | optional | boolean | when a dataset is global, it could be seen for each group |
+| global | optional | boolean | when a volume is global, it could be seen for each group |
 | type | required | string | one of ['pv', 'nfs', 'hostPath', 'git', 'env'] |
 | url | conditional | string | **MUST** use with `git` type |
 | pvProvisioning | conditional | string | onf of ['auto', 'manual'], **MUST** use with `pv` type. This field only uses in `CREATE` action |
@@ -184,18 +184,18 @@ For `create` and `update` require a dataset configuration, please see above exam
 | hostPath | conditional | string | **MUST** use with `hostPath` type  |
 | variables | optional | dict | **MAY** use with `env` type. It is key value pairs. All values have to a string value. For example: `{"key1":"value1","key2":"value2"}`. |
 | groups | optional | list of connected groups (dict) | please see the `connect` examples |
-| secret | optional | dict | **MAY** use with `git` type, it binds a `secret` to the `git` dataset |
+| secret | optional | dict | **MAY** use with `git` type, it binds a `secret` to the `git` volume |
 | volumeSize | conditional | integer | **MUST** use with `pv` type. The unit is `GB`.|
 | enableUploadServer | optional | boolean | it only works with one of ['pv', 'nfs', 'hostPath'] writable types |
 
 > There is a simple rule to use fields for `UPDATE`. All required fields should not be in the payload.
 
-For example, there is a configuration for creating env dataset:
+For example, there is a configuration for creating env volume:
 
 ```bash
-primehub datasets create <<EOF
+primehub volumes create <<EOF
 {
-  "name": "env-dataset",
+  "name": "env-volume",
   "description": "",
   "type": "env",
   "global": true,
@@ -210,7 +210,7 @@ EOF
 After removing required `name` and `type` fields, it could be used with updating:
 
 ```bash
-primehub admin datasets update env-dataset <<EOF
+primehub admin volumes update env-volume <<EOF
 {
   "description": "make changes to the description",
   "variables": {
@@ -226,9 +226,9 @@ EOF
 
 ```json
 {
-  "name": "pv-dataset",
-  "displayName": "the dataset created by SDK",
-  "description": "It is a PV dataset",
+  "name": "pv-volume",
+  "displayName": "the volume created by SDK",
+  "description": "It is a PV volume",
   "type": "pv",
   "global": true,
   "pvProvisioning": "auto",
@@ -236,24 +236,24 @@ EOF
 }
 ```
 
-Save the configuration to `create-dataset.json` and run `create`:
+Save the configuration to `create-volume.json` and run `create`:
 
 ```
-primehub admin datasets create --file create-dataset.json
+primehub admin volumes create --file create-volume.json
 ```
 
-The example creates a PV dataset. According to the type `pv`, these fields become `required`:
+The example creates a PV volume. According to the type `pv`, these fields become `required`:
 * pvProvisioning: how does the PV create? `auto` means PV will create automatically, `manual` means the system administrator should create it.
 * volumeSize: the capacity in GB when `auto` creates it.
 
-The `group.connect` will bind two groups to the dataset. One is a writable group and another is readonly group.
+The `group.connect` will bind two groups to the volume. One is a writable group and another is readonly group.
 
 
 ### NFS type
 
 ```json
 {
-  "name": "nfs-dataset",
+  "name": "nfs-volume",
   "type": "nfs",
   "global": true,
   "nfsServer": "1.2.3.4",
@@ -261,13 +261,13 @@ The `group.connect` will bind two groups to the dataset. One is a writable group
 }
 ```
 
-Save the configuration to `create-dataset.json` and run `create`:
+Save the configuration to `create-volume.json` and run `create`:
 
 ```
-primehub admin datasets create --file create-dataset.json
+primehub admin volumes create --file create-volume.json
 ```
 
-The example creates a NFS dataset. According to the type `nfs`, these fields become `required`:
+The example creates a NFS volume. According to the type `nfs`, these fields become `required`:
 * nfsServer: the address of a NFS server
 * nfsPath: the mount path of a NFS server
 
@@ -275,7 +275,7 @@ The example creates a NFS dataset. According to the type `nfs`, these fields bec
 
 ```json
 {
-  "name": "host-path-dataset",
+  "name": "host-path-volume",
   "description": "",
   "type": "hostPath",
   "global": true,
@@ -283,19 +283,19 @@ The example creates a NFS dataset. According to the type `nfs`, these fields bec
 }
 ```
 
-Save the configuration to `create-dataset.json` and run `create`:
+Save the configuration to `create-volume.json` and run `create`:
 
 ```
-primehub admin datasets create --file create-dataset.json
+primehub admin volumes create --file create-volume.json
 ```
 
-The example creates a hostPath dataset. According to the type `hostPath`, the `hostPath` field becomes `required`. You should put an absolute path that available in the node.
+The example creates a hostPath volume. According to the type `hostPath`, the `hostPath` field becomes `required`. You should put an absolute path that available in the node.
 
 ### Git type
 
 ```json
 {
-  "name": "git-dataset",
+  "name": "git-volume",
   "type": "git",
   "global": true,
   "url": "https://github.com/datasets/covid-19"
@@ -306,7 +306,7 @@ or with a `secret`
 
 ```json
 {
-  "name": "git-dataset",
+  "name": "git-volume",
   "type": "git",
   "global": true,
   "url": "https://github.com/datasets/covid-19",
@@ -318,13 +318,13 @@ or with a `secret`
 }
 ```
 
-Save the configuration to `create-dataset.json` and run `create`:
+Save the configuration to `create-volume.json` and run `create`:
 
 ```
-primehub admin datasets create --file create-dataset.json
+primehub admin volumes create --file create-volume.json
 ```
 
-The example creates a git dataset. According to the type `git`, `url` field becomes `required`. You should put a git repository url.
+The example creates a git volume. According to the type `git`, `url` field becomes `required`. You should put a git repository url.
 
 If the url needs a credential, you could use `secret` to connect the pre-set secret (an SSH public key).
 
@@ -332,7 +332,7 @@ If the url needs a credential, you could use `secret` to connect the pre-set sec
 
 ```json
 {
-  "name": "env-dataset",
+  "name": "env-volume",
   "description": "",
   "type": "env",
   "global": true,
@@ -343,19 +343,19 @@ If the url needs a credential, you could use `secret` to connect the pre-set sec
 }
 ```
 
-Save the configuration to `create-dataset.json` and run `create`:
+Save the configuration to `create-volume.json` and run `create`:
 
 ```
-primehub admin datasets create --file create-dataset.json
+primehub admin volumes create --file create-volume.json
 ```
 
-The example creates an ENV dataset. According to the type `env`, `variables` field becomes `required`. You could put many key-value pairs. Be careful, the key and value should be string values.
+The example creates an ENV volume. According to the type `env`, `variables` field becomes `required`. You could put many key-value pairs. Be careful, the key and value should be string values.
 
-### Manage groups in a dataset
+### Manage groups in a volume
 
 In this section, we will discuss the `global` and `groups` fields.
 
-There some use cases to manage groups in a dataset:
+There some use cases to manage groups in a volume:
 * allow any groups to read data 
 * allow any groups to read data, but some groups can write
 * few groups can read data, some groups can write
@@ -365,13 +365,13 @@ etc.
 ----
 
 
-Here is an example to create a PV dataset:
+Here is an example to create a PV volume:
 
 ```bash
-primehub admin datasets create <<EOF
+primehub admin volumes create <<EOF
 {
-  "name": "dataset-with-groups",
-  "displayName": "the dataset created by SDK",
+  "name": "volume-with-groups",
+  "displayName": "the volume created by SDK",
   "type": "pv",
   "global": true,
   "groups": {
@@ -388,7 +388,7 @@ primehub admin datasets create <<EOF
 EOF
 ```
 
-Please pay attention to `global` and `groups`. When `global` is enabled, it means any groups `can read` the dataset.
+Please pay attention to `global` and `groups`. When `global` is enabled, it means any groups `can read` the volume.
 
 > There is not options for global `write`, you have to set the `write` to each group by the `groups.connect` field
 
@@ -409,18 +409,18 @@ Here is our example in the `connect`:
 
 The `groups.connect` can be used with:
 
-* primehub admin datasets create
-* primehub admin datasets update
+* primehub admin volumes create
+* primehub admin volumes update
 
-However, the `writable` only has meanings to `writable` datasets (one of `['pv', 'nfs', 'hostPath']` writable types).
-When a writable dataset got a group with `writable: false` setting, it will make the group read-only to the dataset.
+However, the `writable` only has meanings to `writable` volumes (one of `['pv', 'nfs', 'hostPath']` writable types).
+When a writable volume got a group with `writable: false` setting, it will make the group read-only to the volume.
 
 
 #### groups.disconnect
 
 The `groups.disconnect` can be used with:
 
-* primehub admin datasets update
+* primehub admin volumes update
 
 
 ```json
@@ -439,8 +439,8 @@ The `groups.disconnect` can be used with:
 }
 ```
 
-`groups.disconnect` will remove the association between the dataset and group.
+`groups.disconnect` will remove the association between the volume and group.
 
 The result depends on `global` value:
-* `true` -> the removed group could read the dataset
-* `false` -> the remove group would not see the dataset anymore
+* `true` -> the removed group could read the volume
+* `false` -> the remove group would not see the volume anymore

@@ -361,6 +361,8 @@ class AdminGroups(Helpful, Module):
         if 'data' not in results:
             return results
 
+        results['data']['group']['volumes'] = results['data']['group'].pop('datasets', '[]')
+
         return results['data']['group']
 
     def _everyone_group_id(self) -> dict:
