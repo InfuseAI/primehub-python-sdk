@@ -205,7 +205,7 @@ class PrimeHub(object):
         self.register_command('volumes', 'Volumes')
         self.register_command('instancetypes', 'InstanceTypes')
         self.register_command('jobs', 'Jobs')
-        self.register_command('schedules', 'Schedules')
+        self.register_command('recurring_jobs', 'RecurringJobs')
         self.register_command('deployments', 'Deployments')
         self.register_command('notebooks', 'Notebooks')
         self.register_command('files', 'Files')

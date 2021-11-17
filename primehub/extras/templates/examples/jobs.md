@@ -1,4 +1,14 @@
-### Example: submit a job
+### Fields for submitting
+
+| field | required | type | description |
+| --- | --- | --- | --- |
+| displayName | required | string | display name |
+| instanceType | required | string | instance type which allocates resources for the job |
+| image | required | string | image which the job run bases on |
+| command | required | string | sequential commands of the job context |
+| activeDeadlineSeconds | optional | int | a running job will be cancelled after this time period (in seconds) |
+
+### Submit a job
 
 Using `submit` to create a job, it needs the job definition. We could give the job definition either `stdin` or `--file`
 flag.
@@ -23,7 +33,7 @@ cancel:         False
 command:        echo "great job"
 groupId:        2b080113-e2f1-4b1b-a6ef-eb0ca5e2f376
 groupName:      phusers
-schedule:       None
+recurrence:     None
 image:          base-notebook
 instanceType:
   id:           cpu-1
@@ -42,7 +52,10 @@ startTime:      None
 finishTime:     None 
 ```
 
-### Example: check job status
+#### Note
+There are a few **[limitations](https://docs.primehub.io/docs/job-submission-feature#limitation)**, e.g., maximum execution time, log preservation.
+
+### Check job status
 
 * `list` and `get` could get jobs status
 
@@ -57,7 +70,7 @@ cancel:         None
 command:        echo "great job"
 groupId:        2b080113-e2f1-4b1b-a6ef-eb0ca5e2f376
 groupName:      phusers
-schedule:       None
+recurrence:     None
 image:          base-notebook
 instanceType:
   id:           cpu-1
@@ -76,7 +89,7 @@ startTime:      2021-08-18T07:56:58Z
 finishTime:     2021-08-18T07:56:59Z
 ```
 
-check log messages with `logs` command
+### Check log messages with `logs` command
 
 ```
 primehub jobs logs job-202108180756-pqihgl
@@ -87,7 +100,7 @@ great job
 Artifacts: no artifact found
 ```
 
-### Example: Artifacts
+### Job Artifacts
 
 [Job Artifacts](https://docs.primehub.io/docs/job-artifact-feature) is a feature to keep a job's output files to the
 shared spaces. Any files in the directory `/home/jovyan/artifacts` will upload

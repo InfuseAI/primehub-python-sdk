@@ -51,7 +51,7 @@ primehub
 ├── me.py
 ├── notebooks.py
 ├── resource_operations.py
-└── schedules.py
+└── recurring_jobs.py
 ```
 
 ### Create a command group
@@ -167,7 +167,7 @@ class PrimeHub(object):
         self.register_command('volumes', 'Volumes')
         self.register_command('instancetypes', 'InstanceTypes')
         self.register_command('jobs', 'Jobs')
-        self.register_command('schedules', 'Schedules')
+        self.register_command('recurring_jobs', 'RecurringJobs')
         self.register_command('notebooks', 'Notebooks')
         self.register_command('files', 'Files')
         self.register_command('me', 'Me')

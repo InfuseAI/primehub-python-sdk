@@ -14,13 +14,13 @@ CUSTOMIZED_COLUMNS: Dict[str, List[tuple]] = {
     'primehub.jobs.list': [
         ('id',),
         ('displayName',),
-        ('schedule',),
+        ('recurrence',),
         ('userName', 'user',),
         ('startTime',),
         ('finishTime',),
         ('phase',),
     ],
-    'primehub.schedules.list': [
+    'primehub.recurring_jobs.list': [
         ('id',),
         ('displayName',),
         ('recurrence',),

@@ -5,6 +5,7 @@ from primehub import Helpful, cmd, Module, primehub_load_config
 from primehub.utils import resource_not_found, PrimeHubException
 from primehub.utils.optionals import file_flag
 from primehub.utils.permission import ask_for_permission
+from primehub.jobs import verify_basic_field, verify_timeout, invalid_field
 
 
 def _error_handler(response):
@@ -16,35 +17,74 @@ def _error_handler(response):
             message = message[0]['message']
             result = re.findall(r'phschedules.primehub.io "([^"]+)" not found', message)
             if result:
-                resource_not_found('schedule', result[0], 'id')
+                resource_not_found('recurring-jobs', result[0], 'id')
 
 
 def invalid_config(message: str):
     example = """
-    {"instanceType":"cpu-1","image":"base-notebook","displayName":"schedule-example","command":"echo 'good job'","recurrence":{"type":"daily","cron":"0 4 * * *"}}
+    {"instanceType":"cpu-1","image":"base-notebook","displayName":"recurring-job-example","command":"echo 'good job'","recurrence":{"type":"daily","cron":"0 4 * * *"}}
     """.strip()  # noqa: E501
     raise PrimeHubException(message + "\n\nExample:\n" + json.dumps(json.loads(example), indent=2))
 
 
-def verify_config(config):
-    # verify required fields in the config
-    if 'instanceType' not in config:
-        invalid_config('instanceType is required')
-    if 'image' not in config:
-        invalid_config('image is required')
-    if 'displayName' not in config:
-        invalid_config('displayName is required')
-    if 'command' not in config:
-        invalid_config('command is required')
-    if 'recurrence' not in config:
-        invalid_config('recurrence is required')
+def verify_recurrence_options(config: dict):
+    type_options = ['on-demand', 'daily', 'weekly', 'monthly', 'custom']
+
+    type_option = config.get('type', '')
+    if not type_option:
+        invalid_config('type is required')
+    if not isinstance(type_option, str):
+        invalid_field('type should be string value')
+    if type_option not in type_options:
+        invalid_field(f'\'{type_option}\' is not acceptable type')
+
+    cron_val = config.get('cron', '')
+    if not isinstance(cron_val, str):
+        invalid_field('cron should be string value')
+
+    if type_option == 'custom' and not cron_val:
+        invalid_config('cron is required in custom type')
+
+    if type_option != 'custom' and cron_val != '':
+        print('Notice: To make cron you defined effective, please use \'custom\' type')
 
 
-class Schedules(Helpful, Module):
+def verify_recurrence(config: dict, for_update: bool = False):
+    field_name = 'recurrence'
+    if field_name not in config:
+        if for_update:
+            return
+        invalid_config(f'{field_name} is required')
+
+    field_val = config.get(field_name, None)
+    if field_val is None or not isinstance(field_val, dict):
+        invalid_field(f'{field_name} should be a json object')
+
+    verify_recurrence_options(field_val)
+
+
+def verify_config(config: dict, for_update: bool = False):
+    verify_basic_field(config, for_update)
+    verify_timeout(config)
+    verify_recurrence(config, for_update)
+
+
+def rename_inactive_to_on_demand_when_read(message: dict):
+    if message['recurrence']['type'] == 'inactive':
+        message['recurrence']['type'] = 'on-demand'
+
+
+def rename_on_demand_to_inactive_when_write(config: dict):
+    recurrence_type = config['recurrence'].get('type', '')
+    if recurrence_type == 'on-demand':
+        config['recurrence']['type'] = 'inactive'
+
+
+class RecurringJobs(Helpful, Module):
     """
-    The schedules module provides functions to manage PrimeHub Schedules
+    The recurring jobs module provides functions to manage PrimeHub RecurringJobs
 
-    Schedule configuration example:
+    Recurring job configuration example:
     {
         "instanceType": "cpu-1",
         "image": "base-notebook",
@@ -61,16 +101,16 @@ class Schedules(Helpful, Module):
         if 'instanceType' in config:
             self.primehub.instancetypes.get(config['instanceType'])
 
-    @cmd(name='list', description='List schedules', optionals=[('page', int)])
+    @cmd(name='list', description='List recurring jobs', optionals=[('page', int)])
     def list(self, **kwargs) -> Iterator[dict]:
         """
-        List all schedules information in the current group
+        List all recurring jobs information in the current group
 
         :type page: int
-        :param page: The page number as you can see in PrimeHub Schedules UI
+        :param page: The page number as you can see in PrimeHub RecurringJobs UI
 
         :rtype list
-        :return The list of schedules
+        :return The list of recurring jobs
         """
         query = """
         query (
@@ -120,6 +160,7 @@ class Schedules(Helpful, Module):
             variables['page'] = page
             results = self.request(variables, query)
             for e in results['data']['phSchedulesConnection']['edges']:
+                rename_inactive_to_on_demand_when_read(e['node'])
                 yield e['node']
             return
 
@@ -129,21 +170,22 @@ class Schedules(Helpful, Module):
             results = self.request(variables, query)
             if results['data']['phSchedulesConnection']['edges']:
                 for e in results['data']['phSchedulesConnection']['edges']:
+                    rename_inactive_to_on_demand_when_read(e['node'])
                     yield e['node']
                 page = page + 1
             else:
                 break
 
-    @cmd(name='get', description='Get a schedule by id', return_required=True)
+    @cmd(name='get', description='Get a recurring job by id', return_required=True)
     def get(self, id):
         """
-        Get detail information of a schedule by id
+        Get detail information of a recurring job by id
 
         :type id: str
-        :param id: The schedule id
+        :param id: The recurring job id
 
         :rtype dict
-        :return The detail information of a schedule
+        :return The detail information of a recurring job
         """
         query = """
         query ($where: PhScheduleWhereUniqueInput!) {
@@ -175,35 +217,37 @@ class Schedules(Helpful, Module):
         }
         """
         results = self.request({'where': {'id': id}}, query, _error_handler)
+        rename_inactive_to_on_demand_when_read(results['data']['phSchedule'])
+
         return results['data']['phSchedule']
 
-    @cmd(name='create', description='Create a schedule', optionals=[('file', file_flag)])
+    @cmd(name='create', description='Create a recurring job', optionals=[('file', file_flag)])
     def _create_cmd(self, **kwargs):
         """
-        Submit a schedule from commands
+        Submit a recurring job from commands
 
         :type file: str
-        :param file: The file path of schedule configurations
+        :param file: The file path of recurring job configurations
 
         :rtype dict
-        :return The detail information of the created schedule
+        :return The detail information of the created recurring job
         """
         config = primehub_load_config(filename=kwargs.get('file', None))
 
         if not config:
-            invalid_config('Schedule description is required.')
+            invalid_config('Recurring job description is required.')
 
         return self.create(config)
 
     def create(self, config):
         """
-        Create a schedules with config
+        Create a recurring jobs with config
 
         :type config: dict
-        :param config: The schedule config
+        :param config: The recurring job config
 
         :rtype dict
-        :return The detail information of the created schedule
+        :return The detail information of the created recurring job
         """
         query = """
         mutation ($data: PhScheduleCreateInput!) {
@@ -238,38 +282,40 @@ class Schedules(Helpful, Module):
 
         verify_config(config)
         self._verify_dependency(config)
+        rename_on_demand_to_inactive_when_write(config)
         results = self.request({'data': config}, query)
+        rename_inactive_to_on_demand_when_read(results['data']['createPhSchedule'])
         return results['data']['createPhSchedule']
 
-    @cmd(name='update', description='Update a schedule by id', optionals=[('file', file_flag)])
+    @cmd(name='update', description='Update a recurring job by id', optionals=[('file', file_flag)])
     def _update_cmd(self, id, **kwargs):
         """
-        Update a schedule from commands
+        Update a recurring job from commands
 
         :type file: str
-        :param file: The file path of schedule configurations
+        :param file: The file path of recurring job configurations
 
         :rtype dict
-        :return The detail information of the updated schedule
+        :return The detail information of the updated recurring job
         """
         config = primehub_load_config(filename=kwargs.get('file', None))
         if not config:
-            invalid_config('Schedule description is required.')
+            invalid_config('Recurring job description is required.')
 
         return self.update(id, config)
 
     def update(self, id, config):
         """
-        Update a schedule with config
+        Update a recurring job with config
 
         :type id: str
-        :param id: The schedule id
+        :param id: The recurring job id
 
         :type config: dict
-        :param config: The schedule config
+        :param config: The recurring job config
 
         :rtype dict
-        :return The detail information of the updated schedule
+        :return The detail information of the updated recurring job
         """
         query = """
         mutation ($data: PhScheduleUpdateInput!, $where: PhScheduleWhereUniqueInput!) {
@@ -301,23 +347,26 @@ class Schedules(Helpful, Module):
         }
         """
         config['groupId'] = self.group_id
-        if not config:
-            invalid_config('Schedule description is required.')
+        verify_config(config, True)
         self._verify_dependency(config)
+        if 'recurrence' in config:
+            rename_on_demand_to_inactive_when_write(config)
+
         results = self.request({'data': config, 'where': {'id': id}}, query, _error_handler)
+        rename_inactive_to_on_demand_when_read(results['data']['updatePhSchedule'])
         return results['data']['updatePhSchedule']
 
     @ask_for_permission
-    @cmd(name='delete', description='Delete a schedule by id')
+    @cmd(name='delete', description='Delete a recurring job by id')
     def delete(self, id, **kwargs):
         """
-        Delete a schedule by id
+        Delete a recurring job by id
 
         :type id: str
-        :param id: The schedule id
+        :param id: The recurring job id
 
         :rtype dict
-        :return The detail information of the deleted schedule
+        :return The detail information of the deleted recurring job
         """
         query = """
         mutation ($where: PhScheduleWhereUniqueInput!) {
@@ -330,4 +379,4 @@ class Schedules(Helpful, Module):
         return results['data']['deletePhSchedule']
 
     def help_description(self):
-        return "Get a schedule or list schedules"
+        return "Manage recurring jobs"
