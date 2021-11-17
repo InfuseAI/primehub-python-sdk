@@ -7,12 +7,12 @@ primehub instancetypes list
 ```
 
 ```
-id     name    displayName    description
------  ------  -------------  -------------------
-cpu-1  cpu-1   CPU 1          1 CPU / 2G
-gpu-2  gpu-2   GPU 2          4 CPU / 14G / 2 GPU
-cpu-2  cpu-2   CPU 2          2 CPU / 10G
-gpu-1  gpu-1   GPU 1          2 CPU / 7G / 1 GPU
+name                              displayName                                    description                       cpuRequest    cpuLimit    memoryRequest    memoryLimit    gpuLimit  global
+--------------------------------  ---------------------------------------------  ------------------------------  ------------  ----------  ---------------  -------------  ----------  --------
+cpu-2                             CPU 2                                          2 CPU / 10G                                            2                              10           0  True
+gpu-1                             GPU 1                                          2 CPU / 7G / 1 GPU                       1.5           2                5              7           1  True
+gpu-2                             GPU 2                                          4 CPU / 14G / 2 GPU                      4             4               14             14           2  True
+cpu-1                             CPU 1                                          1 CPU / 2G                               1             1                2              2           0  True
 ```
 
 If you already know the name of an instance type, use the `get` to get a single entry:
@@ -22,8 +22,15 @@ primehub instancetypes get cpu-1
 ```
 
 ```
-id:             cpu-1
 name:           cpu-1
 displayName:    CPU 1
 description:    1 CPU / 2G
+cpuRequest:     1
+cpuLimit:       1
+memoryRequest:  2
+memoryLimit:    2
+gpuLimit:       0
+global:         True
+tolerations:    [{'operator': 'Equal', 'key': 'hub.jupyter.org/dedicated', 'value': 'user', 'effect': 'NoSchedule'}]
+nodeSelector:   None
 ```
