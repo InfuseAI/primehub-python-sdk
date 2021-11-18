@@ -3,7 +3,8 @@ import traceback
 
 import primehub as ph
 from primehub.config import CliConfig
-from primehub.utils import create_logger, PrimeHubException, PrimeHubReturnsRequiredException, ResourceNotFoundException
+from primehub.utils import create_logger, PrimeHubException, PrimeHubReturnsRequiredException, \
+    ResourceNotFoundException, GraphQLException
 from primehub.utils.argparser import create_command_parser, create_action_parser
 from primehub.utils.decorators import find_actions, find_action_method, find_action_info
 from primehub.utils.permission import has_permission_flag, enable_ask_for_permission_feature
@@ -265,6 +266,15 @@ def main(sdk=None):
         exit_normally = False
         type_name, key, key_type = e.args
         print(f'Cannot find resource type "{type_name}" with [{key_type}: {key}]', file=sdk.stderr)
+        sys.exit(1)
+    except GraphQLException as e:
+        hide_help = True
+        exit_normally = False
+        if not e.args or not isinstance(e.args[0], dict):
+            print(f'unknown API errors {e}', file=sdk.stderr)
+            sys.exit(1)
+        errors = e.args[0]['errors']
+        sdk.config.get_display().display(None, errors, sdk.stderr)
         sys.exit(1)
     except PrimeHubException as e:
         hide_help = True

@@ -164,7 +164,11 @@ class HumanFriendlyDisplay(Displayable):
         logger.debug('display-many')
 
         # 'module': 'primehub.jobs', 'func': 'list'
-        customized_key = "{}.{}".format(action['module'], action['func'])
+        if action:
+            customized_key = "{}.{}".format(action['module'], action['func'])
+        else:
+            customized_key = "fake-module.fake-function"
+
         if customized_key not in CUSTOMIZED_COLUMNS:
             print(tabulate(value, headers="keys"), file=file)
         else:

@@ -34,6 +34,8 @@ class Client(object):
             raise ResponseException("Response is not valid JSON:\n{}".format(content))
         except ResourceNotFoundException as e:
             raise e
+        except GraphQLException as e:
+            raise e
         except BaseException as e:
             raise RequestException(e)
 
