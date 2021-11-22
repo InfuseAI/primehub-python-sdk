@@ -3,9 +3,10 @@ import importlib
 import json
 import os
 import sys
-from typing import Union, Callable, Dict, Any
+from typing import Union, Callable, Any
 
 from primehub.utils import group_required, create_logger, PrimeHubException
+from primehub.utils.core import CommandContainer
 from primehub.utils.decorators import cmd  # noqa: F401
 from primehub.utils.display import Display, HumanFriendlyDisplay, Displayable
 from primehub.utils.http_client import Client
@@ -193,8 +194,8 @@ class PrimeHub(object):
         self.primehub_config = config
         self.json_output = True
         self.usage_role = 'user'
-        self.commands: Dict[str, Module] = dict()
-        self.admin_commands: Dict[str, Module] = dict()
+        self.commands: CommandContainer = CommandContainer()
+        self.admin_commands: CommandContainer = CommandContainer()
         self._stderr = sys.stderr
         self._stdout = sys.stdout
 
@@ -205,7 +206,7 @@ class PrimeHub(object):
         self.register_command('volumes', 'Volumes')
         self.register_command('instancetypes', 'InstanceTypes')
         self.register_command('jobs', 'Jobs')
-        self.register_command('recurring_jobs', 'RecurringJobs')
+        self.register_command('recurring_jobs', 'RecurringJobs', 'recurring-jobs')
         self.register_command('deployments', 'Deployments')
         self.register_command('notebooks', 'Notebooks')
         self.register_command('files', 'Files')
@@ -258,28 +259,27 @@ class PrimeHub(object):
             clazz = command_class
         return clazz
 
-    def register_command(self, module_name: str, command_class: Union[str, Callable], command_name=None):
-        if not command_name:
-            command_name = module_name
-
-        clazz = self._find_command_class(command_class, module_name)
-
-        # register to the commands table
-        self.commands[command_name] = clazz(self)
-
     def register_dummy_command(self, command_name, command_help):
 
         # register to the commands table
         self.commands[command_name] = Dummy(self, command_help)
 
-    def register_admin_command(self, module_name: str, command_class: Union[str, Callable], command_name=None):
-        if not command_name:
-            command_name = module_name
+    def register_command(self, module_name: str, command_class: Union[str, Callable], command_name=None):
+        self._register_command(self.commands, module_name, command_class, command_name)
 
+    def register_admin_command(self, module_name: str, command_class: Union[str, Callable], command_name=None):
+        self._register_command(self.admin_commands, module_name, command_class, command_name)
+
+    def _register_command(self, target, module_name: str, command_class: Union[str, Callable], command_name=None):
         clazz = self._find_command_class(command_class, module_name)
 
         # register to the commands table
-        self.admin_commands[command_name] = clazz(self)
+        module_object = clazz(self)
+        if module_name and command_name:
+            target[f':{module_name}'] = module_object
+            target[command_name] = module_object
+        else:
+            target[module_name] = module_object
 
     def switch_admin_role(self):
         self.usage_role = 'admin'

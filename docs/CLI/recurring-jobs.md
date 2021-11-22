@@ -1,9 +1,9 @@
 
-# Primehub Recurring_jobs
+# Primehub Recurring-jobs
 
 ```
 Usage: 
-  primehub recurring_jobs <command>
+  primehub recurring-jobs <command>
 
 Manage recurring jobs
 
@@ -33,7 +33,7 @@ Create a recurring job
 
 
 ```
-primehub recurring_jobs create
+primehub recurring-jobs create
 ```
  
 
@@ -48,7 +48,7 @@ Delete a recurring job by id
 
 
 ```
-primehub recurring_jobs delete <id>
+primehub recurring-jobs delete <id>
 ```
 
 * id: The recurring job id
@@ -63,7 +63,7 @@ Get a recurring job by id
 
 
 ```
-primehub recurring_jobs get <id>
+primehub recurring-jobs get <id>
 ```
 
 * id: The recurring job id
@@ -78,7 +78,7 @@ List recurring jobs
 
 
 ```
-primehub recurring_jobs list
+primehub recurring-jobs list
 ```
  
 
@@ -93,7 +93,7 @@ Update a recurring job by id
 
 
 ```
-primehub recurring_jobs update <id>
+primehub recurring-jobs update <id>
 ```
 
 * id

@@ -10,10 +10,14 @@ class TestAskForPermissionMethods(BaseTestCase):
     def test_verify_ask_for_permissions(self):
         commands = __requires_permission__.keys()
         for cmd in commands:
+
             if "test" in cmd:
                 continue
             # cmd will look like 'primehub.schedules.delete'
             package_name, command_name, method_name = cmd.split(".")
+
+            if ":" in command_name:
+                continue
 
             if package_name != 'primehub':
                 # only cares about primehub package
@@ -66,6 +70,9 @@ class TestDocumentation(BaseTestCase):
             return [os.path.normpath(os.path.join(project_dir, x)) for x in files]
 
         for command in self.sdk.commands:
+            # skip hidden command (starts with :)
+            if command and command.startswith(':'):
+                continue
 
             # skip version command
             if command == 'version':
