@@ -185,7 +185,7 @@ For `create` and `update` require a volume configuration, please see above examp
 | variables | optional | dict | **MAY** use with `env` type. It is key value pairs. All values have to a string value. For example: `{"key1":"value1","key2":"value2"}`. |
 | groups | optional | list of connected groups (dict) | please see the `connect` examples |
 | secret | optional | dict | **MAY** use with `git` type, it binds a `secret` to the `git` volume |
-| volumeSize | conditional | integer | **MUST** use with `pv` type. The unit is `GB`.|
+| volumeSize | conditional | integer | **MUST** use with `pv` type and 'auto' provisioning. The unit is `GB`.|
 | enableUploadServer | optional | boolean | it only works with one of ['pv', 'nfs', 'hostPath'] writable types |
 
 > There is a simple rule to use fields for `UPDATE`. All required fields should not be in the payload.

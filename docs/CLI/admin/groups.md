@@ -122,6 +122,7 @@ primehub admin groups update <id>
 | admins | optional | string | assign admin user of the group, multiple users are able to be assigned (see [also](https://docs.primehub.io/docs/guide_manual/admin-group#group-admin)) |
 | users | optional | assign / dissociate users to the group | please see the connect / disconnect examples |
 
+*Note: user resource quota should not greater than project resource quota. e.g., `quotaCpu <= projectQuotaCpu`*
 
 #### Model Deployment
 Groups with enabled model deployment are able to deploy/serve models. (see [also](https://docs.primehub.io/docs/guide_manual/admin-group#model-deployment))

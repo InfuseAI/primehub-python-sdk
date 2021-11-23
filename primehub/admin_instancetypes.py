@@ -62,6 +62,7 @@ class AdminInstanceTypes(Helpful, Module):
         :rtype dict
         :return The instance type
         """
+        apply_auto_fill(config)
         payload = validate(config)
 
         query = """
@@ -286,6 +287,13 @@ class AdminInstanceTypes(Helpful, Module):
 
     def help_description(self):
         return "Manage instance type"
+
+
+def apply_auto_fill(config: dict):
+    if 'cpuLimit' not in config:
+        config['cpuLimit'] = 1
+    if 'memoryLimit' not in config:
+        config['memoryLimit'] = 1
 
 
 def required_field(field):
