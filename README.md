@@ -65,11 +65,11 @@ Available Commands:
   images               Get a image or list images
   info                 Display the user information and the selected group information
   instancetypes        Get an instance types of list instance types
-  jobs                 Get a job or list jobs
+  jobs                 Manage jobs
   me                   Show user account
   models               Manage models
   notebooks            Get notebooks logs
-  schedules            Get a schedule or list schedules
+  recurring-jobs       Manage recurring jobs
   version              Display the version of PrimeHub Python SDK
   volumes              Get a volume or list volumes
 

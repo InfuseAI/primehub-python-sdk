@@ -27,6 +27,44 @@ def invalid_config(message: str):
     raise PrimeHubException(message + "\n\nExample:\n" + json.dumps(json.loads(example), indent=2))
 
 
+def invalid_field(message: str):
+    raise PrimeHubException(message)
+
+
+def verify_basic_field(config: dict, for_update: bool = False):
+    field_names = ['displayName', 'instanceType', 'image', 'command']
+
+    for field_name in field_names:
+        if field_name not in config:
+            if for_update:
+                continue
+            invalid_config(f'{field_name} is required')
+
+        field_val = config.get(field_name, '')
+        if field_val is None or not isinstance(field_val, str):
+            invalid_field(f'{field_name} should be string value')
+
+        if field_val == '':
+            invalid_field(f'{field_name} should be specified')
+
+
+def verify_timeout(config: dict):
+    field_name = 'activeDeadlineSeconds'
+    if field_name not in config:
+        return
+
+    field_val = config.get(field_name, None)
+    if field_val is None:
+        invalid_field(f'{field_name} should not be empty')
+
+    if not isinstance(field_val, int):
+        invalid_field(f'{field_name} should be int value')
+
+
+def rename_schedule_to_recurrence(message: dict):
+    message['recurrence'] = message.pop('schedule', '')
+
+
 class Jobs(Helpful, Module):
     """
     The jobs module provides functions to manage PrimeHub Jobs
@@ -100,6 +138,7 @@ class Jobs(Helpful, Module):
             variables['page'] = page
             results = self.request(variables, query)
             for e in results['data']['phJobsConnection']['edges']:
+                rename_schedule_to_recurrence(e['node'])
                 yield e['node']
             return
 
@@ -109,6 +148,7 @@ class Jobs(Helpful, Module):
             results = self.request(variables, query)
             if results['data']['phJobsConnection']['edges']:
                 for e in results['data']['phJobsConnection']['edges']:
+                    rename_schedule_to_recurrence(e['node'])
                     yield e['node']
                 page = page + 1
             else:
@@ -156,6 +196,8 @@ class Jobs(Helpful, Module):
         }
         """
         results = self.request({'where': {'id': id}}, query, _error_handler)
+        rename_schedule_to_recurrence(results['data']['phJob'])
+
         return results['data']['phJob']
 
     @cmd(name='submit', description='Submit a job', optionals=[('file', file_flag), ('from', str)])
@@ -167,13 +209,13 @@ class Jobs(Helpful, Module):
         :param file: The file path of job configurations
 
         :type from: str
-        :param from: The schedule id to submit as a job
+        :param from: The recurring job id to submit a job
 
         :rtype dict
         :return The detail information of the submitted job
         """
         if kwargs.get('from', None):
-            return self.submit_from_schedule(kwargs['from'])
+            return self.submit_from_recurring_job(kwargs['from'])
 
         config = primehub_load_config(filename=kwargs.get('file', None))
         if not config:
@@ -228,25 +270,21 @@ class Jobs(Helpful, Module):
         config['groupId'] = self.group_id
 
         # verify required fields in the config
-        if 'instanceType' not in config:
-            invalid_config('instanceType is required')
-        if 'image' not in config:
-            invalid_config('image is required')
-        if 'displayName' not in config:
-            invalid_config('displayName is required')
-        if 'command' not in config:
-            invalid_config('command is required')
+        verify_basic_field(config)
+        verify_timeout(config)
 
         self._verify_dependency(config)
         results = self.request({'data': config}, query)
+        rename_schedule_to_recurrence(results['data']['createPhJob'])
+
         return results['data']['createPhJob']
 
-    def submit_from_schedule(self, id):
+    def submit_from_recurring_job(self, id):
         """
-        Submit a job from schedules
+        Submit a job from the recurring job
 
         :type id: str
-        :param id: The schedule id
+        :param id: The recurring job id
 
         :rtype dict
         :return The detail information of the submitted job
@@ -310,7 +348,7 @@ class Jobs(Helpful, Module):
     @cmd(name='cancel', description='Cancel a job by id')
     def cancel(self, id):
         """
-        Cancle a job by id
+        Cancel a job by id
 
         :type id: str
         :param id: The job id
@@ -434,8 +472,8 @@ class Jobs(Helpful, Module):
         :type dest: str
         :param dest: The local path to save artifacts
 
-        :type recusive: bool
-        :param recusive: Copy recursively
+        :type recursive: bool
+        :param recursive: Copy recursively
         """
 
         if path in ['.', '', './']:
@@ -455,4 +493,4 @@ class Jobs(Helpful, Module):
             super(Jobs, self).display(action, value)
 
     def help_description(self):
-        return "Get a job or list jobs"
+        return "Manage jobs"
