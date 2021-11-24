@@ -1,5 +1,5 @@
 import re
-from typing import Union, Any, Optional, Dict
+from typing import Union, Any, Optional, Dict, List
 
 from primehub.utils import PrimeHubException
 
@@ -97,3 +97,120 @@ def validate_connection(payload: dict, field_name: str):
             if 'id' in entry and len(entry) == 1:
                 continue
             raise PrimeHubException(DISCONNECT_ERROR)
+
+
+class Validator(object):
+    class OpBase:
+        def __init__(self, acceptable_types: list):
+            self.types = acceptable_types
+
+        def validate(self, value):
+            for x in self.types:
+                if isinstance(value, x):
+                    return True
+            return False
+
+        def error_message(self, field: str):
+            t = [x.__name__ for x in self.types]
+            if len(self.types) == 1:
+                return f'The value of the {field} should be the {t[0]} type'
+            else:
+                return f'The value of the {field} should be one of the types: [{", ".join(t)}]'
+
+    class OpID(OpBase):
+        def __init__(self):
+            super().__init__([str])
+
+    class OpString(OpBase):
+
+        def __init__(self):
+            super().__init__([str])
+
+    class OpInt(OpBase):
+
+        def __init__(self):
+            super().__init__([int])
+
+        def validate(self, value):
+            # Int also consider as bool, but not suitable to our use cases
+            if isinstance(value, bool):
+                return False
+
+            for x in self.types:
+                if isinstance(value, x):
+                    return True
+            return False
+
+    class OpFloat(OpBase):
+        def __init__(self):
+            super().__init__([int, float])
+
+        def validate(self, value):
+            # Int also consider as bool, but not suitable to our use cases
+            if isinstance(value, bool):
+                return False
+
+            for x in self.types:
+                if isinstance(value, x):
+                    return True
+            return False
+
+    class OpJSON(OpBase):
+        def __init__(self):
+            super().__init__([dict])
+
+    def __init__(self, type_def: str):
+        self.type_def = type_def
+        self.type_name = type_def.replace('!', '')
+        self.required = type_def.endswith('!')
+        self.typeOp = getattr(self, f'Op{self.type_name}')
+
+    def validate(self, value):
+        return self.typeOp().validate(value)
+
+    def error_message(self, error_field: str):
+        return self.typeOp().error_message(error_field)
+
+
+class ValidationSpec(object):
+
+    def __init__(self, validation_spec: str):
+        self.validation_spec = validation_spec
+        self._required_fields: List = []
+        self._fields: List = []
+        self._process_fields()
+
+    def _process_fields(self):
+        for line in self.validation_spec.strip().split('\n'):
+            field, type_def = [x.strip() for x in line.strip().split(':')]
+            if type_def.endswith('!'):
+                self._required_fields.append((field, Validator(type_def)))
+            self._fields.append((field, Validator(type_def)))
+
+    def required_fields(self):
+        return [(name, type_def) for name, type_def in self._required_fields]
+
+    def get_field(self, field):
+        for f, v in self._fields:
+            if field == f:
+                return v
+        return None
+
+    def validate(self, data: dict):
+        def check_type(validator, field: str, value: Any):
+            if validator.validate(value):
+                return
+            raise PrimeHubException(validator.error_message(field))
+
+        for field, validator in self._required_fields:
+            if field not in data:
+                raise PrimeHubException(f'{field} is a required field')
+            value = data[field]
+            if value is None:
+                raise PrimeHubException(f'{field} can not be null, it is a required field')
+            check_type(validator, field, data[field])
+
+        for field, validator in self._fields:
+            if field not in data:
+                continue
+            check_type(validator, field, data[field])
