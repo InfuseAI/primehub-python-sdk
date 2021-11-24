@@ -1,3 +1,4 @@
+import json
 from unittest import TestCase
 
 from primehub import PrimeHubException
@@ -100,3 +101,58 @@ class TestValidatorTools(TestCase):
         spec.validate({'int': None})
         spec.validate({'float': None})
         spec.validate({'dict': None})
+
+    def test_multi_rules(self):
+        from primehub.utils.validator import Validator
+
+        class OpC8763(Validator.OpBase):
+            def __init__(self):
+                super().__init__([str])
+
+            def validate(self, value):
+                if not super(OpC8763, self).validate(value):
+                    return False
+                return 'C8763' in value
+
+            def error_message(self, field: str):
+                return f'The value of the {field} should contain "C8763"'
+
+        class OpParsedJson(Validator.OpBase):
+            def __init__(self):
+                super().__init__([str])
+
+            def validate(self, value):
+                if not super(OpParsedJson, self).validate(value):
+                    return False
+                try:
+                    json.loads(value)
+                    return True
+                except BaseException:
+                    return False
+
+            def error_message(self, field: str):
+                return f'The value of the {field} should be a valid json string'
+
+        # register validation operators
+        Validator.OpC8763 = OpC8763
+        Validator.OpParsedJson = OpParsedJson
+
+        spec = ValidationSpec(
+            """
+            foo:String
+            foo:C8763
+            """
+        )
+        self.got_failed(spec, dict(foo=1), 'The value of the foo should be the str type')
+        self.got_failed(spec, dict(foo=''), 'The value of the foo should contain "C8763"')
+        spec.validate(dict(foo='... C8763 ...'))
+
+        spec = ValidationSpec(
+            """
+            foo:C8763
+            foo:ParsedJson
+            """
+        )
+        self.got_failed(spec, dict(foo='C8763'), 'The value of the foo should be a valid json string')
+        spec.validate(dict(foo='["C8763"]'))
+        spec.validate(dict(foo='{"name": "skill", "value": "C8763"}'))

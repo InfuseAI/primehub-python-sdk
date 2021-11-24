@@ -182,6 +182,8 @@ class ValidationSpec(object):
 
     def _process_fields(self):
         for line in self.validation_spec.strip().split('\n'):
+            if ':' not in line:
+                continue
             field, type_def = [x.strip() for x in line.strip().split(':')]
             if type_def.endswith('!'):
                 self._required_fields.append((field, Validator(type_def)))
