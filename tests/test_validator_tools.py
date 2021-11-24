@@ -156,3 +156,51 @@ class TestValidatorTools(TestCase):
         self.got_failed(spec, dict(foo='C8763'), 'The value of the foo should be a valid json string')
         spec.validate(dict(foo='["C8763"]'))
         spec.validate(dict(foo='{"name": "skill", "value": "C8763"}'))
+
+    def test_phjob_create_input(self):
+        spec = ValidationSpec("""
+        input PhJobCreateInput {
+          displayName: String!
+          groupId: String!
+          instanceType: String!
+          image: String!
+          command: String!
+          activeDeadlineSeconds: IntGe0
+        }
+        """)
+
+        data = {}
+        self.got_failed(spec, data, 'displayName is a required field')
+
+        data['displayName'] = True
+        self.got_failed(spec, data, 'The value of the displayName should be the str type')
+
+        data['displayName'] = 'my-job'
+        self.got_failed(spec, data, 'groupId is a required field')
+
+        data['groupId'] = 'group-id'
+        self.got_failed(spec, data, 'instanceType is a required field')
+
+        data['instanceType'] = 'instance-type'
+        self.got_failed(spec, data, 'image is a required field')
+
+        data['image'] = 'image'
+        self.got_failed(spec, data, 'command is a required field')
+
+        data['command'] = 'date'
+
+        # We have all required fields
+        spec.validate(data)
+
+        # Check activeDeadlineSeconds
+        data['activeDeadlineSeconds'] = None
+        spec.validate(data)
+
+        data['activeDeadlineSeconds'] = 1.5
+        self.got_failed(spec, data, 'The value of the activeDeadlineSeconds should be an integer value >= 0')
+
+        data['activeDeadlineSeconds'] = -1
+        self.got_failed(spec, data, 'The value of the activeDeadlineSeconds should be an integer value >= 0')
+
+        data['activeDeadlineSeconds'] = 0
+        spec.validate(data)

@@ -141,6 +141,16 @@ class Validator(object):
                     return True
             return False
 
+    class OpIntGe0(OpInt):
+
+        def validate(self, value):
+            if not super().validate(value):
+                return False
+            return value >= 0
+
+        def error_message(self, field: str):
+            return f'The value of the {field} should be an integer value >= 0'
+
     class OpFloat(OpBase):
         def __init__(self):
             super().__init__([int, float])
