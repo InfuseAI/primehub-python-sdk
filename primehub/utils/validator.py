@@ -213,4 +213,6 @@ class ValidationSpec(object):
         for field, validator in self._fields:
             if field not in data:
                 continue
+            if data[field] is None:
+                continue
             check_type(validator, field, data[field])

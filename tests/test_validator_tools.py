@@ -81,3 +81,22 @@ class TestValidatorTools(TestCase):
 
         # check float field
         general_type_tester(spec, [int, float], 'float')
+
+    def test_validation_optional_fields_will_skip(self):
+        spec = ValidationSpec(
+            """
+            str: String
+            int: Int
+            float: Float
+            dict: JSON
+            """
+        )
+
+        # pass with nothing with the data
+        spec.validate({})
+
+        # pass with None (skip to check None values)
+        spec.validate({'str': None})
+        spec.validate({'int': None})
+        spec.validate({'float': None})
+        spec.validate({'dict': None})
