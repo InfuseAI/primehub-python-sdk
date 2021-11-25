@@ -3,8 +3,10 @@ from typing import Iterator, Any
 
 from primehub import Helpful, cmd, Module, primehub_load_config
 from primehub.utils import resource_not_found, PrimeHubException
+from primehub.utils.core import auto_gen_id
 from primehub.utils.display import display_tree_like_format
 from primehub.utils.optionals import toggle_flag, file_flag
+from primehub.utils.validator import ValidationSpec
 
 _query_ph_applications = query = """
         query PhApplicationsConnection(
@@ -143,36 +145,106 @@ class Apps(Helpful, Module):
             raise PrimeHubException('config is required')
         config['groupName'] = self.group_name
 
-        # verify required fields in the config
-        if 'instanceType' not in config:
-            invalid_config('instanceType is required')
-        if 'templateId' not in config:
-            invalid_config('templateId is required')
-        if 'displayName' not in config:
-            invalid_config('displayName is required')
-        if 'scope' not in config:
-            invalid_config('scope is required')
-        else:
-            if config['scope'] not in scope_list:
-                invalid_config('scope is invalid')
+        self.apply_auto_filling(config)
+        self.validate_creation(config)
 
-        if 'env' in config:
-            if not isinstance(config['env'], list):
-                invalid_config('env should be a list of the name and value pair')
-            for x in config['env']:
-                if not isinstance(x, dict):
-                    invalid_config('entry in the "env" should be a name and value pair')
-                valid = 'name' in x and 'value' in x
-                if not valid:
-                    invalid_config('entry in the "env" should be a name and value pair')
-                if not isinstance(x['value'], str):
-                    invalid_config(f'value in an entry must be the string type => {x}')
-
-        self._verify_dependency(config)
         results = self.request({'data': config}, query)
         if 'data' in results:
             return results['data']['createPhApplication']
         return results
+
+    @cmd(name='update', description='Update an application', optionals=[('file', file_flag)])
+    def _update_cmd(self, id: str, **kwargs):
+        """
+        Update a PrimeHub application
+
+        :type id: str
+        :param id: The id of PrimeHub application
+
+        :type file: str
+        :param file: The file path of PrimeHub application configuration
+
+        :rtype dict
+        :return The information of the PrimeHub application
+        """
+
+        config = primehub_load_config(filename=kwargs.get('file', None))
+        if not config:
+            invalid_config('PrimeHub application configuration is required.')
+        return self.update(id, config)
+
+    def update(self, id: str, config: dict):
+        """
+        Update a PrimeHub application
+
+        :type id: str
+        :param id: The id of PrimeHub application
+
+        :type config: dict
+        :param config: The file path of PrimeHub application configuration
+
+        :rtype dict
+        :return The information of the PrimeHub application
+        """
+
+        self.validate_updating(config)
+        query = """
+        mutation UpdatePhApplication(
+          $where: PhApplicationWhereUniqueInput!
+          $data: PhApplicationUpdateInput!
+        ) {
+          updatePhApplication(where: $where, data: $data) {
+            id
+          }
+        }
+        """
+
+        # config without instanceType will make the API crash
+        if 'instanceType' not in config:
+            current = self.get(id)
+            if not current:
+                return None
+            config['instanceType'] = current['instanceType']
+
+        results = self.request({'data': config, 'where': {'id': id}}, query)
+        if 'data' in results:
+            return results['data']['updatePhApplication']
+        return results
+
+    def apply_auto_filling(self, config):
+        if 'id' not in config:
+            config['id'] = auto_gen_id(config['templateId'])
+        if 'env' not in config:
+            template = self.primehub.apptemplates.get(config['templateId'])
+            if isinstance(template['defaultEnvs'], list):
+                config['env'] = [{'name': x['name'], 'value': x['defaultValue']} for x in template['defaultEnvs']]
+
+    def validate_creation(self, config):
+        spec = ValidationSpec("""
+        input PhApplicationCreateInput {
+          templateId: String!
+          id: ID!
+          displayName: String!
+          groupName: String!
+          env: EnvList
+          instanceType: String!
+          scope: PhAppScope!
+        }
+        """)
+        spec.validate(config)
+        self._verify_dependency(config)
+
+    def validate_updating(self, config):
+        spec = ValidationSpec("""
+        input PhApplicationUpdateInput {
+          env: EnvList
+          instanceType: String
+          scope: PhAppScope
+          displayName: String
+        }
+        """)
+        spec.validate(config)
+        self._verify_dependency(config)
 
     def _verify_dependency(self, config):
         if 'instanceType' in config:

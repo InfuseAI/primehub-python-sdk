@@ -1,3 +1,35 @@
+### Fields for creating or updating
+
+| field | required | type | description |
+| --- | --- | --- | --- |
+| templateId | required | string | The id of a PhAppTemplate *only used with creating*|
+| id | required* | string | The id of a PhApp *only used with creating* |
+| displayName | required | string |  |
+| instanceType | required | string |  |
+| scope | required | string | one of `[public, primehub, group]` |
+| env | optional | EnvVar[] | a list of EnvVar |
+
+#### EnvVar
+
+EnvVar is a dict with `name` and `value` with string values:
+
+```json
+{
+  "name": "my_var",
+  "value": "1"
+}
+```
+
+### Auto-filling Fields
+
+Auto-filling will happen when the inputs omitted fields
+
+| field | value | comment |
+| --- | --- | --- |
+| id | {templateId}-{random-hex} | Generate a valid PhApp id from the templateId |
+
+### Creating
+
 The `create` action helps you to install a new PrimeHub application. It shows an example that can be used to create
 a `code-server` application:
 
