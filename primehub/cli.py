@@ -192,6 +192,14 @@ def run_action_noargs(sdk, selected_component, sub_parsers, target, args):
     return helper
 
 
+def print_exception_errors(sdk, errors: str):
+    # We need a display to show error, but a display lives with a command group
+    # Get one from regular-command group or admin-command group depend on whether in admin role
+    # (it could be from any command of both command groups)
+    command_class = sdk.commands.items()[0][1]
+    command_class.get_display().display(None, errors, sdk.stderr)
+
+
 def main(sdk=None):
     if not sdk:
         sdk = create_sdk()
@@ -274,7 +282,7 @@ def main(sdk=None):
             print(f'unknown API errors {e}', file=sdk.stderr)
             sys.exit(1)
         errors = e.args[0]['errors']
-        sdk.config.get_display().display(None, errors, sdk.stderr)
+        print_exception_errors(sdk, errors)
         sys.exit(1)
     except PrimeHubException as e:
         hide_help = True

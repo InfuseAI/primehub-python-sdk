@@ -5,12 +5,14 @@
 | name | required | string | it should be a valid resource name for kubernetes. `name` will be ignored when updating |
 | displayName | optional | string | |
 | description | optional | string | |
-| type | required | string | one of ['cpu', 'gpu', 'both'] |
+| type | optional | string | one of ['cpu', 'gpu', 'both'], default value: 'both' |
 | global | optional | boolean |  |
 | groups | optional | object | |
 | url | optional | string | container image url |
 | urlForGpu | optional | string | container image url for GPU optimized |
 | imageSpec | optional | object | the specification for customization |
+
+*Note: imageSpec cannot use with url and urlForGpu*
 
 #### imageSpec Example
 

@@ -152,6 +152,13 @@ def validate(data: dict, for_update: bool = False) -> dict:
     return data
 
 
+def apply_auto_fill(config: dict):
+    if config.get('quotaCpu') is None:
+        config['quotaCpu'] = 0.5
+    if config.get('quotaGpu') is None:
+        config['quotaGpu'] = 0
+
+
 class AdminGroups(Helpful, Module):
 
     @cmd(name='create', description='Create a group', optionals=[('file', file_flag)])
@@ -204,6 +211,7 @@ class AdminGroups(Helpful, Module):
         }
         """
 
+        apply_auto_fill(config)
         results = self.request({'data': validate(config)}, query)
 
         if 'data' not in results:

@@ -6,6 +6,7 @@ from primehub import Helpful, cmd, Module, primehub_load_config
 from primehub.utils import resource_not_found, PrimeHubException
 from primehub.utils.optionals import toggle_flag, file_flag
 from primehub.utils.permission import ask_for_permission
+from primehub.utils.auto_fill import auto_gen_id
 
 
 def _error_handler(response):
@@ -42,16 +43,27 @@ def invalid_config(message: str):
     raise PrimeHubException(explain)
 
 
+def auto_fill(config: dict):
+    if 'id' not in config:
+        config['id'] = auto_gen_id(config['name'])
+    if 'replicas' not in config:
+        config['replicas'] = 1
+
+
 def verify_requires(config):
     # verify required fields in the config
     if not config:
         invalid_config('Deployment definition is required.')
+    if 'name' not in config:
+        invalid_config('name is required')
     if 'id' not in config:
         invalid_config('id is required')
     if 'instanceType' not in config:
         invalid_config('instanceType is required')
     if 'modelImage' not in config:
         invalid_config('modelImage is required')
+    if 'replicas' not in config:
+        invalid_config('replicas is required')
 
 
 class Deployments(Helpful, Module):
@@ -246,6 +258,7 @@ class Deployments(Helpful, Module):
         }
         """
 
+        auto_fill(config)
         verify_requires(config)
         config['groupId'] = self.group_id
         self.verify_dependency(config)

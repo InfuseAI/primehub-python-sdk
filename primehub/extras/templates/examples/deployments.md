@@ -1,3 +1,26 @@
+### Fields for creating or updating
+
+| field | required | type | description |
+| --- | --- | --- | --- |
+| name | required | string | the name of the deployment |
+| id | required* | string | either self-defined or system generated automatically if not specified |
+| modelImage | required | string | the image file; see [also](https://docs.primehub.io/docs/model-deployment-feature#deployment-details) |
+| modelURI | optional | string | the location which the trained model is stored in; see [also](https://docs.primehub.io/docs/model-deployment-model-uri)|
+| env | optional | array | key-value pairs of environmental variables |
+| metadata | optional | object | key-value pairs of metadata |
+| instanceType | required | string | instance type which allocates resources for the job |
+| replicas | required* | int | how many replicas for the service |
+| updateMessage | optional | string | message here for each update |
+| endpointAccessType | optional | string | one of ['public', 'private'] |
+
+#### Auto-filling Fields
+Auto-filling will happen when the config omitted below fields
+
+| field | value | description |
+| --- | --- | --- |
+| id | [normalize name]-[random string] | random string is in the length of 5 |
+| replicas | 1 | |
+
 ### Example: create a deployment
 
 We could use `create` to make a new model deployment. Here is an example when you are missing the required config file,
