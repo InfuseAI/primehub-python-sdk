@@ -216,7 +216,8 @@ class Apps(Helpful, Module):
             config['id'] = auto_gen_id(config['templateId'])
         if 'env' not in config:
             template = self.primehub.apptemplates.get(config['templateId'])
-            config['env'] = [{'name': x['name'], 'value': x['defaultValue']} for x in template['defaultEnvs']]
+            if isinstance(template['defaultEnvs'], list):
+                config['env'] = [{'name': x['name'], 'value': x['defaultValue']} for x in template['defaultEnvs']]
 
     def validate_creation(self, config):
         spec = ValidationSpec("""
