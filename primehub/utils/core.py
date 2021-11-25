@@ -1,3 +1,5 @@
+import random
+import re
 from collections import UserDict
 
 
@@ -20,3 +22,9 @@ class CommandContainer(UserDict):
         if has_item:
             return True
         return super(CommandContainer, self).__contains__(f':{item}')
+
+
+def auto_gen_id(name: str):
+    normalized_name = re.sub(r'[\W_]', '-', name).lower()
+    random_string = str(float.hex(random.random()))[4:9]
+    return f'{normalized_name}-{random_string}'

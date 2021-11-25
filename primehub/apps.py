@@ -1,10 +1,9 @@
 import json
-import random
-import re
 from typing import Iterator, Any
 
 from primehub import Helpful, cmd, Module, primehub_load_config
 from primehub.utils import resource_not_found, PrimeHubException
+from primehub.utils.core import auto_gen_id
 from primehub.utils.display import display_tree_like_format
 from primehub.utils.optionals import toggle_flag, file_flag
 from primehub.utils.validator import ValidationSpec
@@ -101,13 +100,6 @@ def invalid_config(message: str):
     scope_help = f"""* the scope field could be one of the {scope_list}"""
     raise PrimeHubException(
         message + "\n\nExample:\n" + json.dumps(json.loads(example), indent=2) + f"\n\n{scope_help}\n")
-
-
-# TODO: remove this after merge to upstream
-def _auto_gen_id(name: str):
-    normalized_name = re.sub(r'[\W_]', '-', name).lower()
-    random_string = str(float.hex(random.random()))[4:9]
-    return f'{normalized_name}-{random_string}'
 
 
 class Apps(Helpful, Module):
@@ -221,7 +213,7 @@ class Apps(Helpful, Module):
 
     def apply_auto_filling(self, config):
         if 'id' not in config:
-            config['id'] = _auto_gen_id(config['templateId'])
+            config['id'] = auto_gen_id(config['templateId'])
         if 'env' not in config:
             template = self.primehub.apptemplates.get(config['templateId'])
             config['env'] = [{'name': x['name'], 'value': x['defaultValue']} for x in template['defaultEnvs']]

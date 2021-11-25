@@ -6,7 +6,7 @@ from primehub import Helpful, cmd, Module, primehub_load_config
 from primehub.utils import resource_not_found, PrimeHubException
 from primehub.utils.optionals import toggle_flag, file_flag
 from primehub.utils.permission import ask_for_permission
-from primehub.utils.auto_fill import auto_gen_id
+from primehub.utils.core import auto_gen_id
 
 
 def _error_handler(response):
