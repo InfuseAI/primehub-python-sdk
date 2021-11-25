@@ -1,3 +1,4 @@
+import json
 import re
 from typing import Union, Any, Optional, Dict, List
 
@@ -168,6 +169,44 @@ class Validator(object):
     class OpJSON(OpBase):
         def __init__(self):
             super().__init__([dict])
+
+    class OpPhAppScope(OpBase):
+        def __init__(self):
+            super().__init__([str])
+            self.scope_list = ['public', 'primehub', 'group']
+
+        def validate(self, value):
+            return value in self.scope_list
+
+        def error_message(self, field: str):
+            return f'The value of the {field} should be one of [{", ".join(self.scope_list)}]'
+
+    class OpEnvList(OpBase):
+        def __init__(self):
+            super().__init__([list])
+
+        def validate(self, value):
+            if not isinstance(value, list):
+                return False
+            for entry in value:
+                if not isinstance(entry, dict):
+                    return False
+                if sorted(entry.keys()) != sorted(['name', 'value']):
+                    return False
+                if not isinstance(entry['value'], str):
+                    return False
+            return True
+
+        def error_message(self, field: str):
+            example = [
+                dict(name="name", value="my-name"),
+                dict(name="int_value", value="1"),
+                dict(name="float_value", value="1.5"),
+                dict(name="bool_value", value="true"),
+            ]
+            return f'The value of the {field} should be an EnvList. ' \
+                   f'It is a list of {{name, value}} and all values MUST be a string.\n' \
+                   f'For example: {json.dumps(example)}'
 
     def __init__(self, type_def: str):
         self.type_def = type_def
