@@ -206,6 +206,14 @@ class Apps(Helpful, Module):
           }
         }
         """
+
+        # config without instanceType will make the API crash
+        if 'instanceType' not in config:
+            current = self.get(id)
+            if not current:
+                return None
+            config['instanceType'] = current['instanceType']
+
         results = self.request({'data': config, 'where': {'id': id}}, query)
         if 'data' in results:
             return results['data']['updatePhApplication']
