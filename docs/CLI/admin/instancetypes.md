@@ -116,9 +116,9 @@ primehub admin instancetypes update <id>
 | description | optional | string | |
 | global | optional | boolean | when an instance type is global, it could be seen for each group |
 | groups | optional | list of connected groups (dict) | please see the `connect` examples. default value: false |
-| cpuLimit | *required | float | the maximum vCPU quantity. For example: `1` or `1.0` means 1 vCPU and `0.5` means half of vCPU |
+| cpuLimit | required* | float | the maximum vCPU quantity. For example: `1` or `1.0` means 1 vCPU and `0.5` means half of vCPU |
 | cpuRequest | optional | float | the initial vCPU quantity for CPU resource. cpuRequest can not be greater than cpuLimit |
-| memoryLimit | *required | float | the maximum Memory size. For example: `1.5` means `1.5 GB` memory |
+| memoryLimit | required* | float | the maximum Memory size. For example: `1.5` means `1.5 GB` memory |
 | memoryRequest | optional | float | the initial Memory size. memoryRequest can not be greater than memoryLimit |
 | gpuLimit | optional | int | the count of GPU when an instance allocated |
 | tolerations | optional | dict | kubernetes pod toleration in an instance (Pod) |
