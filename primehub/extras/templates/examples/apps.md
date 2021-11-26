@@ -7,7 +7,7 @@
 | displayName | required | string |  |
 | instanceType | required | string |  |
 | scope | required | string | one of `[public, primehub, group]` |
-| env | optional | EnvVar[] | a list of EnvVar |
+| env | optional* | EnvVar[] | a list of EnvVar |
 
 #### EnvVar
 
@@ -27,6 +27,7 @@ Auto-filling will happen when the inputs omitted fields
 | field | value | comment |
 | --- | --- | --- |
 | id | {templateId}-{random-hex} | Generate a valid PhApp id from the templateId |
+| env | defaultEnvs | Copy defaultEnvs from the PhAppTemplate |
 
 ### Creating
 
