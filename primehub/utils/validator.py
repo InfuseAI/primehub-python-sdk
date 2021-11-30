@@ -170,6 +170,21 @@ class Validator(object):
         def __init__(self):
             super().__init__([dict])
 
+    class OpStringList(OpBase):
+        def __init__(self):
+            super().__init__([list])
+
+        def validate(self, value):
+            if not isinstance(value, list):
+                return False
+            for entry in value:
+                if not isinstance(entry, str):
+                    return False
+            return True
+
+        def error_message(self, field: str):
+            return f'The value of the {field} should be a list of string.'
+
     class OpPhAppScope(OpBase):
         def __init__(self):
             super().__init__([str])
