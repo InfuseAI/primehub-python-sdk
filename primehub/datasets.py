@@ -1,8 +1,8 @@
 import json
-from typing import Iterator, Optional
+from typing import Iterator, Optional, List, Dict
 
 from primehub import Helpful, cmd, Module, primehub_load_config
-from primehub.utils import PrimeHubException
+from primehub.utils import PrimeHubException, SharedFileException
 from primehub.utils.optionals import file_flag, toggle_flag
 from primehub.utils.validator import ValidationSpec
 
@@ -14,6 +14,13 @@ def invalid_config(message: str):
     {"id":"my-dataset-name","tags":["my-tag-1", "my-tag-2"]}
     """.strip()
     raise PrimeHubException(message + "\n\nExample:\n" + json.dumps(json.loads(example), indent=2))
+
+
+def hide_metadata(files: List[Dict]):
+    for idx, file in enumerate(files):
+        if file['name'] == '.dataset':
+            files.pop(idx)
+            break
 
 
 class Datasets(Helpful, Module):
@@ -244,8 +251,14 @@ class Datasets(Helpful, Module):
         """
 
         full_path = DATASETS_ROOT + path
-        result = self.primehub.files.list(full_path)
-        return result
+        try:
+            result = self.primehub.files.list(full_path)
+            hide_metadata(result)
+            return result
+        except SharedFileException as e:
+            message = e.args[0]
+            message = message.replace(full_path, path)
+            raise SharedFileException(message)
 
     @cmd(name='files-upload', description='upload files to the dataset', optionals=[('recursive', toggle_flag)])
     def files_upload(self, src, path, **kwargs):
@@ -262,9 +275,14 @@ class Datasets(Helpful, Module):
         :param recursive: copy recursively, set it when the source is a directory
         """
 
-        full_path = DATASETS_ROOT + path
-        result = self.primehub.files.upload(src, full_path, **kwargs)
-        return result
+        try:
+            full_path = DATASETS_ROOT + path
+            result = self.primehub.files.upload(src, full_path, **kwargs)
+            return result
+        except SharedFileException as e:
+            message = e.args[0]
+            message = message.replace(full_path, path)
+            raise SharedFileException(message)
 
     @cmd(name='files-download', description='download files from the dataset', optionals=[('recursive', toggle_flag)])
     def files_download(self, path, dest, **kwargs) -> dict:
@@ -281,9 +299,14 @@ class Datasets(Helpful, Module):
         :param recursive: copy recursively, set it when the path is a directory
         """
 
-        full_path = DATASETS_ROOT + path
-        result = self.primehub.files.download(full_path, dest, **kwargs)
-        return result
+        try:
+            full_path = DATASETS_ROOT + path
+            result = self.primehub.files.download(full_path, dest, **kwargs)
+            return result
+        except SharedFileException as e:
+            message = e.args[0]
+            message = message.replace(full_path, path)
+            raise SharedFileException(message)
 
     @cmd(name='files-delete', description='delete files from the dataset', optionals=[('recursive', toggle_flag)])
     def files_delete(self, path, **kwargs) -> dict:
@@ -298,9 +321,14 @@ class Datasets(Helpful, Module):
         :param recursive: delete recursively, set it when the path is a directory
         """
 
-        full_path = DATASETS_ROOT + path
-        result = self.primehub.files.delete(full_path, **kwargs)
-        return result
+        try:
+            full_path = DATASETS_ROOT + path
+            result = self.primehub.files.delete(full_path, **kwargs)
+            return result
+        except SharedFileException as e:
+            message = e.args[0]
+            message = message.replace(full_path, path)
+            raise SharedFileException(message)
 
     def help_description(self):
         return "Manage datasets"
