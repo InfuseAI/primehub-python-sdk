@@ -254,3 +254,38 @@ class TestCmdFiles(BaseTestCase):
         self.assertEqual('/', _normalize_dest_path('/'))
         self.assertEqual('abc', _normalize_dest_path('abc'))
         self.assertEqual('./abc', _normalize_dest_path('./abc'))
+
+    def test_generate_prefix(self):
+        generate_prefix = self.sdk.files._generate_prefix
+        # test directory path
+        self.assertEqual('', generate_prefix('/', recursive=True))
+        self.assertEqual('', generate_prefix('./', recursive=True))
+        self.assertEqual('', generate_prefix('.', recursive=True))
+        self.assertEqual('deep/sub', generate_prefix('/deep/sub/', recursive=True))
+        self.assertEqual('deep/sub/path', generate_prefix('/deep/sub/path/', recursive=True))
+        self.assertEqual('deep/sub/path', generate_prefix('/deep/sub/path', recursive=True))
+
+        # test file path
+        self.assertEqual('l0.csv', generate_prefix('/l0.csv', recursive=False))
+        self.assertEqual('deep/l1.csv', generate_prefix('/deep/l1.csv', recursive=False))
+        self.assertEqual('deep/sub/path/l3.csv', generate_prefix('deep/sub/path/l3.csv', recursive=False))
+
+        with self.assertRaises(SharedFileException) as e:
+            generate_prefix('./l1.csv', recursive=True)
+        self.assertEqual('No such file or directory: /l1.csv', str(e.exception))
+
+        with self.assertRaises(SharedFileException) as e:
+            generate_prefix('./', recursive=False)
+        self.assertEqual('/ is a directory, please delete it recursively', str(e.exception))
+
+        with self.assertRaises(SharedFileException) as e:
+            generate_prefix('/deep/l2.csv', recursive=False)
+        self.assertEqual('No such file or directory: /deep/l2.csv', str(e.exception))
+
+        with self.assertRaises(SharedFileException) as e:
+            generate_prefix('/deep/l1.csv/', recursive=False)
+        self.assertEqual('Not a directory: /deep/l1.csv/', str(e.exception))
+
+        with self.assertRaises(SharedFileException) as e:
+            generate_prefix('deep/sub/path/l3', recursive=False)
+        self.assertEqual('No such file or directory: /deep/sub/path/l3', str(e.exception))

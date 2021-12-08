@@ -35,3 +35,9 @@ Uses `upload` to upload a file or a directory with `--recursive` options.
 ```
 $ primehub files upload ./my-download /jobArtifacts/job-202107290838-aoq173 --recursive
 ```
+
+Uses `delete` to delete a file or a directory with `--recursive` options.
+
+```
+$ primehub files delete /jobArtifacts/job-202107290838-aoq173 --recursive
+```

@@ -329,5 +329,58 @@ class Files(Helpful, Module):
     def _execute_upload(self, endpoint, src, path):
         return self.upload_file(endpoint + path, src)
 
+    @cmd(name='delete', description='delete shared files', optionals=[('recursive', toggle_flag)])
+    def delete(self, path, **kwargs):
+        """
+        Delete files
+
+        :type path: str
+        :param path: The path of file or folder
+
+        :type recursive: bool
+        :param recursive: Delete recursively, it works when a path is a directory.
+        """
+
+        query = """
+        mutation deleteFiles(
+          $where: StoreFileWhereInput!
+          $options: StoreFileDeleteOptionInput
+        ) {
+          deleteFiles(where: $where, options: $options)
+        }
+        """
+        recursive = kwargs.get('recursive', False)
+        phfs_prefix = self._generate_prefix(path, recursive)
+
+        variables = {'options': {'recursive': recursive},
+                     'where': {'phfsPrefix': phfs_prefix, 'groupName': self.group_name}}
+
+        result = self.request(variables, query)
+        if 'data' in result:
+            return result['data']
+        return result
+
+    def _generate_prefix(self, path, recursive) -> str:
+        path = _normalize_user_input_path(path)
+
+        items = self._execute_list(path, limit=1)
+        if items:  # directory
+            if not recursive:
+                invalid(f'{path} is a directory, please delete it recursively')
+
+        else:  # file or not exist
+            items = self._execute_list(path, recursive=True, limit=1)
+            if not items or items[0]['name']:
+                invalid(f'No such file or directory: {path}')
+
+            if not os.path.basename(path):  # trailing slash
+                invalid(f'Not a directory: {path}')
+
+        path_norm = os.path.normpath(path)
+        if path_norm.startswith('/'):
+            return path_norm[1:]
+
+        return path_norm
+
     def help_description(self):
         return "List and download shared files"
