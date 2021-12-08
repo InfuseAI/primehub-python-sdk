@@ -133,3 +133,16 @@ local-dir
 
 2 directories, 3 files
 ```
+
+### Delete files from the dataset with given path
+We could delete a single file of the dataset or delete a specific directory of the dataset by `files-delete`.
+
+*Note: indicate `--recursive` options when delete directory*
+
+```
+$ primehub datasets files-delete test-dataset/test-upload-file.txt
+deleteFiles:    1
+
+$ primehub datasets files-delete test-dataset/test-dir --recursive
+deleteFiles:    2
+```

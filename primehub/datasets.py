@@ -285,6 +285,23 @@ class Datasets(Helpful, Module):
         result = self.primehub.files.download(full_path, dest, **kwargs)
         return result
 
+    @cmd(name='files-delete', description='delete files from the dataset', optionals=[('recursive', toggle_flag)])
+    def files_delete(self, path, **kwargs) -> dict:
+        """
+        delete a file or a directory of the dataset by path
+
+        :type path: str
+        :param path: the path of a file or a directory
+
+
+        :type recursive: bool
+        :param recursive: delete recursively, set it when the path is a directory
+        """
+
+        full_path = DATASETS_ROOT + path
+        result = self.primehub.files.delete(full_path, **kwargs)
+        return result
+
     def help_description(self):
         return "Manage datasets"
 

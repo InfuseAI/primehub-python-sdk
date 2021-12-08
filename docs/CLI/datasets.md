@@ -10,6 +10,7 @@ Manage datasets
 Available Commands:
   create               Create a datasets
   delete               Delete the dataset
+  files-delete         delete files from the dataset
   files-download       download files from the dataset
   files-list           lists files of the dataset
   files-upload         upload files to the dataset
@@ -56,6 +57,23 @@ primehub datasets delete <dataset_id>
 
 * dataset_id: the id of the dataset
  
+
+
+
+
+### files-delete
+
+delete files from the dataset
+
+
+```
+primehub datasets files-delete <path>
+```
+
+* path: the path of a file or a directory
+ 
+
+* *(optional)* recursive: delete recursively, set it when the path is a directory
 
 
 
@@ -295,4 +313,17 @@ local-dir
     └── test-upload-file.txt
 
 2 directories, 3 files
+```
+
+### Delete files from the dataset with given path
+We could delete a single file of the dataset or delete a specific directory of the dataset by `files-delete`.
+
+*Note: indicate `--recursive` options when delete directory*
+
+```
+$ primehub datasets files-delete test-dataset/test-upload-file.txt
+deleteFiles:    1
+
+$ primehub datasets files-delete test-dataset/test-dir --recursive
+deleteFiles:    2
 ```
