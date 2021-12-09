@@ -59,6 +59,7 @@ Available Commands:
   apps                 Manage PrimeHub Applications
   apptemplates         Get PhAppTemplates
   config               Update the settings of PrimeHub SDK
+  datasets             Manage datasets
   deployments          Get a deployment or list deployments
   files                List and download shared files
   groups               Get a group or list groups
