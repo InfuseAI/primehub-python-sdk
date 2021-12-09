@@ -1,12 +1,15 @@
 import json
-from typing import Iterator, Optional, List, Dict
+import os.path
+from typing import Iterator, Optional
 
 from primehub import Helpful, cmd, Module, primehub_load_config
-from primehub.utils import PrimeHubException, SharedFileException
+from primehub.files import _normalize_user_input_path
+from primehub.utils import PrimeHubException, SharedFileException, DatasetsException
 from primehub.utils.optionals import file_flag, toggle_flag
 from primehub.utils.validator import ValidationSpec
 
-DATASETS_ROOT = '/datasets/'
+DATASETS_ROOT = '/datasets'
+METADATA_NAME = '.dataset'
 
 
 def invalid_config(message: str):
@@ -16,11 +19,30 @@ def invalid_config(message: str):
     raise PrimeHubException(message + "\n\nExample:\n" + json.dumps(json.loads(example), indent=2))
 
 
-def hide_metadata(files: List[Dict]):
-    for idx, file in enumerate(files):
-        if file['name'] == '.dataset':
-            files.pop(idx)
-            break
+def invalid(message: str):
+    raise SharedFileException(message)
+
+
+def get_phfs_path(dataset_id: str, path: str) -> str:
+    prefix = os.path.join(DATASETS_ROOT, dataset_id)
+    path = _normalize_user_input_path(path)
+    path = os.path.normpath(path)
+    path = path.replace('//', '/')
+    if path.startswith('.'):
+        return prefix + '/' + path
+    return prefix + path
+
+
+def protect_metadata(dataset_id: str, phfs_path: str):
+    # prevent from accessing dataset metadata directly
+    metadata_path = os.path.join(DATASETS_ROOT, dataset_id, METADATA_NAME)
+    if phfs_path == metadata_path:
+        raise DatasetsException('Invalid Operation')
+
+
+def is_dataset_root(dataset_id: str, path: str) -> bool:
+    dataset_root = os.path.join(DATASETS_ROOT, dataset_id)
+    return path == (dataset_root + '/')
 
 
 class Datasets(Helpful, Module):
@@ -239,9 +261,12 @@ class Datasets(Helpful, Module):
         return result
 
     @cmd(name='files-list', description='lists files of the dataset', return_required=True)
-    def files_list(self, path) -> dict:
+    def files_list(self, dataset_id: str, path: str) -> dict:
         """
         List files of the dataset by path
+
+        :type dataset_id: str
+        :param dataset_id: the name of the dataset
 
         :type path: str
         :param path: the path of the dataset
@@ -250,20 +275,30 @@ class Datasets(Helpful, Module):
         :return the files information of the path in the dataset
         """
 
-        full_path = DATASETS_ROOT + path
+        self._check_dataset_existed(dataset_id)
+        phfs_path = get_phfs_path(dataset_id, path)
+        protect_metadata(dataset_id, phfs_path)
+
         try:
-            result = self.primehub.files.list(full_path)
-            hide_metadata(result)
-            return result
+            def filter_func(files: list):
+                if is_dataset_root(dataset_id, phfs_path):
+                    return [f for f in files if f['name'] != METADATA_NAME]
+                return result
+
+            result = self.primehub.files.list(phfs_path)
+            return filter_func(result)
         except SharedFileException as e:
             message = e.args[0]
-            message = message.replace(full_path, path)
+            message = message.replace(phfs_path, path)
             raise SharedFileException(message)
 
     @cmd(name='files-upload', description='upload files to the dataset', optionals=[('recursive', toggle_flag)])
-    def files_upload(self, src, path, **kwargs):
+    def files_upload(self, dataset_id: str, src: str, path: str, **kwargs):
         """
         Upload files to the dataset by path
+
+        :type dataset_id: str
+        :param dataset_id: the name of the dataset
 
         :type src: str
         :param src: the path of a local file or local directory
@@ -275,19 +310,28 @@ class Datasets(Helpful, Module):
         :param recursive: copy recursively, set it when the source is a directory
         """
 
+        self._check_dataset_existed(dataset_id)
+        phfs_path = get_phfs_path(dataset_id, path)
+        protect_metadata(dataset_id, phfs_path)
+
         try:
-            full_path = DATASETS_ROOT + path
-            result = self.primehub.files.upload(src, full_path, **kwargs)
+            def filter_func(target: str):
+                return target == get_phfs_path(dataset_id, METADATA_NAME)
+
+            result = self.primehub.files.upload(src, phfs_path, filter_func=filter_func, **kwargs)
             return result
         except SharedFileException as e:
             message = e.args[0]
-            message = message.replace(full_path, path)
+            message = message.replace(phfs_path, path)
             raise SharedFileException(message)
 
     @cmd(name='files-download', description='download files from the dataset', optionals=[('recursive', toggle_flag)])
-    def files_download(self, path, dest, **kwargs) -> dict:
+    def files_download(self, dataset_id: str, path: str, dest: str, **kwargs) -> dict:
         """
         Download files of the dataset by path
+
+        :type dataset_id: str
+        :param dataset_id: the name of the dataset
 
         :type path: str
         :param path: the path of a file or a directory
@@ -299,36 +343,69 @@ class Datasets(Helpful, Module):
         :param recursive: copy recursively, set it when the path is a directory
         """
 
+        self._check_dataset_existed(dataset_id)
+        phfs_path = get_phfs_path(dataset_id, path)
+        protect_metadata(dataset_id, phfs_path)
+
         try:
-            full_path = DATASETS_ROOT + path
-            result = self.primehub.files.download(full_path, dest, **kwargs)
+            def filter_func(target: str):
+                return target == get_phfs_path(dataset_id, METADATA_NAME)
+
+            result = self.primehub.files.download(phfs_path, dest, filter_func=filter_func, **kwargs)
             return result
         except SharedFileException as e:
             message = e.args[0]
-            message = message.replace(full_path, path)
+            message = message.replace(phfs_path, path)
             raise SharedFileException(message)
 
     @cmd(name='files-delete', description='delete files from the dataset', optionals=[('recursive', toggle_flag)])
-    def files_delete(self, path, **kwargs) -> dict:
+    def files_delete(self, dataset_id: str, path: str, **kwargs) -> dict:
         """
-        delete a file or a directory of the dataset by path
+        Delete a file or a directory of the dataset by path
+
+        :type dataset_id: str
+        :param dataset_id: the name of the dataset
 
         :type path: str
         :param path: the path of a file or a directory
-
 
         :type recursive: bool
         :param recursive: delete recursively, set it when the path is a directory
         """
 
+        self._check_dataset_existed(dataset_id)
+        phfs_path = get_phfs_path(dataset_id, path)
+        protect_metadata(dataset_id, phfs_path)
+
         try:
-            full_path = DATASETS_ROOT + path
-            result = self.primehub.files.delete(full_path, **kwargs)
-            return result
+            if is_dataset_root(dataset_id, phfs_path):
+                # prevent from deleting dataset metadata
+                if not kwargs.get('recursive', False):
+                    invalid(f'{path} is a directory, please delete it recursively')
+
+                files = self.files_list(dataset_id, path)
+                total_deleted_files = 0
+
+                for file in files:
+                    phfs_path = get_phfs_path(dataset_id, file['name'])
+                    if file['name'].endswith('/'):
+                        result = self.primehub.files.delete(phfs_path, recursive=True)
+                        total_deleted_files += result.get('deleteFiles', 0)
+                    else:
+                        result = self.primehub.files.delete(phfs_path)
+                        total_deleted_files += result.get('deleteFiles', 0)
+
+                return {'deleteFiles': total_deleted_files}
+            else:
+                result = self.primehub.files.delete(phfs_path, **kwargs)
+                return result
         except SharedFileException as e:
             message = e.args[0]
-            message = message.replace(full_path, path)
+            message = message.replace(phfs_path, path)
             raise SharedFileException(message)
+
+    def _check_dataset_existed(self, dataset_id: str):
+        self.get(dataset_id)
 
     def help_description(self):
         return "Manage datasets"
@@ -337,7 +414,7 @@ class Datasets(Helpful, Module):
 def validate_creation(config):
     spec = ValidationSpec("""
     input DatasetV2CreateInput {
-      id: String!
+      id: ResourceID!
       groupName: String!
       tags: StringList
     }

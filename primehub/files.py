@@ -172,10 +172,13 @@ class Files(Helpful, Module):
         """
 
         endpoint = self._primehub_store_endpoint()
+        filter_func = kwargs.get('filter_func', None)
 
         # start download
         src_dst_list = self._generate_download_list(path, dest, **kwargs)
         for src, dst in src_dst_list:
+            if filter_func and filter_func(src):
+                continue
             dir = os.path.dirname(dst)
             if dir and not os.path.isdir(dir):
                 os.makedirs(dir)
@@ -279,6 +282,7 @@ class Files(Helpful, Module):
         """
         path = _normalize_user_input_path(path)
         recursive = kwargs.get('recursive', False)
+        filter_func = kwargs.get('filter_func', None)
 
         # check src
         if not os.path.exists(src):
@@ -313,6 +317,8 @@ class Files(Helpful, Module):
                 else:
                     phfs_path = os.path.join(path, os.path.relpath(filepath, os.path.dirname(src)))
                     pass
+                if filter_func and filter_func(phfs_path):
+                    continue
                 print('[Uploading] ' + filepath + ' -> phfs://' + phfs_path)
                 response = self._execute_upload(endpoint, filepath, phfs_path)
                 response['phfs'] = phfs_path

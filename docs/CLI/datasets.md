@@ -67,9 +67,10 @@ delete files from the dataset
 
 
 ```
-primehub datasets files-delete <path>
+primehub datasets files-delete <dataset_id> <path>
 ```
 
+* dataset_id: the name of the dataset
 * path: the path of a file or a directory
  
 
@@ -84,9 +85,10 @@ download files from the dataset
 
 
 ```
-primehub datasets files-download <path> <dest>
+primehub datasets files-download <dataset_id> <path> <dest>
 ```
 
+* dataset_id: the name of the dataset
 * path: the path of a file or a directory
 * dest: the local path to save files
  
@@ -102,9 +104,10 @@ lists files of the dataset
 
 
 ```
-primehub datasets files-list <path>
+primehub datasets files-list <dataset_id> <path>
 ```
 
+* dataset_id: the name of the dataset
 * path: the path of the dataset
  
 
@@ -117,9 +120,10 @@ upload files to the dataset
 
 
 ```
-primehub datasets files-upload <src> <path>
+primehub datasets files-upload <dataset_id> <src> <path>
 ```
 
+* dataset_id: the name of the dataset
 * src: the path of a local file or local directory
 * path: the path of the dataset
  
@@ -258,42 +262,59 @@ To upload a file or a directory to the dataset, `files-upload` command can help 
 
 *Note: indicate `--recursive` options when upload directory*
 
-```
-$ primehub datasets files-upload test-dir test-dataset --recursive
-[Uploading] test-dir/test-file.txt -> phfs:///datasets/test-dataset/test-dir/test-file.txt
-success    phfs                                           file
----------  ---------------------------------------------  ----------------------
-True       /datasets/test-dataset/test-dir/test-file.txt  test-dir/test-file.txt
+We could upload a directory to the root path of the dataset
 
-$ primehub datasets files-upload test-upload-file.txt test-dataset/test-dir
-[Uploading] /tmp/test-upload-file.txt -> phfs:///datasets/test-dataset/test-dir/test-upload-file.txt
-success    phfs                                                  file
----------  ----------------------------------------------------  ---------------------------------------------------------
-True       /datasets/test-dataset/test-dir/test-upload-file.txt  /tmp/test-upload-file.txt
+```
+$ primehub datasets files-upload test-dataset ./test-dir / --recursive
+[Uploading] ./test-dir/test.txt -> phfs:///datasets/test-dataset/test-dir/test.txt
+[Uploading] ./test-dir/test-upload.txt -> phfs:///datasets/test-dataset/test-dir/test-upload.txt
+success    phfs                                             file
+---------  -----------------------------------------------  --------------------------
+True       /datasets/test-dataset/test-dir/test.txt         ./test-dir/test.txt
+True       /datasets/test-dataset/test-dir/test-upload.txt  ./test-dir/test-upload.txt
+```
+
+or upload a single file to the root path of the dataset
+
+```
+$ primehub datasets files-upload test-dataset ./test-upload.txt /
+[Uploading] ./test-upload.txt -> phfs:///datasets/test-dataset/test-upload.txt
+success    phfs                                    file
+---------  --------------------------------------  ----------------------------------------------------
+True       /datasets/test-dataset/test-upload.txt  ./test-upload.txt
+```
+
+You might upload sub-directory of the dataset
+
+```
+$ primehub datasets files-upload test-dataset ./test-upload.txt /test-dir
+[Uploading] ./test-upload.txt -> phfs:///datasets/test-dataset/test-dir/test-upload.txt
+success    phfs                                             file
+---------  -----------------------------------------------  ----------------------------------------------------
+True       /datasets/test-dataset/test-dir/test-upload.txt  ./test-upload.txt
 ```
 
 ### List files of the dataset with given path
 We could use `files-list` to watch files of the dataset.
 
-`files-list` requires a `path` parameter, and it always starts with the name of the dataset:
+`files-list` requires `path` parameter, and `/` means the root path of the dataset.
 
 ```
-$ primehub datasets files-list test-dataset
-name                    size  lastModified
---------------------  ------  ------------------------
-.dataset                 123  2021-12-06T12:56:28.000Z
-test-upload-file.txt      12  2021-12-06T15:10:15.000Z
-test-dir/                  0
+$ primehub datasets files-list test-dataset /
+name               size  lastModified
+---------------  ------  ------------------------
+test-upload.txt    1108  2021-12-09T04:03:12.000Z
+test-dir/             0
 ```
 
 You might go deeply into a sub-directory:
 
 ```
-$ primehub datasets files-list test-dataset/test-dir
-name                    size  lastModified
---------------------  ------  ------------------------
-test-file.txt             39  2021-12-06T15:09:59.000Z
-test-upload-file.txt      12  2021-12-06T15:12:41.000Z
+$ primehub datasets files-list test-dataset /test-dir
+name               size  lastModified
+---------------  ------  ------------------------
+test-upload.txt    1108  2021-12-09T04:03:39.000Z
+test.txt             13  2021-12-09T03:57:17.000Z
 ```
 
 ### Download files from the dataset with given path
@@ -302,17 +323,18 @@ test-upload-file.txt      12  2021-12-06T15:12:41.000Z
 *Note: indicate `--recursive` options when upload directory*
 
 ```
-$ primehub datasets files-download test-dataset local-dir --recursive
+# download the whole dataset from root directory recursively
+$ primehub datasets files-download test-dataset / ./local-dir --recursive
 
 $ tree local-dir
-local-dir
-└── test-dataset
-    ├── test-dir
-    │   ├── test-file.txt
-    │   └── test-upload-file.txt
-    └── test-upload-file.txt
 
-2 directories, 3 files
+local-dir
+├── test-dir
+│   ├── test-upload.txt
+│   └── test.txt
+└── test-upload.txt
+
+1 directory, 3 files
 ```
 
 ### Delete files from the dataset with given path
@@ -321,9 +343,11 @@ We could delete a single file of the dataset or delete a specific directory of t
 *Note: indicate `--recursive` options when delete directory*
 
 ```
-$ primehub datasets files-delete test-dataset/test-upload-file.txt
+# delete a single file in the dataset
+$ primehub datasets files-delete test-dataset /test-upload.txt
 deleteFiles:    1
 
-$ primehub datasets files-delete test-dataset/test-dir --recursive
+# delete a whole sub-directory of the dataset
+$ primehub datasets files-delete test-dataset /test-dir --recursive
 deleteFiles:    2
 ```
