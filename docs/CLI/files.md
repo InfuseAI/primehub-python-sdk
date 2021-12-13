@@ -8,6 +8,7 @@ Usage:
 List and download shared files
 
 Available Commands:
+  delete               delete shared files
   download             Download shared files
   list                 List shared files
   upload               Upload shared files
@@ -23,6 +24,23 @@ Global Options:
   --json               Output the json format (output human-friendly format by default)
 
 ```
+
+
+### delete
+
+delete shared files
+
+
+```
+primehub files delete <path>
+```
+
+* path: The path of file or folder
+ 
+
+* *(optional)* recursive: Delete recursively, it works when a path is a directory.
+
+
 
 
 ### download
@@ -115,4 +133,10 @@ Uses `upload` to upload a file or a directory with `--recursive` options.
 
 ```
 $ primehub files upload ./my-download /jobArtifacts/job-202107290838-aoq173 --recursive
+```
+
+Uses `delete` to delete a file or a directory with `--recursive` options.
+
+```
+$ primehub files delete /jobArtifacts/job-202107290838-aoq173 --recursive
 ```

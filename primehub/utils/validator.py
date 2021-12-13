@@ -122,6 +122,26 @@ class Validator(object):
         def __init__(self):
             super().__init__([str])
 
+    class OpResourceID(OpID):
+
+        def validate(self, value):
+            if not super().validate(value):
+                return False
+
+            # check formats
+            format_matched: Union[str, Any, None] = re.match(
+                r'^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$',
+                value)
+
+            if not format_matched:
+                return False
+            return True
+
+        def error_message(self, field: str):
+            err_msg = f'{field} should be string type and lower case alphanumeric characters, \'-\' or \'.\', ' \
+                      f'and must start and end with an alphanumeric character.'
+            return err_msg
+
     class OpString(OpBase):
 
         def __init__(self):
@@ -169,6 +189,21 @@ class Validator(object):
     class OpJSON(OpBase):
         def __init__(self):
             super().__init__([dict])
+
+    class OpStringList(OpBase):
+        def __init__(self):
+            super().__init__([list])
+
+        def validate(self, value):
+            if not isinstance(value, list):
+                return False
+            for entry in value:
+                if not isinstance(entry, str):
+                    return False
+            return True
+
+        def error_message(self, field: str):
+            return f'The value of the {field} should be a list of string.'
 
     class OpPhAppScope(OpBase):
         def __init__(self):

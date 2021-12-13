@@ -39,6 +39,10 @@ class SharedFileException(PrimeHubException):
     pass
 
 
+class DatasetsException(PrimeHubException):
+    pass
+
+
 def reject_action(action):
     raise UserRejectAction(
         'User rejects action [%s], please use the flag "--yes-i-really-mean-it" to allow the action.' % action)

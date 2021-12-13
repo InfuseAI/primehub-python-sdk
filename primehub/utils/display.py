@@ -40,6 +40,12 @@ CUSTOMIZED_COLUMNS: Dict[str, List[tuple]] = {
         ('stop',),
         ('status',),
         ('message',),
+    ],
+    'primehub.datasets.list': [
+        ('name',),
+        ('createdBy',),
+        ('updatedAt',),
+        ('tags',),
     ]
 }
 
