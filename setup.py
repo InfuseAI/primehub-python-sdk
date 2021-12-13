@@ -33,7 +33,7 @@ setup(name='primehub-python-sdk',
               'flake8==3.9.2',
               'pytest-mypy',
               'pytest-cov',
-              'Jinja2',
+              'Jinja2', 'types-Jinja2',
               'twine'
           ],
       },
