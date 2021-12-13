@@ -2,10 +2,12 @@ import json
 from typing import Iterator
 
 from primehub import Helpful, cmd, Module, primehub_load_config
-from primehub.utils import resource_not_found, PrimeHubException
+from primehub.utils import resource_not_found, PrimeHubException, create_logger
 from primehub.utils.optionals import file_flag
 from primehub.utils.permission import ask_for_permission
 from primehub.jobs import verify_basic_field, verify_timeout, invalid_field
+
+logger = create_logger('cmd-recurring-jobs')
 
 
 def _error_handler(response):
@@ -46,7 +48,7 @@ def verify_recurrence_options(config: dict):
         invalid_config('cron is required in custom type')
 
     if type_option != 'custom' and cron_val != '':
-        print('Notice: To make cron you defined effective, please use \'custom\' type')
+        logger.warning('Notice: To make cron you defined effective, please use \'custom\' type')
 
 
 def verify_recurrence(config: dict, for_update: bool = False):
