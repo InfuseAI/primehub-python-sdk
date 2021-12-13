@@ -178,6 +178,7 @@ class Files(Helpful, Module):
         src_dst_list = self._generate_download_list(path, dest, **kwargs)
         for src, dst in src_dst_list:
             if filter_func and filter_func(src):
+                self._warning_skip(src)
                 continue
             dir = os.path.dirname(dst)
             if dir and not os.path.isdir(dir):
@@ -318,6 +319,7 @@ class Files(Helpful, Module):
                     phfs_path = os.path.join(path, os.path.relpath(filepath, os.path.dirname(src)))
                     pass
                 if filter_func and filter_func(phfs_path):
+                    self._warning_skip(phfs_path)
                     continue
                 print('[Uploading] ' + filepath + ' -> phfs://' + phfs_path)
                 response = self._execute_upload(endpoint, filepath, phfs_path)
@@ -331,6 +333,9 @@ class Files(Helpful, Module):
                     'message': e
                 })
         return result
+
+    def _warning_skip(self, path):
+        logger.warning(f'[Warning] skip path: {path}')
 
     def _execute_upload(self, endpoint, src, path):
         return self.upload_file(endpoint + path, src)
