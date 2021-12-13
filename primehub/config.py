@@ -184,7 +184,7 @@ class OidcAuthenticationFlow:
             if 'api-token' in data:
                 self._save_config(config_from_console)
             else:
-                print(config_from_console)
+                print(config_from_console, file=self.primehub.stderr)
         except BaseException:
             raise
 
@@ -202,10 +202,10 @@ class OidcAuthenticationFlow:
         if os.path.exists(default_config_path):
             backup_path = os.path.expanduser(f'~/.primehub/config-{datetime.now().strftime("%Y%m%d%H%M%S")}.json')
             copyfile(default_config_path, backup_path)
-            print(f'Found old configuration, backup it to {backup_path}')
+            print(f'Found old configuration, backup it to {backup_path}', file=self.primehub.stderr)
 
         cfg.save(default_config_path)
-        print(f'PrimeHub SDK Config has been updated: {default_config_path}', file=self.primehub.stdout)
+        print(f'PrimeHub SDK Config has been updated: {default_config_path}', file=self.primehub.stderr)
 
     def _save_config(self, config_from_console: str):
         config_file_path = self._save_tmp_config(config_from_console)

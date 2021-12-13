@@ -321,7 +321,7 @@ class Files(Helpful, Module):
                 if filter_func and filter_func(phfs_path):
                     self._warning_skip(phfs_path)
                     continue
-                print('[Uploading] ' + filepath + ' -> phfs://' + phfs_path)
+                print(f'[Uploading] {filepath} -> phfs://{phfs_path}', file=self.primehub.stderr)
                 response = self._execute_upload(endpoint, filepath, phfs_path)
                 response['phfs'] = phfs_path
                 response['file'] = filepath
