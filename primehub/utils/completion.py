@@ -35,6 +35,7 @@ def auto_complete():
     # cur = os.environ.get('cur')
     prev = os.environ.get('prev')
     current_index = os.environ.get('COMP_CWORD')
+    command_line = os.environ.get('COMP_LINE')
     if prev == 'primehub':
         for k in sdk.commands:
             if k.startswith(':'):
@@ -45,10 +46,19 @@ def auto_complete():
     # primehub <current-group> <auto-completion>
     if current_index == '2':
         _debug_log(f'{prev} => {sdk.commands.keys()}')
-        if prev in sdk.commands:
+        if prev != 'admin' and prev in sdk.commands:
             for verb in find_actions(sdk.commands[prev]):
                 print(verb['name'])
-        pass
+        elif prev == 'admin':
+            for k in sdk.admin_commands:
+                if k.startswith(':'):
+                    continue
+                print(k)
+
+    if current_index == '3' and command_line.startswith('primehub admin '):
+        if prev in sdk.admin_commands:
+            for verb in find_actions(sdk.admin_commands[prev]):
+                print(verb['name'])
 
 
 if __name__ == '__main__':
