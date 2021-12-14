@@ -16,8 +16,9 @@ class TestDatasets(BaseTestCase):
         self.assertEqual(message, context.exception.args[0])
 
     def test_creation_validator(self):
-        invalid_id_format_msg = 'id should be string type and lower case alphanumeric characters, \'-\' or \'.\', ' \
-                                'and must start and end with an alphanumeric character.'
+        invalid_id_format_msg = "id should be string type and lower case alphanumeric characters, '-' or '.'. " \
+                                "The value must start and end with an alphanumeric character " \
+                                "and its length of it should be less than 63."
 
         self.check_exception({}, 'id is a required field', validate_creation)
         self.check_exception({'id': 123}, invalid_id_format_msg, validate_creation)
