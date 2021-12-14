@@ -26,8 +26,6 @@ def invalid(message: str):
 def get_phfs_path(dataset_id: str, path: str) -> str:
     prefix = os.path.join(DATASETS_ROOT, dataset_id)
     path = _normalize_user_input_path(path)
-    path = os.path.normpath(path)
-    path = path.replace('//', '/')
     if path.startswith('.'):
         return prefix + '/' + path
     return prefix + path
@@ -36,7 +34,8 @@ def get_phfs_path(dataset_id: str, path: str) -> str:
 def protect_metadata(dataset_id: str, phfs_path: str):
     # prevent from accessing dataset metadata directly
     metadata_path = os.path.join(DATASETS_ROOT, dataset_id, METADATA_NAME)
-    if phfs_path == metadata_path:
+    phfs_normpath = os.path.normpath(phfs_path)
+    if phfs_normpath == metadata_path:
         raise DatasetsException('Invalid Operation')
 
 

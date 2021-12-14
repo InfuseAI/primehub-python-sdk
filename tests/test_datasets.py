@@ -48,12 +48,18 @@ class TestDatasets(BaseTestCase):
         self.assertEqual(get_phfs_path('dataset-1', './'), '/datasets/dataset-1/')
         self.assertEqual(get_phfs_path('dataset-1', '.'), '/datasets/dataset-1/')
         self.assertEqual(get_phfs_path('dataset-1', '.abc'), '/datasets/dataset-1/.abc')
+        self.assertEqual(get_phfs_path('dataset-1', './a/../.abc'), '/datasets/dataset-1/a/../.abc')
+        self.assertEqual(get_phfs_path('dataset-1', '///a/../.abc'), '/datasets/dataset-1///a/../.abc')
 
     def test_protect_metadata(self):
         dataset = 'dataset-1'
         # path to metadata
         with self.assertRaises(DatasetsException) as e:
             protect_metadata(dataset, get_phfs_path(dataset, '/.dataset'))
+        self.assertEqual('Invalid Operation', str(e.exception))
+
+        with self.assertRaises(DatasetsException) as e:
+            protect_metadata(dataset, get_phfs_path(dataset, '//.dataset'))
         self.assertEqual('Invalid Operation', str(e.exception))
 
         with self.assertRaises(DatasetsException) as e:
@@ -66,6 +72,14 @@ class TestDatasets(BaseTestCase):
 
         with self.assertRaises(DatasetsException) as e:
             protect_metadata(dataset, get_phfs_path(dataset, './.dataset'))
+        self.assertEqual('Invalid Operation', str(e.exception))
+
+        with self.assertRaises(DatasetsException) as e:
+            protect_metadata(dataset, get_phfs_path(dataset, '///a/../.dataset'))
+        self.assertEqual('Invalid Operation', str(e.exception))
+
+        with self.assertRaises(DatasetsException) as e:
+            protect_metadata(dataset, get_phfs_path(dataset, '///a/..//.dataset'))
         self.assertEqual('Invalid Operation', str(e.exception))
 
         # pass with valid path
