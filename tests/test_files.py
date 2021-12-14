@@ -165,18 +165,19 @@ class TestCmdFiles(BaseTestCase):
 
         actual = get_download_src_dst_list('/deep/', '.', recursive=True)
         actual = self.norm_src_dst_list(actual)
-        expected = [('/deep/l1.csv', 'l1.csv')]
+        expected = [('/deep/l1.csv', 'deep/l1.csv'),
+                    ('/deep/sub/l2.csv', 'deep/sub/l2.csv'),
+                    ('/deep/sub/path/l3.csv', 'deep/sub/path/l3.csv')]
         self.assertFileListEqual(actual, expected)
 
         actual = get_download_src_dst_list('/deep/sub/', '.', recursive=True)
         actual = self.norm_src_dst_list(actual)
-        expected = [('/deep/sub/path/l3.csv', 'path/l3.csv')]
-        self.assertFileListEqual(actual, expected)
+        self.assertFileListEqual(actual, [])
 
         actual = get_download_src_dst_list('/deep/sub/', 'new', recursive=True)
         actual = self.norm_src_dst_list(actual)
-        expected = [('/deep/sub/l2.csv', 'new/l2.csv'),
-                    ('/deep/sub/path/l3.csv', 'new/path/l3.csv')]
+        expected = [('/deep/sub/l2.csv', 'new/sub/l2.csv'),
+                    ('/deep/sub/path/l3.csv', 'new/sub/path/l3.csv')]
 
         self.assertFileListEqual(actual, expected)
         actual = get_download_src_dst_list('/deep/sub', 'new', recursive=True)
@@ -233,7 +234,7 @@ class TestCmdFiles(BaseTestCase):
 
         with self.assertRaises(SharedFileException) as e:
             actual = get_download_src_dst_list('ln.csv', '.')
-        self.assertEqual(str(e.exception), 'No such file or directory: /ln.csv')
+        self.assertEqual(str(e.exception), 'No such file: /ln.csv')
 
     def norm_src_dst_list(self, pairs):
         return [(p[0], os.path.normpath(p[1])) for p in pairs]
@@ -261,9 +262,9 @@ class TestCmdFiles(BaseTestCase):
         self.assertEqual('', generate_prefix('/', recursive=True))
         self.assertEqual('', generate_prefix('./', recursive=True))
         self.assertEqual('', generate_prefix('.', recursive=True))
-        self.assertEqual('deep/sub', generate_prefix('/deep/sub/', recursive=True))
-        self.assertEqual('deep/sub/path', generate_prefix('/deep/sub/path/', recursive=True))
-        self.assertEqual('deep/sub/path', generate_prefix('/deep/sub/path', recursive=True))
+        self.assertEqual('deep/sub/', generate_prefix('/deep/sub/', recursive=True))
+        self.assertEqual('deep/sub/path/', generate_prefix('/deep/sub/path/', recursive=True))
+        self.assertEqual('deep/sub/path/', generate_prefix('/deep/sub/path', recursive=True))
 
         # test file path
         self.assertEqual('l0.csv', generate_prefix('/l0.csv', recursive=False))
@@ -280,7 +281,7 @@ class TestCmdFiles(BaseTestCase):
 
         with self.assertRaises(SharedFileException) as e:
             generate_prefix('/deep/l2.csv', recursive=False)
-        self.assertEqual('No such file or directory: /deep/l2.csv', str(e.exception))
+        self.assertEqual('No such file: /deep/l2.csv', str(e.exception))
 
         with self.assertRaises(SharedFileException) as e:
             generate_prefix('/deep/l1.csv/', recursive=False)
@@ -288,4 +289,4 @@ class TestCmdFiles(BaseTestCase):
 
         with self.assertRaises(SharedFileException) as e:
             generate_prefix('deep/sub/path/l3', recursive=False)
-        self.assertEqual('No such file or directory: /deep/sub/path/l3', str(e.exception))
+        self.assertEqual('No such file: /deep/sub/path/l3', str(e.exception))
