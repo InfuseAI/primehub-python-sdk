@@ -23,7 +23,15 @@ class TestAskForPermissionMethods(BaseTestCase):
                 # only cares about primehub package
                 continue
 
-            cmd_obj = self.sdk.commands[command_name]
+            cmd_obj = None
+            if command_name in self.sdk.commands:
+                cmd_obj = self.sdk.commands[command_name]
+            elif command_name in self.sdk.admin_commands:
+                cmd_obj = self.sdk.admin_commands[command_name]
+
+            if cmd_obj is None:
+                continue
+
             method = getattr(cmd_obj, method_name)
 
             # check the "**kwargs" in the last parameter

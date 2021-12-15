@@ -104,6 +104,7 @@ class Validator(object):
     class OpBase:
         def __init__(self, acceptable_types: list):
             self.types = acceptable_types
+            self.payload = None
 
         def validate(self, value):
             for x in self.types:
@@ -128,6 +129,9 @@ class Validator(object):
             if not super().validate(value):
                 return False
 
+            if len(value) > 63:
+                return False
+
             # check formats
             format_matched: Union[str, Any, None] = re.match(
                 r'^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$',
@@ -138,8 +142,9 @@ class Validator(object):
             return True
 
         def error_message(self, field: str):
-            err_msg = f'{field} should be string type and lower case alphanumeric characters, \'-\' or \'.\', ' \
-                      f'and must start and end with an alphanumeric character.'
+            err_msg = f'{field} should be string type and lower case alphanumeric characters, \'-\' or \'.\'. ' \
+                      f'The value must start and end with an alphanumeric character ' \
+                      f'and its length of it should be less than 63.'
             return err_msg
 
     class OpString(OpBase):
@@ -243,17 +248,58 @@ class Validator(object):
                    f'It is a list of {{name, value}} and all values MUST be a string.\n' \
                    f'For example: {json.dumps(example)}'
 
+    class OpSecretType(OpBase):
+        def __init__(self):
+            super().__init__([str])
+            self.type_list = ['kubernetes', 'opaque']
+            self.field_list = ['registryHost', 'username', 'password']
+
+        def validate(self, value):
+            self.input = value
+            if value not in self.type_list:
+                self.error_message = self._type_error
+                return False
+
+            if value == 'opaque' and not self.payload.get('secret', ''):
+                self.error_message = self._no_secret_error
+                return False
+
+            if value == 'kubernetes':
+                values = [self.payload.get(x, '') for x in self.field_list]
+                if len([x for x in values if x]) < 3:
+                    self.error_message = self._kubernetes_type_config_error
+                    return False
+            return True
+
+        def _no_secret_error(self, field: str):
+            return f'The value of the [{field}={self.input}] should use with the "secret" field'
+
+        def _kubernetes_type_config_error(self, field: str):
+            return f'The value of the [{field}={self.input}] should use ' \
+                   f'with the {self.field_list} fields without any empty values'
+
+        def _type_error(self, field: str):
+            return f'The value of the {field} should be one of [{", ".join(self.type_list)}]'
+
+        def error_message(self, field: str):
+            return f'The value of the {field} should be one of [{", ".join(self.type_list)}]'
+
     def __init__(self, type_def: str):
         self.type_def = type_def
         self.type_name = type_def.replace('!', '')
         self.required = type_def.endswith('!')
         self.typeOp = getattr(self, f'Op{self.type_name}')
+        self.Operator = self.typeOp()
+
+        # set when check type
+        self.payload = None
 
     def validate(self, value):
-        return self.typeOp().validate(value)
+        self.Operator.payload = self.payload
+        return self.Operator.validate(value)
 
     def error_message(self, error_field: str):
-        return self.typeOp().error_message(error_field)
+        return self.Operator.error_message(error_field)
 
 
 class ValidationSpec(object):
@@ -284,6 +330,7 @@ class ValidationSpec(object):
 
     def validate(self, data: dict):
         def check_type(validator, field: str, value: Any):
+            validator.payload = data
             if validator.validate(value):
                 return
             raise PrimeHubException(validator.error_message(field))
