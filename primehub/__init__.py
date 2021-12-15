@@ -216,6 +216,7 @@ class PrimeHub(object):
         self.register_command('apps', 'Apps')
         self.register_command('models', 'Models')
         self.register_command('datasets', 'Datasets')
+        self.register_command('secrets', 'Secrets')
         self.register_dummy_command('admin', 'Commands for system administrator')
 
         # register admin commands
