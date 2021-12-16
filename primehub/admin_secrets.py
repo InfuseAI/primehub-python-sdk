@@ -49,12 +49,15 @@ class AdminSecrets(Helpful, Module):
           username
         }
         """
-        results = self.request({}, query)
+
+        variables = {}
+        if kwargs.get('page', 0) > 0:
+            variables['page'] = kwargs.get('page')
+
+        results = self.request(variables, query)
         if 'secretsConnection' in results['data']:
             results = results['data']['secretsConnection']['edges']
 
-        # TODO does it support page?
-        # check would it support pagination
         for e in results:
             yield e['node']
 
