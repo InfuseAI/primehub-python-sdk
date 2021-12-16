@@ -61,7 +61,7 @@ For `create` and `update` require a volume configuration, please see above examp
 | hostPath | conditional | string | **MUST** use with `hostPath` type  |
 | variables | optional | dict | **MAY** use with `env` type. It is key value pairs. All values have to a string value. For example: `{"key1":"value1","key2":"value2"}`. |
 | groups | optional | list of connected groups (dict) | please see the `connect` examples |
-| secret | optional | dict | **MAY** use with `git` type, it binds a `secret` to the `git` volume |
+| secret | optional | dict | **MAY** use with `git` type, it binds a `secret` id to the `git` volume. The secret can be found with `primehub admin secrets list` |
 | volumeSize | conditional | integer | **MUST** use with `pv` type and 'auto' provisioning. The unit is `GB`.|
 | enableUploadServer | optional | boolean | it only works with one of ['pv', 'nfs', 'hostPath'] writable types |
 
@@ -179,7 +179,17 @@ The example creates a hostPath volume. According to the type `hostPath`, the `ho
 }
 ```
 
-or with a `secret`
+Or with a `secret`:
+
+find the id with `admin secrets list`
+
+```
+$ primehub admin secrets list
+id                             name            displayName     type        registryHost         username
+-----------------------------  --------------  --------------  ----------  -------------------  ----------
+gitsync-secret-dataset-secret  dataset-secret  dataset-secret  opaque
+```
+
 
 ```json
 {
@@ -189,7 +199,7 @@ or with a `secret`
   "url": "https://github.com/datasets/covid-19",
   "secret": {
     "connect": {
-      "id": "gitsync-secret-public-key-for-git-repo"
+      "id": "gitsync-secret-dataset-secret"
     }
   }
 }
@@ -233,7 +243,7 @@ The example creates an ENV volume. According to the type `env`, `variables` fiel
 In this section, we will discuss the `global` and `groups` fields.
 
 There some use cases to manage groups in a volume:
-* allow any groups to read data 
+* allow any groups to read data
 * allow any groups to read data, but some groups can write
 * few groups can read data, some groups can write
 

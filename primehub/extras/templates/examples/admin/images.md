@@ -11,8 +11,25 @@
 | url | optional | string | container image url |
 | urlForGpu | optional | string | container image url for GPU optimized |
 | imageSpec | optional | object | the specification for customization |
+| useImagePullSecret | optional | string | the id of a secret |
 
 *Note: imageSpec cannot use with url and urlForGpu*
+
+#### useImagePullSecret
+
+The secret can be found with `primehub admin secrets list`
+
+```
+$ primehub admin secrets list
+
+id                             name               displayName        type        registryHost         username
+-----------------------------  -----------------  -----------------  ----------  -------------------  ----------
+image-my-image-registry        my-image-registry  my-image-registry  kubernetes  registry.gitlab.com  nobody
+gitsync-secret-dataset-secret  dataset-secret     dataset-secret     opaque
+```
+
+Please pick up a secret with `kubernetes` type. For example, `image-my-image-registry` can be used for useImagePullSecret.
+
 
 #### imageSpec Example
 

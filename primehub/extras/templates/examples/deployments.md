@@ -12,8 +12,20 @@
 | replicas | required* | int | how many replicas for the service |
 | updateMessage | optional | string | message here for each update |
 | endpointAccessType | optional | string | one of ['public', 'private'] |
+| imagePullSecret | optional | string | the id of an image pull secret |
+
+Available image pull secrets could be found by `secrets list` command:
+
+```
+$ primehub secrets list
+
+id              name      type
+--------------  --------  ----------
+image-example1  example1  kubernetes
+```
 
 #### Auto-filling Fields
+
 Auto-filling will happen when the config omitted below fields
 
 | field | value | description |
