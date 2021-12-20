@@ -88,11 +88,14 @@ class Files(Helpful, Module):
         :return The detail information of files in the path
         """
 
-        items = self._execute_list(path, limit=1)
-        if items:  # directory
-            return self._execute_list(path)
+        path_norm = _normalize_user_input_path(path)
+        path_norm = os.path.normpath(path_norm)
 
-        items = self._execute_list(path, recursive=True, limit=1)
+        items = self._execute_list(path_norm, limit=1)
+        if items:  # directory
+            return self._execute_list(path_norm)
+
+        items = self._execute_list(path_norm, recursive=True, limit=1)
         if not items or items[0]['name']:
             invalid(f'No such file or directory: {path}')
             return []
@@ -133,13 +136,10 @@ class Files(Helpful, Module):
           }
         }
         """
-        path = _normalize_user_input_path(path)
-
-        path_norm = os.path.normpath(path)
         recursive = kwargs.get('recursive', False)
         limit = kwargs.get('limit', 1000)
         results = self.request(
-            {'where': {'phfsPrefix': path_norm, 'groupName': self.group_name},
+            {'where': {'phfsPrefix': path, 'groupName': self.group_name},
              'options': {'recursive': recursive, 'limit': limit}},
             query)
         items = results['data']['files']['items']
@@ -202,7 +202,10 @@ class Files(Helpful, Module):
         :return List of tuple of download source and destination
         """
         path = _normalize_user_input_path(path)
+        path_norm = os.path.normpath(path)
+        path_isprefix = path.endswith('/')
         recursive = kwargs.get('recursive', False)
+        download_single_file = False
 
         # check dest
         dest = _normalize_dest_path(dest)
@@ -213,36 +216,50 @@ class Files(Helpful, Module):
             invalid(f'No such file or directory: {dest_dir}')
             return []
 
-        items = self._execute_list(path, limit=1)
-        if items:  # directory
-            if dest_isfile:
-                invalid(f'Not a directory: {dest}')
-                return []
-
-            if not recursive:
-                invalid(f'{path} is a directory, please download it recursively')
-                return []
-
-            transform = not any(os.path.basename(path))
-
-        else:  # file or not exist
-            items = self._execute_list(path, recursive=True, limit=1)
+        if not path_isprefix and not recursive:
+            # to download a file
+            items = self._execute_list(path_norm, recursive=True, limit=1)
             if not items or items[0]['name']:
-                invalid(f'No such file or directory: {path}')
-                return []
+                invalid(f'No such file: {path}')
 
-            if not os.path.basename(path):  # trailing slash
-                invalid(f'Not a directory: {path}')
-                return []
+            download_single_file = True
+        else:
+            # to download directory
+            items = self._execute_list(path_norm, limit=1)
+            if items:
+                if dest_isfile:
+                    invalid(f'Not a directory: {dest}')
+                    return []
 
-            transform = not os.path.isdir(dest)
+                if not recursive:
+                    invalid(f'{path} is a directory, please download it recursively')
+                    return []
+
+            else:  # directory not exist
+                items = self._execute_list(path_norm, recursive=True, limit=1)
+                if not items or items[0]['name']:
+                    invalid(f'No such file or directory: {path}')
+                    return []
+
+                if not os.path.basename(path):  # trailing slash
+                    invalid(f'Not a directory: {path}')
+                    return []
+
+                download_single_file = True
 
         src_dst_list = []
-        path_norm = os.path.normpath(path)
-        prefix = path_norm if transform else os.path.dirname(path_norm)
+        prefix = os.path.dirname(path_norm)
         prefix_len = len(os.path.join(prefix, ''))
 
-        files_phfs = [path_norm + f['name'] for f in self._execute_list(path_norm, recursive=True)]
+        if download_single_file:
+            files_phfs = [path_norm]
+            if not os.path.isdir(dest):
+                prefix_len = len(os.path.join(path_norm, ''))
+        else:
+            if not path_norm.endswith('/'):
+                path_norm += '/'
+            files_phfs = [path_norm + f['name'] for f in self._execute_list(path_norm, recursive=True)]
+
         for src in files_phfs:
             dst = os.path.normpath(os.path.join(dest_norm, src[prefix_len:]))
             if os.path.isdir(dst):
@@ -314,7 +331,11 @@ class Files(Helpful, Module):
             try:
                 phfs_path = path
                 if os.path.isfile(src):
-                    phfs_path = os.path.join(path, os.path.basename(src))
+                    if not recursive and not path.endswith('/'):
+                        # overwrite a phfs object
+                        phfs_path = path
+                    else:
+                        phfs_path = os.path.join(path, os.path.basename(src))
                 else:
                     phfs_path = os.path.join(path, os.path.relpath(filepath, os.path.dirname(src)))
                     pass
@@ -373,25 +394,45 @@ class Files(Helpful, Module):
 
     def _generate_prefix(self, path, recursive) -> str:
         path = _normalize_user_input_path(path)
-
-        items = self._execute_list(path, limit=1)
-        if items:  # directory
-            if not recursive:
-                invalid(f'{path} is a directory, please delete it recursively')
-
-        else:  # file or not exist
-            items = self._execute_list(path, recursive=True, limit=1)
-            if not items or items[0]['name']:
-                invalid(f'No such file or directory: {path}')
-
-            if not os.path.basename(path):  # trailing slash
-                invalid(f'Not a directory: {path}')
-
         path_norm = os.path.normpath(path)
-        if path_norm.startswith('/'):
-            return path_norm[1:]
+        path_isprefix = path.endswith('/')
+        delete_single_file = False
 
-        return path_norm
+        if not path_isprefix and not recursive:
+            # to delete a file
+            items = self._execute_list(path_norm, recursive=True, limit=1)
+            if not items or items[0]['name']:
+                invalid(f'No such file: {path}')
+
+            delete_single_file = True
+        else:
+            items = self._execute_list(path_norm, limit=1)
+            if items:  # directory
+                if not recursive:
+                    invalid(f'{path} is a directory, please delete it recursively')
+
+            else:  # file or not exist
+                items = self._execute_list(path_norm, recursive=True, limit=1)
+                if not items or items[0]['name']:
+                    invalid(f'No such file or directory: {path}')
+
+                if not os.path.basename(path):  # trailing slash
+                    invalid(f'Not a directory: {path}')
+
+                delete_single_file = True
+
+        if path_norm == '/':
+            # delete from root
+            return ''
+
+        if path_norm.startswith('/'):
+            path_norm = path_norm[1:]
+
+        if delete_single_file:
+            return path_norm
+
+        # prevent from deleting objects with the same prefix, e.g., /config, /config2
+        return path_norm + '/'
 
     def help_description(self):
         return "List and download shared files"
