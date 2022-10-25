@@ -35,7 +35,8 @@ setup(name='primehub-python-sdk',
               'pytest-mypy',
               'pytest-cov',
               'Jinja2', 'types-Jinja2',
-              'twine'
+              'twine',
+              'importlib-metadata<5'
           ],
       },
       project_urls={

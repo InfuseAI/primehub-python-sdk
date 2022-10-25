@@ -24,9 +24,12 @@ def validate_name(payload: dict):
     if 'username' not in payload:
         raise PrimeHubException('username is required')
 
-    matched: Union[str, Any, None] = re.match(
-        r'^[a-z0-9][-a-z0-9_.@]*$',
-        payload.get('username'))
+    matched: Union[str, Any, None] = None
+    username = payload.get('username')
+    if isinstance(username, str):
+        matched = re.match(
+            r'^[a-z0-9][-a-z0-9_.@]*$',
+            username)
 
     # check formats
     if not matched:
@@ -37,10 +40,13 @@ def validate_email(payload: dict):
     if 'email' not in payload:
         return
 
-    matched: Union[str, Any, None] = re.match(
-        r'(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))'
-        r'@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$',
-        payload.get('email'))
+    matched: Union[str, Any, None] = None
+    email = payload.get('email')
+    if isinstance(email, str):
+        matched = re.match(
+            r'(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))'
+            r'@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$',
+            email)
 
     # check formats
     if not matched:

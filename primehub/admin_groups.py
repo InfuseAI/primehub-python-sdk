@@ -30,9 +30,12 @@ def validate_name(data: dict):
     if 'name' not in data:
         raise PrimeHubException('name is required')
 
-    matched: Union[str, Any, None] = re.match(
-        r'^[A-Za-z0-9][-\w]*[A-Za-z0-9]+$',
-        data.get('name'))
+    matched: Union[str, Any, None] = None
+    name = data.get('name')
+    if isinstance(name, str):
+        matched = re.match(
+            r'^[A-Za-z0-9][-\w]*[A-Za-z0-9]+$',
+            name)
 
     # check formats
     if not matched:
