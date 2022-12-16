@@ -1,6 +1,6 @@
 import json
 from json import JSONDecodeError
-from typing import Iterator, Callable
+from typing import Iterator, Callable, Optional
 
 import requests  # type: ignore
 
@@ -16,7 +16,7 @@ class Client(object):
         self.primehub_config = primehub_config
         self.timeout = 10
 
-    def request(self, variables: dict, query: str, error_handler: Callable = None):
+    def request(self, variables: dict, query: str, error_handler: Optional[Callable] = None):
         request_body = dict(variables=json.dumps(variables), query=query)
         logger.debug('request body: {}'.format(request_body))
         headers = {'authorization': 'Bearer {}'.format(self.primehub_config.api_token)}

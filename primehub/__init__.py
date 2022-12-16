@@ -3,7 +3,7 @@ import importlib
 import json
 import os
 import sys
-from typing import Union, Callable, Any
+from typing import Union, Callable, Any, Optional
 
 from primehub.utils import group_required, create_logger, PrimeHubException
 from primehub.utils.core import CommandContainer
@@ -242,7 +242,7 @@ class PrimeHub(object):
         except BaseException:
             pass
 
-    def request(self, variables: dict, query: str, error_handler: Callable = None):
+    def request(self, variables: dict, query: str, error_handler: Optional[Callable] = None):
         return Client(self.primehub_config).request(variables, query, error_handler)
 
     def request_logs(self, endpint: str, follow: bool, tail: int):

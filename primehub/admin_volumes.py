@@ -4,7 +4,7 @@ from typing import Optional
 from primehub import Helpful, Module, cmd, primehub_load_config
 from primehub.utils import PrimeHubException
 from primehub.utils.optionals import file_flag
-from primehub.utils.validator import validate_name, validate_pv_groups
+from primehub.utils.validator import validate_name, validate_pv_groups, validate_group_exists
 
 
 def waring_if_needed(data: dict, stderr):
@@ -125,6 +125,35 @@ class AdminVolumes(Helpful, Module):
         if 'data' in result and 'updateDataset' in result['data']:
             return waring_if_needed(result['data']['updateDataset'], self.primehub.stderr)
         return result
+
+    def add_group(self, id: str, group_id, writable=False):
+        self._update_group(id, group_id, 'connect', writable)
+
+    def remove_group(self, id: str, group_id):
+        self._update_group(id, group_id, 'disconnect')
+
+    def _update_group(self, id: str, group_id: str, action: str, writable=False):
+        validate_group_exists(self, group_id)
+
+        query = """
+        mutation UpdateDatasetMutation(
+          $data: DatasetUpdateInput!
+          $where: DatasetWhereUniqueInput!
+        ) {
+          updateDataset(data: $data, where: $where) {
+            id
+          }
+        }
+        """
+        group = {'id': group_id}
+        if action == 'connect':
+            group['writable'] = writable
+        data = {'groups': {action: [group]}}
+        results = self.request({'where': {'id': id}, 'data': data}, query)
+        if 'data' not in results:
+            return results
+
+        return results['data']['updateDataset']
 
     @cmd(name='regen-upload-secret', description='Regenerate the secret of the upload server',
          return_required=True)

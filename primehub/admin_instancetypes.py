@@ -4,7 +4,7 @@ from typing import Iterator, Dict, Any
 from primehub import Helpful, Module, cmd, primehub_load_config
 from primehub.utils import PrimeHubException, resource_not_found
 from primehub.utils.optionals import file_flag
-from primehub.utils.validator import validate_name, validate_groups
+from primehub.utils.validator import validate_name, validate_groups, validate_group_exists
 
 NODE_SELECTOR_KEY_LEN_ERROR = 'nodeSelector: len(key) should be less or equal to 63'
 NODE_SELECTOR_KV_TYPE_ERROR = 'nodeSelector: key and value must be a string'
@@ -117,6 +117,38 @@ class AdminInstanceTypes(Helpful, Module):
         """
 
         results = self.request({'where': {'id': id}, 'payload': config}, query, _error_handler)
+        if 'data' not in results:
+            return results
+
+        return results['data']['updateInstanceType']
+
+    def add_group(self, id: str, group_id):
+        self._update_group(id, group_id, 'connect')
+
+    def remove_group(self, id: str, group_id):
+        self._update_group(id, group_id, 'disconnect')
+
+    def _update_group(self, id: str, group_id: str, action: str):
+        validate_group_exists(self, group_id)
+
+        query = """
+        mutation UpdateInstanceTypeMutation(
+          $data: InstanceTypeUpdateInput!
+          $where: InstanceTypeWhereUniqueInput!
+        ) {
+          updateInstanceType(data: $data, where: $where) {
+            id
+            global
+            groups {
+              id
+              name
+              displayName
+            }
+          }
+        }
+        """
+        data = {'groups': {action: [{'id': group_id}]}}
+        results = self.request({'where': {'id': id}, 'data': data}, query, _error_handler)
         if 'data' not in results:
             return results
 
