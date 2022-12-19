@@ -1,10 +1,10 @@
 import json
 import re
-from typing import Iterator, Union, Any
+from typing import Dict, Iterator, Union, Any
 
-from primehub import Helpful, Module, cmd, primehub_load_config
+from primehub import HTTPSupport, Helpful, Module, cmd, primehub_load_config
 from primehub.utils import PrimeHubException
-from primehub.utils.optionals import file_flag
+from primehub.utils.optionals import file_flag, toggle_flag
 from primehub.utils.validator import validate_connection
 
 
@@ -162,7 +162,200 @@ def apply_auto_fill(config: dict):
         config['quotaGpu'] = 0
 
 
-class AdminGroups(Helpful, Module):
+class AdminGroupsUsers(HTTPSupport):
+
+    @cmd(name='add-user', description='Add the user to the group', optionals=[('enable_group_admin', toggle_flag)])
+    def add_user(self, group_id: str, user_id: str, **kwargs):
+        """
+        Add the user to the group
+
+        :type group_id: str
+        :param group_id: the group id
+
+        :type user_id: str
+        :param user_id: the user id
+
+        :returns errors or group-id if the user was added
+        :rtype dict
+        """
+
+        enable_group_admin = kwargs.get('enable_group_admin', False)
+        new_group_admins = None
+        if enable_group_admin:
+            new_group_admins = self._make_group_admins(group_id, user_id, True)
+
+        query = """
+        mutation UpdateGroup($data: GroupUpdateInput!, $where: GroupWhereUniqueInput!) {
+          updateGroup(data: $data, where: $where) {
+            id
+          }
+        }
+        """
+
+        variables: Dict[str, Any] = {
+            "where": {
+                "id": group_id
+            },
+            "data": {
+                "users": {
+                    "connect": [
+                        {
+                            "id": user_id
+                        }
+                    ],
+                    "disconnect": []
+                }
+            }
+        }
+
+        if new_group_admins is not None:
+            variables['data']['admins'] = new_group_admins
+
+        results = self.request(variables, query)
+        if 'data' not in results:
+            return results
+
+        # the result will be at results['data']['updateGroup']
+        # but we only care if the user was added successfully
+        return results['data']['updateGroup']
+
+    @cmd(name='remove-user', description='Remove the user from the group',
+         optionals=[('disable_group_admin', toggle_flag)])
+    def remove_user(self, group_id: str, user_id: str, **kwargs):
+        """
+        Add the user to the group
+
+        :type group_id: str
+        :param group_id: the group id
+
+        :type user_id: str
+        :param user_id: the user id
+
+        :returns errors or group-id if the user was added
+        :rtype dict
+        """
+
+        disable_group_admin = kwargs.get('disable_group_admin', False)
+
+        query = """
+        mutation UpdateGroup($data: GroupUpdateInput!, $where: GroupWhereUniqueInput!) {
+          updateGroup(data: $data, where: $where) {
+            id
+          }
+        }
+        """
+
+        group_admins = self._make_group_admins(group_id, user_id, False)
+        variables: Dict[str, Any] = {
+            "where": {
+                "id": group_id
+            },
+            "data": {
+                "users": {
+                    "connect": [],
+                    "disconnect": [{
+                        "id": user_id
+                    }]
+                }
+            }
+        }
+
+        if group_admins is not None:
+            variables['data']['admins'] = group_admins
+
+        if disable_group_admin:
+            # only disable group-admin flag
+            del variables['data']['users']
+
+        results = self.request(variables, query)
+        if 'data' not in results:
+            return results
+
+        # the result will be at results['data']['updateGroup']
+        # but we only care if the user was removed successfully
+        return results['data']['updateGroup']
+
+    @cmd(name='list-users', description='List users in the group')
+    def list_users(self, group_id: str):
+        """
+        List users in the group
+
+        :type group_id: str
+        :param group_id: the group id
+
+        :returns errors or list
+        :rtype dict, list
+        """
+
+        query = """
+        query Group($where: GroupWhereUniqueInput!) {
+          group(where: $where) {
+            admins
+            users {
+              id
+              username
+            }
+          }
+        }
+        """
+
+        variables = {"where": {
+            "id": group_id
+        }}
+
+        results = self.request(variables, query)
+        if 'data' not in results:
+            return results
+
+        group_admins = [x.strip() for x in results['data']['group'].get('admins', '').split(',')]
+
+        # decorate the users with group-admin information
+        users = results['data']['group']['users']
+        for u in users:
+            if u['username'] in group_admins:
+                u['group_admin'] = True
+            else:
+                u['group_admin'] = False
+
+        return users
+
+    def _make_group_admins(self, group_id: str, user_id: str, added: bool):
+        user_dict = self.primehub.admin_users.get(user_id)
+        username = None
+        if 'id' in user_dict and 'username' in user_dict:
+            username = user_dict['username']
+
+        if username is None:
+            # it is not possible to make a new list
+            return None
+
+        query = """
+        query Group($where: GroupWhereUniqueInput!) {
+          group(where: $where) {
+            admins
+          }
+        }
+        """
+
+        results = self.request({"where": {"id": group_id}}, query)
+        if 'data' not in results:
+            return None
+
+        group_admins = [x.strip() for x in results['data']['group'].get('admins', '').split(',')]
+
+        if added:
+            # add the user to the group admin list
+            if username not in group_admins:
+                group_admins.append(username)
+        else:
+            # remove the user from the group admin list
+            if username in group_admins:
+                group_admins.remove(username)
+
+        return ",".join(group_admins)
+
+
+class AdminGroups(Helpful, Module, AdminGroupsUsers):
 
     @cmd(name='create', description='Create a group', optionals=[('file', file_flag)])
     def _create_cmd(self, **kwargs):

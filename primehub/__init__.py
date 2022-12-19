@@ -343,8 +343,7 @@ class PrimeHub(object):
         return self.current_group['name']
 
 
-class Module(object):
-
+class HTTPSupport(object):
     def __init__(self, primehub: PrimeHub, **kwargs):
         self.primehub = primehub
 
@@ -353,6 +352,12 @@ class Module(object):
         self.request_logs = primehub.request_logs
         self.request_file = primehub.request_file
         self.upload_file = primehub.upload_file
+
+
+class Module(HTTPSupport):
+
+    def __init__(self, primehub: PrimeHub, **kwargs):
+        super().__init__(primehub, **kwargs)
 
     @property
     def current_group(self) -> dict:
