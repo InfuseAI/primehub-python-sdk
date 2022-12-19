@@ -122,9 +122,10 @@ class AdminInstanceTypes(Helpful, Module):
 
         return results['data']['updateInstanceType']
 
+    @cmd(name='list-group', description='List group of an instance type by id')
     def list_group(self, id: str):
         """
-        List group of an instance type by id
+        List groups of an instance type by id. It will return empty list if the instance type is at the global scope.
 
         :type id: str
         :param id: the id of an instance type
@@ -155,10 +156,34 @@ class AdminInstanceTypes(Helpful, Module):
             return []
         return data['groups']
 
+    @cmd(name='add-group', description='Add group connection to an instance type by id')
     def add_group(self, id: str, group_id):
+        """
+        Add group connection to an instance type by id.
+
+        :type id: str
+        :param id: the id of an instance type
+        :type group_id: str
+        :param group_id: group id
+
+        :rtype dict
+        :return an instance type with groups only
+        """
         self._update_group(id, group_id, 'connect')
 
+    @cmd(name='remove-group', description='Remove group connection from an instance type by id')
     def remove_group(self, id: str, group_id):
+        """
+        Remove group connection from an instance type by id.
+
+        :type id: str
+        :param id: the id of an instance type
+        :type group_id: str
+        :param group_id: group id
+
+        :rtype dict
+        :return an instance type with groups only
+        """
         self._update_group(id, group_id, 'disconnect')
 
     def _update_group(self, id: str, group_id: str, action: str):

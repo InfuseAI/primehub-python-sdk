@@ -41,7 +41,7 @@ primehub admin images add-group <id> <group_id>
 
 * id: the id of an image
 * group_id: group id
-
+ 
 
 
 
@@ -116,7 +116,7 @@ primehub admin images list-group <id>
 ```
 
 * id: the id of an image
-
+ 
 
 
 
@@ -132,7 +132,7 @@ primehub admin images remove-group <id> <group_id>
 
 * id: the id of an image
 * group_id: group id
-
+ 
 
 
 

@@ -8,10 +8,13 @@ Usage:
 Manage instance type
 
 Available Commands:
+  add-group            Add group connection to an instance type by id
   create               Create an instance type
   delete               Delete an instance type by id
   get                  Get an instance type by id
   list                 List instance type
+  list-group           List group of an instance type by id
+  remove-group         Remove group connection from an instance type by id
   update               Update the instance type
 
 Options:
@@ -25,6 +28,22 @@ Global Options:
   --json               Output the json format (output human-friendly format by default)
 
 ```
+
+
+### add-group
+
+Add group connection to an instance type by id
+
+
+```
+primehub admin instancetypes add-group <id> <group_id>
+```
+
+* id: the id of an instance type
+* group_id: group id
+ 
+
+
 
 
 ### create
@@ -83,6 +102,37 @@ primehub admin instancetypes list
  
 
 * *(optional)* page: the page of all data
+
+
+
+
+### list-group
+
+List group of an instance type by id
+
+
+```
+primehub admin instancetypes list-group <id>
+```
+
+* id: the id of an instance type
+ 
+
+
+
+
+### remove-group
+
+Remove group connection from an instance type by id
+
+
+```
+primehub admin instancetypes remove-group <id> <group_id>
+```
+
+* id: the id of an instance type
+* group_id: group id
+ 
 
 
 

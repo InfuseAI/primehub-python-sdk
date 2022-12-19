@@ -8,11 +8,14 @@ Usage:
 Manage volumes
 
 Available Commands:
+  add-group            Add group connection to a volume by id
   create               Create a volume
   delete               Delete a volume by id
   get                  Get a volume by name
   list                 List volumes
+  list-group           List group of a volume by id
   regen-upload-secret  Regenerate the secret of the upload server
+  remove-group         Remove group connection from a volume by id
   update               Update the volume
 
 Options:
@@ -26,6 +29,23 @@ Global Options:
   --json               Output the json format (output human-friendly format by default)
 
 ```
+
+
+### add-group
+
+Add group connection to a volume by id
+
+
+```
+primehub admin volumes add-group <id> <group_id> <writable>
+```
+
+* id: the id of a volume
+* group_id: group id
+* writable: `True` if the group has write permission to the volume, and `False` otherwise, defaults to False
+ 
+
+
 
 
 ### create
@@ -88,6 +108,21 @@ primehub admin volumes list
 
 
 
+### list-group
+
+List group of a volume by id
+
+
+```
+primehub admin volumes list-group <id>
+```
+
+* id: the id of a volume
+ 
+
+
+
+
 ### regen-upload-secret
 
 Regenerate the secret of the upload server
@@ -98,6 +133,22 @@ primehub admin volumes regen-upload-secret <id>
 ```
 
 * id: The volume id or name
+ 
+
+
+
+
+### remove-group
+
+Remove group connection from a volume by id
+
+
+```
+primehub admin volumes remove-group <id> <group_id>
+```
+
+* id: the id of a volume
+* group_id: group id
  
 
 

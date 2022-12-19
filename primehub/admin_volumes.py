@@ -126,9 +126,10 @@ class AdminVolumes(Helpful, Module):
             return waring_if_needed(result['data']['updateDataset'], self.primehub.stderr)
         return result
 
+    @cmd(name='list-group', description='List group of a volume by id')
     def list_group(self, id: str):
         """
-        List group of a volume by id
+        List groups of a volume by id. It will return writable groups only if the volume is at the global scope.
 
         :type id: str
         :param id: the id of a volume
@@ -161,10 +162,36 @@ class AdminVolumes(Helpful, Module):
             return [x for x in groups if x['writable']]
         return groups
 
+    @cmd(name='add-group', description='Add group connection to a volume by id')
     def add_group(self, id: str, group_id, writable=False):
+        """
+        Add group connection to a volume by id
+
+        :type id: str
+        :param id: the id of a volume
+        :type group_id: str
+        :param group_id: group id
+        :type writable: bool, optional
+        :param writable: `True` if the group has write permission to the volume, and `False` otherwise, defaults to False
+
+        :rtype dict
+        :return a volume with id only
+        """
         self._update_group(id, group_id, 'connect', writable)
 
+    @cmd(name='remove-group', description='Remove group connection from a volume by id')
     def remove_group(self, id: str, group_id):
+        """
+        Remove group connection from a volume by id
+
+        :type id: str
+        :param id: the id of a volume
+        :type group_id: str
+        :param group_id: group id
+
+        :rtype dict
+        :return a volume with id only
+        """
         self._update_group(id, group_id, 'disconnect')
 
     def _update_group(self, id: str, group_id: str, action: str, writable=False):

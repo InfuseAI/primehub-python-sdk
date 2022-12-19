@@ -230,9 +230,10 @@ class AdminUsers(Helpful, Module):
 
         return results['data']['updateUser']
 
+    @cmd(name='list-group', description='List group of a user by id')
     def list_group(self, id: str):
         """
-        List group of a user by id
+        List groups of a user by id
 
         :type id: str
         :param id: the id of a user
@@ -259,10 +260,34 @@ class AdminUsers(Helpful, Module):
         groups = results['data']['user']['groups']
         return [x for x in groups if x['name'] != 'everyone']
 
+    @cmd(name='add-group', description='Add group connection to a user by id')
     def add_group(self, id: str, group_id):
+        """
+        Add group connection to a user by id
+
+        :type id: str
+        :param id: the id of a user
+        :type group_id: str
+        :param group_id: group id
+
+        :rtype dict
+        :return a user with groups only
+        """
         self._update_group(id, group_id, 'connect')
 
+    @cmd(name='remove-group', description='Remove group connection from a user by id')
     def remove_group(self, id: str, group_id):
+        """
+        Remove group connection from a user by id
+
+        :type id: str
+        :param id: the id of a user
+        :type group_id: str
+        :param group_id: group id
+
+        :rtype dict
+        :return a user with groups only
+        """
         self._update_group(id, group_id, 'disconnect')
 
     def _update_group(self, id: str, group_id: str, action: str):
