@@ -172,7 +172,8 @@ class AdminVolumes(Helpful, Module):
         :type group_id: str
         :param group_id: group id
         :type writable: bool, optional
-        :param writable: `True` if the group has write permission to the volume, and `False` otherwise, defaults to False
+        :param writable: `True` if the group has write permission to the volume, and `False` otherwise, \
+defaults to False
 
         :rtype dict
         :return a volume with id only
