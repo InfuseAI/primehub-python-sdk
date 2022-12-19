@@ -12,6 +12,7 @@ Available Commands:
   delete               Delete an image by id
   get                  Get an image by id
   list                 List images
+  list-group           List group of an image by id
   update               Update the image
 
 Options:
@@ -83,6 +84,21 @@ primehub admin images list
  
 
 * *(optional)* page: the page of all data
+
+
+
+
+### list-group
+
+List group of an image by id
+
+
+```
+primehub admin images list-group <id>
+```
+
+* id: the id of an image
+ 
 
 
 
