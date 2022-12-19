@@ -122,6 +122,39 @@ class AdminInstanceTypes(Helpful, Module):
 
         return results['data']['updateInstanceType']
 
+    def list_group(self, id: str):
+        """
+        List group of an instance type by id
+
+        :type id: str
+        :param id: the id of an instance type
+
+        :rtype list
+        :return groups
+        """
+        query = """
+        query InstanceTypeQuery($where: InstanceTypeWhereUniqueInput!) {
+          instanceType(where: $where) {
+            id
+            global
+            groups {
+              id
+              name
+              displayName
+            }
+          }
+        }
+        """
+
+        results = self.request({'where': {'id': id}}, query)
+        if 'data' not in results:
+            return results
+
+        data = results['data']['instanceType']
+        if data['global']:
+            return []
+        return data['groups']
+
     def add_group(self, id: str, group_id):
         self._update_group(id, group_id, 'connect')
 

@@ -126,6 +126,41 @@ class AdminVolumes(Helpful, Module):
             return waring_if_needed(result['data']['updateDataset'], self.primehub.stderr)
         return result
 
+    def list_group(self, id: str):
+        """
+        List group of a volume by id
+
+        :type id: str
+        :param id: the id of a volume
+
+        :rtype list
+        :return groups
+        """
+        query = """
+        query DatasetQuery($where: DatasetWhereUniqueInput!) {
+          dataset(where: $where) {
+            id
+            global
+            groups {
+              id
+              name
+              displayName
+              writable
+            }
+          }
+        }
+        """
+
+        results = self.request({'where': {'id': id}}, query)
+        if 'data' not in results:
+            return results
+
+        data = results['data']['dataset']
+        groups = data['groups']
+        if data['global']:
+            return [x for x in groups if x['writable']]
+        return groups
+
     def add_group(self, id: str, group_id, writable=False):
         self._update_group(id, group_id, 'connect', writable)
 

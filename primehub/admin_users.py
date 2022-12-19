@@ -230,6 +230,35 @@ class AdminUsers(Helpful, Module):
 
         return results['data']['updateUser']
 
+    def list_group(self, id: str):
+        """
+        List group of a user by id
+
+        :type id: str
+        :param id: the id of a user
+
+        :rtype list
+        :return groups
+        """
+        query = """
+        query UserQuery($where: UserWhereUniqueInput!) {
+          user(where: $where) {
+            id
+            groups {
+              id
+              name
+              displayName
+            }
+          }
+        }
+        """
+
+        results = self.request({'where': {'id': id}}, query)
+        if 'data' not in results:
+            return results
+        groups = results['data']['user']['groups']
+        return [x for x in groups if x['name'] != 'everyone']
+
     def add_group(self, id: str, group_id):
         self._update_group(id, group_id, 'connect')
 

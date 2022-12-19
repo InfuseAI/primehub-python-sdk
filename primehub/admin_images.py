@@ -123,6 +123,39 @@ class AdminImages(Helpful, Module):
 
         return results['data']['updateImage']
 
+    def list_group(self, id: str):
+        """
+        List group of an image by id
+
+        :type id: str
+        :param id: the id of an image
+
+        :rtype list
+        :return groups
+        """
+        query = """
+        query ImageQuery($where: ImageWhereUniqueInput!) {
+          image(where: $where) {
+            id
+            global
+            groups {
+              id
+              name
+              displayName
+            }
+          }
+        }
+        """
+
+        results = self.request({'where': {'id': id}}, query)
+        if 'data' not in results:
+            return results
+
+        data = results['data']['image']
+        if data['global']:
+            return []
+        return data['groups']
+
     def add_group(self, id: str, group_id):
         self._update_group(id, group_id, 'connect')
 
