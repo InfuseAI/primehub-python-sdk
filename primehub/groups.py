@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Dict, Any, Optional
 
 from primehub import Helpful, cmd, Module
 from primehub.utils import resource_not_found
@@ -139,7 +139,7 @@ defaults to False
           }
         }
         """
-        data = {'users': {action: [{'id': user_id}]}}
+        data: Dict[str, Any] = {'users': {action: [{'id': user_id}]}}
         if admins:
             data['admins'] = admins
         results = self.request({'where': {'id': group_id}, 'data': data}, query)
