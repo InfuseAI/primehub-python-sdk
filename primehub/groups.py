@@ -116,7 +116,7 @@ defaults to False
     def _get_username(self, user_id: str):
         query = """
         query GetUsername($where: UserWhereUniqueInput!) {
-          user (where: $where) {
+          user(where: $where) {
             username
           }
         }
