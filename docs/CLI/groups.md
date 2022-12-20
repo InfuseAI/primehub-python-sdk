@@ -8,8 +8,10 @@ Usage:
 Get a group or list groups
 
 Available Commands:
+  add-user             Add a user to a group by id
   get                  Get group by name
   list                 List groups
+  remove-user          Remove a user from a group by id
 
 Options:
   -h, --help           Show the help
@@ -22,6 +24,23 @@ Global Options:
   --json               Output the json format (output human-friendly format by default)
 
 ```
+
+
+### add-user
+
+Add a user to a group by id
+
+
+```
+primehub groups add-user <group_id> <user_id> <is_admin>
+```
+
+* group_id: group id
+* user_id: user id
+* is_admin: 'True' if the user is added as group admin, and 'False' otherwise, defaults to False
+ 
+
+
 
 
 ### get
@@ -47,6 +66,22 @@ List groups
 ```
 primehub groups list
 ```
+ 
+
+
+
+
+### remove-user
+
+Remove a user from a group by id
+
+
+```
+primehub groups remove-user <group_id> <user_id>
+```
+
+* group_id: group id
+* user_id: user id
  
 
 
