@@ -4,7 +4,7 @@ from typing import Iterator, Dict, Any
 from primehub import Helpful, Module, cmd, primehub_load_config
 from primehub.utils import PrimeHubException, resource_not_found
 from primehub.utils.optionals import file_flag
-from primehub.utils.validator import validate_name, validate_groups
+from primehub.utils.validator import validate_name, validate_groups, validate_group_exists
 
 NODE_SELECTOR_KEY_LEN_ERROR = 'nodeSelector: len(key) should be less or equal to 63'
 NODE_SELECTOR_KV_TYPE_ERROR = 'nodeSelector: key and value must be a string'
@@ -117,6 +117,96 @@ class AdminInstanceTypes(Helpful, Module):
         """
 
         results = self.request({'where': {'id': id}, 'payload': config}, query, _error_handler)
+        if 'data' not in results:
+            return results
+
+        return results['data']['updateInstanceType']
+
+    @cmd(name='list-group', description='List group of an instance type by id')
+    def list_group(self, id: str):
+        """
+        List groups of an instance type by id. It will return empty list if the instance type is at the global scope.
+
+        :type id: str
+        :param id: the id of an instance type
+
+        :rtype list
+        :return groups
+        """
+        query = """
+        query InstanceTypeQuery($where: InstanceTypeWhereUniqueInput!) {
+          instanceType(where: $where) {
+            id
+            global
+            groups {
+              id
+              name
+              displayName
+            }
+          }
+        }
+        """
+
+        results = self.request({'where': {'id': id}}, query)
+        if 'data' not in results:
+            return results
+
+        data = results['data']['instanceType']
+        if data['global']:
+            return []
+        return data['groups']
+
+    @cmd(name='add-group', description='Add group connection to an instance type by id')
+    def add_group(self, id: str, group_id):
+        """
+        Add group connection to an instance type by id.
+
+        :type id: str
+        :param id: the id of an instance type
+        :type group_id: str
+        :param group_id: group id
+
+        :rtype dict
+        :return an instance type with groups only
+        """
+        self._update_group(id, group_id, 'connect')
+
+    @cmd(name='remove-group', description='Remove group connection from an instance type by id')
+    def remove_group(self, id: str, group_id):
+        """
+        Remove group connection from an instance type by id.
+
+        :type id: str
+        :param id: the id of an instance type
+        :type group_id: str
+        :param group_id: group id
+
+        :rtype dict
+        :return an instance type with groups only
+        """
+        self._update_group(id, group_id, 'disconnect')
+
+    def _update_group(self, id: str, group_id: str, action: str):
+        validate_group_exists(self, group_id)
+
+        query = """
+        mutation UpdateInstanceTypeMutation(
+          $data: InstanceTypeUpdateInput!
+          $where: InstanceTypeWhereUniqueInput!
+        ) {
+          updateInstanceType(data: $data, where: $where) {
+            id
+            global
+            groups {
+              id
+              name
+              displayName
+            }
+          }
+        }
+        """
+        data = {'groups': {action: [{'id': group_id}]}}
+        results = self.request({'where': {'id': id}, 'data': data}, query, _error_handler)
         if 'data' not in results:
             return results
 

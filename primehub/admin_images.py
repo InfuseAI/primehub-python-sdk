@@ -4,7 +4,7 @@ from typing import Iterator
 from primehub import Helpful, Module, cmd, primehub_load_config
 from primehub.utils import PrimeHubException, resource_not_found
 from primehub.utils.optionals import file_flag
-from primehub.utils.validator import validate_name, validate_groups
+from primehub.utils.validator import validate_name, validate_groups, validate_group_exists
 
 
 def _error_handler(response):
@@ -118,6 +118,96 @@ class AdminImages(Helpful, Module):
         """
 
         results = self.request({'where': {'id': id}, 'data': config}, query, _error_handler)
+        if 'data' not in results:
+            return results
+
+        return results['data']['updateImage']
+
+    @cmd(name='list-group', description='List group of an image by id')
+    def list_group(self, id: str):
+        """
+        List groups of an image by id. It will return empty list if the image is at the global scope.
+
+        :type id: str
+        :param id: the id of an image
+
+        :rtype list
+        :return groups
+        """
+        query = """
+        query ImageQuery($where: ImageWhereUniqueInput!) {
+          image(where: $where) {
+            id
+            global
+            groups {
+              id
+              name
+              displayName
+            }
+          }
+        }
+        """
+
+        results = self.request({'where': {'id': id}}, query)
+        if 'data' not in results:
+            return results
+
+        data = results['data']['image']
+        if data['global']:
+            return []
+        return data['groups']
+
+    @cmd(name='add-group', description='Add group connection to an image by id')
+    def add_group(self, id: str, group_id):
+        """
+        Add group connection to an image by id.
+
+        :type id: str
+        :param id: the id of an image
+        :type group_id: str
+        :param group_id: group id
+
+        :rtype dict
+        :return an image with groups only
+        """
+        self._update_group(id, group_id, 'connect')
+
+    @cmd(name='remove-group', description='Remove group connection from an image by id')
+    def remove_group(self, id: str, group_id):
+        """
+        Remove group connection from an image by id.
+
+        :type id: str
+        :param id: the id of an image
+        :type group_id: str
+        :param group_id: group id
+
+        :rtype dict
+        :return an image with groups only
+        """
+        self._update_group(id, group_id, 'disconnect')
+
+    def _update_group(self, id: str, group_id: str, action: str):
+        validate_group_exists(self, group_id)
+
+        query = """
+        mutation UpdateImageMutation(
+          $data: ImageUpdateInput!
+          $where: ImageWhereUniqueInput!
+        ) {
+          updateImage(data: $data, where: $where) {
+            id
+            global
+            groups {
+              id
+              name
+              displayName
+            }
+          }
+        }
+        """
+        data = {'groups': {action: [{'id': group_id}]}}
+        results = self.request({'where': {'id': id}, 'data': data}, query, _error_handler)
         if 'data' not in results:
             return results
 

@@ -8,10 +8,13 @@ Usage:
 Manage images
 
 Available Commands:
+  add-group            Add group connection to an image by id
   create               Create an image
   delete               Delete an image by id
   get                  Get an image by id
   list                 List images
+  list-group           List group of an image by id
+  remove-group         Remove group connection from an image by id
   update               Update the image
 
 Options:
@@ -25,6 +28,22 @@ Global Options:
   --json               Output the json format (output human-friendly format by default)
 
 ```
+
+
+### add-group
+
+Add group connection to an image by id
+
+
+```
+primehub admin images add-group <id> <group_id>
+```
+
+* id: the id of an image
+* group_id: group id
+ 
+
+
 
 
 ### create
@@ -83,6 +102,37 @@ primehub admin images list
  
 
 * *(optional)* page: the page of all data
+
+
+
+
+### list-group
+
+List group of an image by id
+
+
+```
+primehub admin images list-group <id>
+```
+
+* id: the id of an image
+ 
+
+
+
+
+### remove-group
+
+Remove group connection from an image by id
+
+
+```
+primehub admin images remove-group <id> <group_id>
+```
+
+* id: the id of an image
+* group_id: group id
+ 
 
 
 

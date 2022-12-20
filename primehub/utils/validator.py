@@ -70,6 +70,21 @@ def validate_groups(payload: dict):
             raise PrimeHubException(GROUP_DISCONNECT_ERROR)
 
 
+def validate_group_exists(instance, group_id):
+    query = """
+    query Group(
+      $where: GroupWhereUniqueInput!
+    ) {
+      group(where: $where) {
+        id
+      }
+    }
+    """
+    result = instance.request({'where': {'id': group_id}}, query)
+    if result['data']['group'] is None:
+        raise PrimeHubException('Group not found')
+
+
 def validate_connection(payload: dict, field_name: str):
     CONNECT_ERROR = f'{field_name} connection payload should be an entry {{id}}'
     DISCONNECT_ERROR = f'{field_name} disconnection payload should be an entry {{id}}'

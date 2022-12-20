@@ -4,7 +4,7 @@ from typing import Optional
 from primehub import Helpful, Module, cmd, primehub_load_config
 from primehub.utils import PrimeHubException
 from primehub.utils.optionals import file_flag
-from primehub.utils.validator import validate_name, validate_pv_groups
+from primehub.utils.validator import validate_name, validate_pv_groups, validate_group_exists
 
 
 def waring_if_needed(data: dict, stderr):
@@ -125,6 +125,98 @@ class AdminVolumes(Helpful, Module):
         if 'data' in result and 'updateDataset' in result['data']:
             return waring_if_needed(result['data']['updateDataset'], self.primehub.stderr)
         return result
+
+    @cmd(name='list-group', description='List group of a volume by id')
+    def list_group(self, id: str):
+        """
+        List groups of a volume by id. It will return writable groups only if the volume is at the global scope.
+
+        :type id: str
+        :param id: the id of a volume
+
+        :rtype list
+        :return groups
+        """
+        query = """
+        query DatasetQuery($where: DatasetWhereUniqueInput!) {
+          dataset(where: $where) {
+            id
+            global
+            groups {
+              id
+              name
+              displayName
+              writable
+            }
+          }
+        }
+        """
+
+        results = self.request({'where': {'id': id}}, query)
+        if 'data' not in results:
+            return results
+
+        data = results['data']['dataset']
+        groups = data['groups']
+        if data['global']:
+            return [x for x in groups if x['writable']]
+        return groups
+
+    @cmd(name='add-group', description='Add group connection to a volume by id')
+    def add_group(self, id: str, group_id, writable=False):
+        """
+        Add group connection to a volume by id
+
+        :type id: str
+        :param id: the id of a volume
+        :type group_id: str
+        :param group_id: group id
+        :type writable: bool, optional
+        :param writable: `True` if the group has write permission to the volume, and `False` otherwise, \
+defaults to False
+
+        :rtype dict
+        :return a volume with id only
+        """
+        self._update_group(id, group_id, 'connect', writable)
+
+    @cmd(name='remove-group', description='Remove group connection from a volume by id')
+    def remove_group(self, id: str, group_id):
+        """
+        Remove group connection from a volume by id
+
+        :type id: str
+        :param id: the id of a volume
+        :type group_id: str
+        :param group_id: group id
+
+        :rtype dict
+        :return a volume with id only
+        """
+        self._update_group(id, group_id, 'disconnect')
+
+    def _update_group(self, id: str, group_id: str, action: str, writable=False):
+        validate_group_exists(self, group_id)
+
+        query = """
+        mutation UpdateDatasetMutation(
+          $data: DatasetUpdateInput!
+          $where: DatasetWhereUniqueInput!
+        ) {
+          updateDataset(data: $data, where: $where) {
+            id
+          }
+        }
+        """
+        group = {'id': group_id}
+        if action == 'connect':
+            group['writable'] = writable
+        data = {'groups': {action: [group]}}
+        results = self.request({'where': {'id': id}, 'data': data}, query)
+        if 'data' not in results:
+            return results
+
+        return results['data']['updateDataset']
 
     @cmd(name='regen-upload-secret', description='Regenerate the secret of the upload server',
          return_required=True)

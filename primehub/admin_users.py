@@ -5,7 +5,7 @@ from typing import Iterator, Union, Any
 from primehub import Helpful, Module, cmd, primehub_load_config
 from primehub.utils import PrimeHubException
 from primehub.utils.optionals import file_flag, toggle_flag
-from primehub.utils.validator import validate_groups
+from primehub.utils.validator import validate_groups, validate_group_exists
 
 EMAIL_FORMAT_ERROR = 'Please fill a valid email address format.'
 
@@ -225,6 +225,91 @@ class AdminUsers(Helpful, Module):
         """
 
         results = self.request({'where': {'id': id}, 'payload': config}, query)
+        if 'data' not in results:
+            return results
+
+        return results['data']['updateUser']
+
+    @cmd(name='list-group', description='List group of a user by id')
+    def list_group(self, id: str):
+        """
+        List groups of a user by id
+
+        :type id: str
+        :param id: the id of a user
+
+        :rtype list
+        :return groups
+        """
+        query = """
+        query UserQuery($where: UserWhereUniqueInput!) {
+          user(where: $where) {
+            id
+            groups {
+              id
+              name
+              displayName
+            }
+          }
+        }
+        """
+
+        results = self.request({'where': {'id': id}}, query)
+        if 'data' not in results:
+            return results
+        groups = results['data']['user']['groups']
+        return [x for x in groups if x['name'] != 'everyone']
+
+    @cmd(name='add-group', description='Add group connection to a user by id')
+    def add_group(self, id: str, group_id):
+        """
+        Add group connection to a user by id
+
+        :type id: str
+        :param id: the id of a user
+        :type group_id: str
+        :param group_id: group id
+
+        :rtype dict
+        :return a user with groups only
+        """
+        self._update_group(id, group_id, 'connect')
+
+    @cmd(name='remove-group', description='Remove group connection from a user by id')
+    def remove_group(self, id: str, group_id):
+        """
+        Remove group connection from a user by id
+
+        :type id: str
+        :param id: the id of a user
+        :type group_id: str
+        :param group_id: group id
+
+        :rtype dict
+        :return a user with groups only
+        """
+        self._update_group(id, group_id, 'disconnect')
+
+    def _update_group(self, id: str, group_id: str, action: str):
+        validate_group_exists(self, group_id)
+
+        query = """
+        mutation UpdateUserMutation(
+          $data: UserUpdateInput!
+          $where: UserWhereUniqueInput!
+        ) {
+          updateUser(data: $data, where: $where) {
+            id
+            groups {
+              id
+              name
+              displayName
+            }
+          }
+        }
+        """
+        data = {'groups': {action: [{'id': group_id}]}}
+        results = self.request({'where': {'id': id}, 'data': data}, query)
         if 'data' not in results:
             return results
 

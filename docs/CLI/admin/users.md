@@ -8,10 +8,13 @@ Usage:
 Manage users
 
 Available Commands:
+  add-group            Add group connection to a user by id
   create               Create a user
   delete               Delete an user by id
   get                  Get an user by id
   list                 List users
+  list-group           List group of a user by id
+  remove-group         Remove group connection from a user by id
   reset-password       Reset password by id
   update               Update the user
 
@@ -26,6 +29,22 @@ Global Options:
   --json               Output the json format (output human-friendly format by default)
 
 ```
+
+
+### add-group
+
+Add group connection to a user by id
+
+
+```
+primehub admin users add-group <id> <group_id>
+```
+
+* id: the id of a user
+* group_id: group id
+ 
+
+
 
 
 ### create
@@ -84,6 +103,37 @@ primehub admin users list
  
 
 * *(optional)* page: the page of all data
+
+
+
+
+### list-group
+
+List group of a user by id
+
+
+```
+primehub admin users list-group <id>
+```
+
+* id: the id of a user
+ 
+
+
+
+
+### remove-group
+
+Remove group connection from a user by id
+
+
+```
+primehub admin users remove-group <id> <group_id>
+```
+
+* id: the id of a user
+* group_id: group id
+ 
 
 
 
