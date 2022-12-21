@@ -50,7 +50,7 @@ class AdminReport(Helpful, Module):
 
         def prepare_directory(dest: str):
             try:
-                os.truncate(dest)
+                os.truncate(dest, 0)
                 return
             except BaseException:
                 pass
@@ -77,11 +77,9 @@ class AdminReport(Helpful, Module):
         """
 
         query = """
-        query UsageReportQuery($usageReportPage: Int, $usageReportOrderBy: UsageReportOrderByInput, $usageReportWhere: UsageReportWhereInput) {
+        query UsageReportQuery($usageReportPage: Int) {
           usageReport: usageReportsConnection(
             page: $usageReportPage
-            orderBy: $usageReportOrderBy
-            where: $usageReportWhere
           ) {
             edges {
               cursor
