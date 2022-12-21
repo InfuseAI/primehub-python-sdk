@@ -226,6 +226,7 @@ class PrimeHub(object):
         self.register_admin_command('admin_users', 'AdminUsers', 'users')
         self.register_admin_command('admin_groups', 'AdminGroups', 'groups')
         self.register_admin_command('admin_secrets', 'AdminSecrets', 'secrets')
+        self.register_admin_command('admin_reports', 'AdminReport', 'reports')
 
         # initial
         self._ensure_config_details(config)
