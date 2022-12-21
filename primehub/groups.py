@@ -58,6 +58,29 @@ class Groups(Helpful, Module):
         resource_not_found('group', group_name, 'name')
         return None
 
+    @cmd(name='list-users', description='List users in the group by id')
+    def list_users(self, group_id: str):
+        """
+        List users in the group by id
+
+        :type group_id: str
+        :param group_id: group id
+        :rtype: list
+        :returns: users in the group
+        """
+        groups = [x for x in self._list_with_admins() if x['id'] == group_id]
+        if not groups:
+            resource_not_found('group', group_id, 'id')
+            return None
+        group_admins = groups[0]['admins'].split(',')
+        users = groups[0]['users']
+        for u in users:
+            if u['username'] in group_admins:
+                u['group_admin'] = True
+            else:
+                u['group_admin'] = False
+        return users
+
     @cmd(name='add-user', description='Add a user to a group by id')
     def add_user(self, group_id: str, user_id: str, is_admin: bool = False):
         """
@@ -106,6 +129,13 @@ defaults to False
             effectiveGroups {
               id
               admins
+              users {
+                id
+                username
+                firstName
+                lastName
+                email
+              }
             }
           }
         }

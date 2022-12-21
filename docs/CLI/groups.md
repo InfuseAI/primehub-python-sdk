@@ -11,6 +11,7 @@ Available Commands:
   add-user             Add a user to a group by id
   get                  Get group by name
   list                 List groups
+  list-users           List users in the group by id
   remove-user          Remove a user from a group by id
 
 Options:
@@ -66,6 +67,21 @@ List groups
 ```
 primehub groups list
 ```
+ 
+
+
+
+
+### list-users
+
+List users in the group by id
+
+
+```
+primehub groups list-users <group_id>
+```
+
+* group_id: group id
  
 
 
