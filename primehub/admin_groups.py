@@ -1,6 +1,6 @@
 import json
 import re
-from typing import Dict, Iterator, Union, Any
+from typing import Dict, Iterator, List, Union, Any
 
 from primehub import HTTPSupport, Helpful, Module, cmd, primehub_load_config
 from primehub.utils import PrimeHubException
@@ -160,6 +160,169 @@ def apply_auto_fill(config: dict):
         config['quotaCpu'] = 0.5
     if config.get('quotaGpu') is None:
         config['quotaGpu'] = 0
+
+
+class AdminGroupsImages(HTTPSupport):
+
+    @cmd(name='create-image', description='Add the image to the group', optionals=[('file', file_flag)])
+    def _create_image(self, group_id: str, **kwargs):
+        """
+        Create a new image and connect it to a specific group
+
+        :type group_id: str
+        :param group_id: The group id
+
+        :type file: str
+        :param file: The file path of the configurations
+
+        :rtype dict
+        :return The image
+        """
+
+        config = primehub_load_config(filename=kwargs.get('file', None))
+        if not config:
+            from primehub.admin_images import invalid_config as image_invalid_config
+            image_invalid_config('The configuration is required.')
+
+        return self.create_image(group_id, config)
+
+    def create_image(self, group_id: str, config: Dict) -> Dict:
+        """
+        Create a new image and connect it to the group
+
+        :type group_id: str
+        :param group_id: The group id
+
+        :type config: dict
+        :param config: The configurations for creating an image
+
+        :rtype dict
+        :return The image
+        """
+
+        # assign the connected group
+        config['global'] = False
+        config['groups'] = [dict(id=group_id)]
+
+        return self.primehub.admin_images.create(config)
+
+    @cmd(name='disconnect-image', description='Make the image leave the group')
+    def disconnect_image(self, group_id: str, image_id: str) -> Dict:
+        """
+        Make the image leave the group
+
+        :type group_id: str
+        :param group_id: The group id
+
+        :type image_id: str
+        :param image_id: The image id
+
+        :rtype dict
+        :return The image
+        """
+        return self._image_group_in_and_out(group_id, image_id, False)
+
+    @cmd(name='connect-image', description='Make the image join the group')
+    def connect_image(self, group_id: str, image_id: str) -> Dict:
+        """
+        Make the image join the group
+
+        :type group_id: str
+        :param group_id: The group id
+
+        :type image_id: str
+        :param image_id: The image id
+
+        :rtype dict
+        :return The image
+        """
+        return self._image_group_in_and_out(group_id, image_id, True)
+
+    def _image_group_in_and_out(self, group_id: str, image_id: str, execute_connect: bool):
+        query = """
+        mutation UpdateImageMutation(
+          $data: ImageUpdateInput!
+          $where: ImageWhereUniqueInput!
+        ) {
+          updateImage(data: $data, where: $where) {
+            id
+            groups {
+              id
+              name
+              displayName
+            }
+            ...ImageInfo
+          }
+        }
+        fragment ImageInfo on Image {
+          id
+          displayName
+          description
+          url
+          urlForGpu
+          name
+          type
+          groupName
+          useImagePullSecret
+          logEndpoint
+          isReady
+          spec
+          global
+          jobStatus {
+            phase
+          }
+          imageSpec {
+            baseImage
+            pullSecret
+            packages {
+              apt
+              conda
+              pip
+            }
+          }
+        }
+        """
+
+        connect = []
+        disconnect = []
+        group_info = {"id": group_id}
+
+        if execute_connect:
+            connect.append(group_info)
+        else:
+            disconnect.append(group_info)
+
+        variables = {
+            "data": {
+                "groups": {
+                    "connect": connect,
+                    "disconnect": disconnect
+                }
+            },
+            "where": {
+                "id": image_id
+            }
+        }
+        results = self.request(variables, query)
+        if 'data' not in results:
+            return results
+        return results['data']['updateImage']
+
+    @cmd(name='list-images', description='List images in the group')
+    def list_images(self, group_id: str) -> List:
+        """
+        List images in the group
+
+        :type group_id: str
+        :param group_id: The group id
+
+        :rtype list
+        :return image list
+        """
+        results = self.primehub.admin_groups.get(group_id)
+        if 'id' not in results or 'images' not in results:
+            return results
+        return results['images']
 
 
 class AdminGroupsUsers(HTTPSupport):
@@ -355,7 +518,7 @@ class AdminGroupsUsers(HTTPSupport):
         return ",".join(group_admins)
 
 
-class AdminGroups(Helpful, Module, AdminGroupsUsers):
+class AdminGroups(Helpful, Module, AdminGroupsUsers, AdminGroupsImages):
 
     @cmd(name='create', description='Create a group', optionals=[('file', file_flag)])
     def _create_cmd(self, **kwargs):

@@ -9,10 +9,14 @@ Manage groups
 
 Available Commands:
   add-user             Add the user to the group
+  connect-image        Make the image join the group
   create               Create a group
+  create-image         Add the image to the group
   delete               Delete the group by id
+  disconnect-image     Make the image leave the group
   get                  Get the group info by id
   list                 List groups
+  list-images          List images in the group
   list-users           List users in the group
   remove-user          Remove the user from the group
   update               Update the group
@@ -48,6 +52,22 @@ primehub admin groups add-user <group_id> <user_id>
 
 
 
+### connect-image
+
+Make the image join the group
+
+
+```
+primehub admin groups connect-image <group_id> <image_id>
+```
+
+* group_id: The group id
+* image_id: The image id
+ 
+
+
+
+
 ### create
 
 Create a group
@@ -63,6 +83,23 @@ primehub admin groups create
 
 
 
+### create-image
+
+Add the image to the group
+
+
+```
+primehub admin groups create-image <group_id>
+```
+
+* group_id: The group id
+ 
+
+* *(optional)* file: The file path of the configurations
+
+
+
+
 ### delete
 
 Delete the group by id
@@ -73,6 +110,22 @@ primehub admin groups delete <id>
 ```
 
 * id: the group id
+ 
+
+
+
+
+### disconnect-image
+
+Make the image leave the group
+
+
+```
+primehub admin groups disconnect-image <group_id> <image_id>
+```
+
+* group_id: The group id
+* image_id: The image id
  
 
 
@@ -104,6 +157,21 @@ primehub admin groups list
  
 
 * *(optional)* page: the page of all data
+
+
+
+
+### list-images
+
+List images in the group
+
+
+```
+primehub admin groups list-images <group_id>
+```
+
+* group_id: The group id
+ 
 
 
 
