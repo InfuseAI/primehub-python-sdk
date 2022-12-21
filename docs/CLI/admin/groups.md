@@ -8,10 +8,13 @@ Usage:
 Manage groups
 
 Available Commands:
+  add-user             Add the user to the group
   create               Create a group
   delete               Delete the group by id
   get                  Get the group info by id
   list                 List groups
+  list-users           List users in the group
+  remove-user          Remove the user from the group
   update               Update the group
 
 Options:
@@ -25,6 +28,24 @@ Global Options:
   --json               Output the json format (output human-friendly format by default)
 
 ```
+
+
+### add-user
+
+Add the user to the group
+
+
+```
+primehub admin groups add-user <group_id> <user_id>
+```
+
+* group_id: the group id
+* user_id: the user id
+ 
+
+* *(optional)* enable_group_admin
+
+
 
 
 ### create
@@ -87,6 +108,39 @@ primehub admin groups list
 
 
 
+### list-users
+
+List users in the group
+
+
+```
+primehub admin groups list-users <group_id>
+```
+
+* group_id: the group id
+ 
+
+
+
+
+### remove-user
+
+Remove the user from the group
+
+
+```
+primehub admin groups remove-user <group_id> <user_id>
+```
+
+* group_id: the group id
+* user_id: the user id
+ 
+
+* *(optional)* disable_group_admin
+
+
+
+
 ### update
 
 Update the group
@@ -109,40 +163,44 @@ primehub admin groups update <id>
 
 ### Fields for creating or updating
 
-| field | required | type | description |
-| --- | --- | --- | --- |
-| name | required | string | must start with a letter or numeric, '-' and '_' are allowed, and the length should be more than 2. |
-| displayName | optional | string | display name |
-| quotaCpu | optional | float | how many CPU can be used by the user within this group, default: 0.5 |
-| quotaGpu | optional | int | how many GPU can be used by the user within this group, default: 0 |
-| quotaMemory | optional | float | how many memory can be used by the user within this group, default: unlimited GB | 
-| projectQuotaCpu | optional | float |  how many CPU can be shared by all users in the group, default: unlimited |
-| projectQuotaGpu | optional | int | how many GPU can be shared by all users in the group, default: unlimited |
-| projectQuotaMemory| optional | float | how many memory can be shared by all users in the group, default: unlimited GB |
-| admins | optional | string | assign admin user of the group, multiple users are able to be assigned (see [also](https://docs.primehub.io/docs/guide_manual/admin-group#group-admin)) |
-| users | optional | assign / dissociate users to the group | please see the connect / disconnect examples |
+| field              | required | type                                   | description                                                                                                                                             |
+|--------------------|----------|----------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|
+| name               | required | string                                 | must start with a letter or numeric, '-' and '_' are allowed, and the length should be more than 2.                                                     |
+| displayName        | optional | string                                 | display name                                                                                                                                            |
+| quotaCpu           | optional | float                                  | how many CPU can be used by the user within this group, default: 0.5                                                                                    |
+| quotaGpu           | optional | int                                    | how many GPU can be used by the user within this group, default: 0                                                                                      |
+| quotaMemory        | optional | float                                  | how many memory can be used by the user within this group, default: unlimited GB                                                                        | 
+| projectQuotaCpu    | optional | float                                  | how many CPU can be shared by all users in the group, default: unlimited                                                                                |
+| projectQuotaGpu    | optional | int                                    | how many GPU can be shared by all users in the group, default: unlimited                                                                                |
+| projectQuotaMemory | optional | float                                  | how many memory can be shared by all users in the group, default: unlimited GB                                                                          |
+| admins             | optional | string                                 | assign admin user of the group, multiple users are able to be assigned (see [also](https://docs.primehub.io/docs/guide_manual/admin-group#group-admin)) |
+| users              | optional | assign / dissociate users to the group | please see the connect / disconnect examples                                                                                                            |
 
 *Note: user resource quota should not greater than project resource quota. e.g., `quotaCpu <= projectQuotaCpu`*
 
 #### Model Deployment
-Groups with enabled model deployment are able to deploy/serve models. (see [also](https://docs.primehub.io/docs/guide_manual/admin-group#model-deployment))
+
+Groups with enabled model deployment are able to deploy/serve models. (
+see [also](https://docs.primehub.io/docs/guide_manual/admin-group#model-deployment))
 
 `maxDeploy` is used when `enabledDeployment` is enable:
 
-| field | required | type | description |
-| --- | --- | --- | --- |
-| enabledDeployment | optional | boolean | enable model deployment |
-| maxDeploy | optional | int | limit on the amount of deployments for this group |
+| field             | required | type    | description                                       |
+|-------------------|----------|---------|---------------------------------------------------|
+| enabledDeployment | optional | boolean | enable model deployment                           |
+| maxDeploy         | optional | int     | limit on the amount of deployments for this group |
 
 #### Shared Volume
-The created shared volume is shared among members in the group. (see [also](https://docs.primehub.io/docs/guide_manual/admin-group#shared-volume))
+
+The created shared volume is shared among members in the group. (
+see [also](https://docs.primehub.io/docs/guide_manual/admin-group#shared-volume))
 
 `sharedVolumeCapacity` is used when `enabledSharedVolume` is enable:
 
-| field | required | type | description |
-| --- | --- | --- | --- |
-| enabledSharedVolume | optional | boolean | enable share volume |
-| sharedVolumeCapacity | optional | int | the capacity of the shared volume in GB |
+| field                | required | type    | description                             |
+|----------------------|----------|---------|-----------------------------------------|
+| enabledSharedVolume  | optional | boolean | enable share volume                     |
+| sharedVolumeCapacity | optional | int     | the capacity of the shared volume in GB |
 
 ### Create a group
 
@@ -210,3 +268,27 @@ primehub admin users update bd3d499c-0354-407d-b45a-08cf20d1a8b7 <<EOF
 }
 EOF
 ```
+
+### Manipulate users in a group
+
+`list-users` will show users in a group with their id, username and group_admin permission:
+
+```
+$ primehub admin groups list-users 149f4cb6-e8d1-44e8-93d4-3a77f46ac682
+id                                    username    group_admin
+------------------------------------  ----------  -------------
+698da31d-2ef8-476d-9d56-6275a949402c  foo         False
+c634f8c9-d22e-4ead-bfa2-21ed018f6029  phadmin     True
+```
+
+`add-user` and `remove-user` have same arguments to add or remove a user from the group,
+but they are also do the group-admin enabling and disable.
+
+You can add an existing user with `--enable_group_admin` to added the group admin permission:
+
+```
+$ primehub admin groups add-user 149f4cb6-e8d1-44e8-93d4-3a77f46ac682 698da31d-2ef8-476d-9d56-6275a949402c --enable_group_admin
+```
+
+The permission can disable with `remove-user` and `--disable_group_admin`. When `--disable_group_admin` has set,
+removal operation will only remove the permission not the user.
