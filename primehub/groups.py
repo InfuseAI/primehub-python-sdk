@@ -26,6 +26,7 @@ mutation UpdateGroupMLflowConfig($where: GroupWhereUniqueInput!, $data: GroupUpd
 }
 """
 
+
 class Groups(Helpful, Module):
     """
     List effective groups or get a group entry from the list
@@ -219,7 +220,7 @@ defaults to False
               "artifact_envs":[{"name":"key1","value":"value1"}]
             }
             """.strip()
-            field_help = f"""* 'tracking_uri' field is required"""
+            field_help = "* 'tracking_uri' field is required"
             raise PrimeHubException('MLflow configuration is required.' +
                                     "\n\nExample:\n" +
                                     json.dumps(json.loads(example), indent=2) +
@@ -258,7 +259,7 @@ defaults to False
         :param group_id: group id
         """
         query = _mutation_mlflow
-        data = {
+        data: Dict[str, Any] = {
             "trackingUri": None,
             "uiUrl": None,
             "trackingEnvs": [],
