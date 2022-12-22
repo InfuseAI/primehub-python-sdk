@@ -8,30 +8,51 @@ Usage:
 Manage groups
 
 Available Commands:
-  connect-image        Make the image join the group
-  connect-user         Add the user to the group
-  create               Create a group
-  create-image         Add the image to the group
-  delete               Delete the group by id
-  disconnect-image     Make the image leave the group
-  disconnect-user      Remove the user from the group
-  get                  Get the group info by id
-  list                 List groups
-  list-images          List images in the group
-  list-users           List users in the group
-  update               Update the group
+  connect-image         Make the image join the group
+  connect-image         Make the image join the group
+  connect-user          Add the user to the group
+  create                Create a group
+  create-image          Add the image to the group
+  create-instancetype   Add the image to the group
+  delete                Delete the group by id
+  disconnect-image      Make the image leave the group
+  disconnect-instancetype
+                        Make the image leave the group
+  disconnect-user       Remove the user from the group
+  get                   Get the group info by id
+  list                  List groups
+  list-images           List images in the group
+  list-instancetypes    List images in the group
+  list-users            List users in the group
+  update                Update the group
 
 Options:
-  -h, --help           Show the help
+  -h, --help            Show the help
 
 Global Options:
-  --config CONFIG      Change the path of the config file (Default: ~/.primehub/config.json)
-  --endpoint ENDPOINT  Override the GraphQL API endpoint
-  --token TOKEN        Override the API Token
-  --group GROUP        Override the current group
-  --json               Output the json format (output human-friendly format by default)
+  --config CONFIG       Change the path of the config file (Default: ~/.primehub/config.json)
+  --endpoint ENDPOINT   Override the GraphQL API endpoint
+  --token TOKEN         Override the API Token
+  --group GROUP         Override the current group
+  --json                Output the json format (output human-friendly format by default)
 
 ```
+
+
+### connect-image
+
+Make the image join the group
+
+
+```
+primehub admin groups connect-image <group_id> <instancetype_id>
+```
+
+* group_id: The group id
+* instancetype_id
+ 
+
+
 
 
 ### connect-image
@@ -100,6 +121,23 @@ primehub admin groups create-image <group_id>
 
 
 
+### create-instancetype
+
+Add the image to the group
+
+
+```
+primehub admin groups create-instancetype <group_id>
+```
+
+* group_id: The group id
+ 
+
+* *(optional)* file: The file path of the configurations
+
+
+
+
 ### delete
 
 Delete the group by id
@@ -126,6 +164,22 @@ primehub admin groups disconnect-image <group_id> <image_id>
 
 * group_id: The group id
 * image_id: The image id
+ 
+
+
+
+
+### disconnect-instancetype
+
+Make the image leave the group
+
+
+```
+primehub admin groups disconnect-instancetype <group_id> <instancetype_id>
+```
+
+* group_id: The group id
+* instancetype_id: The instanceType id
  
 
 
@@ -186,6 +240,21 @@ List images in the group
 
 ```
 primehub admin groups list-images <group_id>
+```
+
+* group_id: The group id
+ 
+
+
+
+
+### list-instancetypes
+
+List images in the group
+
+
+```
+primehub admin groups list-instancetypes <group_id>
 ```
 
 * group_id: The group id

@@ -162,6 +162,147 @@ def apply_auto_fill(config: dict):
         config['quotaGpu'] = 0
 
 
+class AdminGroupsInstanceTypes(HTTPSupport):
+
+    @cmd(name='create-instancetype', description='Create a new instanceType and connect it to the group', optionals=[('file', file_flag)])
+    def _create_instancetype(self, group_id: str, **kwargs):
+        """
+        Create a new instanceType and connect it to the group
+
+        :type group_id: str
+        :param group_id: The group id
+
+        :type file: str
+        :param file: The file path of the configurations
+
+        :rtype dict
+        :return The instanceType
+        """
+
+        config = primehub_load_config(filename=kwargs.get('file', None))
+        if not config:
+            from primehub.admin_instancetypes import invalid_config as instancetype_invalid_config
+            instancetype_invalid_config('The configuration is required.')
+
+        return self.create_instancetype(group_id, config)
+
+    def create_instancetype(self, group_id: str, config: Dict) -> Dict:
+        """
+        Create a new instanceType and connect it to the group
+
+        :type group_id: str
+        :param group_id: The group id
+
+        :type config: dict
+        :param config: The configurations for creating an instanceType
+
+        :rtype dict
+        :return The instanceType
+        """
+
+        # assign the connected group
+        config['global'] = False
+        config['groups'] = [dict(id=group_id)]
+
+        return self.primehub.admin_instancetypes.create(config)
+
+    @cmd(name='disconnect-instancetype', description='Make the instanceType leave the group')
+    def disconnect_instancetype(self, group_id: str, instancetype_id: str) -> Dict:
+        """
+        Make the instanceType leave the group
+
+        :type group_id: str
+        :param group_id: The group id
+
+        :type instancetype_id: str
+        :param instancetype_id: The instanceType id
+
+        :rtype dict
+        :return The image
+        """
+        return self._instancetype_group_in_and_out(group_id, instancetype_id, False)
+
+    @cmd(name='connect-image', description='Make the instanceType join the group')
+    def connect_instancetype(self, group_id: str, instancetype_id: str) -> Dict:
+        """
+        Make the instanceType join the group
+
+        :type group_id: str
+        :param group_id: The group id
+
+        :type instancetype_id: str
+        :param instancetype_id: The instanceType id
+
+        :rtype dict
+        :return The image
+        """
+        return self._instancetype_group_in_and_out(group_id, instancetype_id, True)
+
+    def _instancetype_group_in_and_out(self, group_id: str, image_id: str, execute_connect: bool):
+        query = """
+        mutation UpdateInstanceTypeMutation(
+          $payload: InstanceTypeUpdateInput!
+          $where: InstanceTypeWhereUniqueInput!
+        ) {
+          updateInstanceType(data: $payload, where: $where) {
+            id
+            global
+            cpuRequest
+            memoryRequest
+            groups {
+              id
+              name
+              displayName
+              quotaCpu
+              quotaGpu
+            }
+            nodeSelector
+          }
+        }
+        """
+
+        connect = []
+        disconnect = []
+        group_info = {"id": group_id}
+
+        if execute_connect:
+            connect.append(group_info)
+        else:
+            disconnect.append(group_info)
+
+        variables = {
+            "payload": {
+                "groups": {
+                    "connect": connect,
+                    "disconnect": disconnect
+                }
+            },
+            "where": {
+                "id": image_id
+            }
+        }
+        results = self.request(variables, query)
+        if 'data' not in results:
+            return results
+        return results['data']['updateInstanceType']
+
+    @cmd(name='list-instancetypes', description='List instanceTypes in the group')
+    def list_instancetypes(self, group_id: str) -> List:
+        """
+        List instance-type in the group
+
+        :type group_id: str
+        :param group_id: The group id
+
+        :rtype list
+        :return instance-type list
+        """
+        results = self.primehub.admin_groups.get(group_id)
+        if 'id' not in results or 'instanceTypes' not in results:
+            return results
+        return results['instanceTypes']
+
+
 class AdminGroupsImages(HTTPSupport):
 
     @cmd(name='create-image', description='Add the image to the group', optionals=[('file', file_flag)])
@@ -518,7 +659,8 @@ class AdminGroupsUsers(HTTPSupport):
         return ",".join(group_admins)
 
 
-class AdminGroups(Helpful, Module, AdminGroupsUsers, AdminGroupsImages):
+class AdminGroups(Helpful, Module,
+                  AdminGroupsUsers, AdminGroupsImages, AdminGroupsInstanceTypes):
 
     @cmd(name='create', description='Create a group', optionals=[('file', file_flag)])
     def _create_cmd(self, **kwargs):
