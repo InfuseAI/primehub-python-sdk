@@ -8,22 +8,26 @@ Usage:
 Manage groups
 
 Available Commands:
-  connect-image         Make the image join the group
+  connect-image         Make the instanceType join the group
   connect-image         Make the image join the group
   connect-user          Add the user to the group
+  connect-volume        Make the volume join the group
   create                Create a group
   create-image          Add the image to the group
-  create-instancetype   Add the image to the group
+  create-instancetype   Create a new instanceType and connect it to the group
+  create-volume         Create a new volume and connect it to the group
   delete                Delete the group by id
   disconnect-image      Make the image leave the group
   disconnect-instancetype
-                        Make the image leave the group
+                        Make the instanceType leave the group
   disconnect-user       Remove the user from the group
+  disconnect-volume     Make the volume leave the group
   get                   Get the group info by id
   list                  List groups
   list-images           List images in the group
-  list-instancetypes    List images in the group
+  list-instancetypes    List instanceTypes in the group
   list-users            List users in the group
+  list-volumes          List volumes in the group
   update                Update the group
 
 Options:
@@ -41,7 +45,7 @@ Global Options:
 
 ### connect-image
 
-Make the image join the group
+Make the instanceType join the group
 
 
 ```
@@ -89,6 +93,22 @@ primehub admin groups connect-user <group_id> <user_id>
 
 
 
+### connect-volume
+
+Make the volume join the group
+
+
+```
+primehub admin groups connect-volume <group_id> <volume_id>
+```
+
+* group_id: The group id
+* volume_id: The volume id
+ 
+
+
+
+
 ### create
 
 Create a group
@@ -123,11 +143,28 @@ primehub admin groups create-image <group_id>
 
 ### create-instancetype
 
-Add the image to the group
+Create a new instanceType and connect it to the group
 
 
 ```
 primehub admin groups create-instancetype <group_id>
+```
+
+* group_id: The group id
+ 
+
+* *(optional)* file: The file path of the configurations
+
+
+
+
+### create-volume
+
+Create a new volume and connect it to the group
+
+
+```
+primehub admin groups create-volume <group_id>
 ```
 
 * group_id: The group id
@@ -171,7 +208,7 @@ primehub admin groups disconnect-image <group_id> <image_id>
 
 ### disconnect-instancetype
 
-Make the image leave the group
+Make the instanceType leave the group
 
 
 ```
@@ -199,6 +236,22 @@ primehub admin groups disconnect-user <group_id> <user_id>
  
 
 * *(optional)* disable_group_admin
+
+
+
+
+### disconnect-volume
+
+Make the volume leave the group
+
+
+```
+primehub admin groups disconnect-volume <group_id> <volume_id>
+```
+
+* group_id: The group id
+* volume_id: The volume id
+ 
 
 
 
@@ -250,7 +303,7 @@ primehub admin groups list-images <group_id>
 
 ### list-instancetypes
 
-List images in the group
+List instanceTypes in the group
 
 
 ```
@@ -273,6 +326,21 @@ primehub admin groups list-users <group_id>
 ```
 
 * group_id: the group id
+ 
+
+
+
+
+### list-volumes
+
+List volumes in the group
+
+
+```
+primehub admin groups list-volumes <group_id>
+```
+
+* group_id: The group id
  
 
 
