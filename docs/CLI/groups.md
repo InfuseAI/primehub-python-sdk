@@ -10,12 +10,12 @@ Get a group or list groups
 Available Commands:
   add-user             Add a user to a group by id
   get                  Get group by name
-  get-mlflow           Get MLflow config from current group
+  get-mlflow           Get MLflow config from a group by id
   list                 List groups
   list-users           List users in the group by id
   remove-user          Remove a user from a group by id
-  set-mlflow           Set MLflow config to current group
-  unset-mlflow         Unset MLflow config from current group
+  set-mlflow           Set MLflow config to a group by id
+  unset-mlflow         Unset MLflow config from a group by id
 
 Options:
   -h, --help           Show the help
@@ -64,12 +64,14 @@ primehub groups get <group_name>
 
 ### get-mlflow
 
-Get MLflow config from current group
+Get MLflow config from a group by id
 
 
 ```
-primehub groups get-mlflow
+primehub groups get-mlflow <group_id>
 ```
+
+* group_id: group id
  
 
 
@@ -121,12 +123,14 @@ primehub groups remove-user <group_id> <user_id>
 
 ### set-mlflow
 
-Set MLflow config to current group
+Set MLflow config to a group by id
 
 
 ```
-primehub groups set-mlflow
+primehub groups set-mlflow <group_id>
 ```
+
+* group_id: group id
  
 
 * *(optional)* file: The file path of MLflow configuration
@@ -136,12 +140,14 @@ primehub groups set-mlflow
 
 ### unset-mlflow
 
-Unset MLflow config from current group
+Unset MLflow config from a group by id
 
 
 ```
-primehub groups unset-mlflow
+primehub groups unset-mlflow <group_id>
 ```
+
+* group_id: group id
  
 
 
@@ -172,10 +178,10 @@ id                                    name     displayName     quotaCpu      quo
 
 ### MLflow configuration
 
-To get MLflow configuration of current group, use `get-mlflow` command:
+To get MLflow configuration of a group, use `get-mlflow` command:
 
 ```
-primehub groups get-mlflow
+primehub groups get-mlflow <group_id>
 ```
 
 ```
@@ -188,7 +194,7 @@ artifactEnvs:   []
 To set MLflow configuration, use `set-mlflow` command:
 
 ```bash
-primehub group set-mlflow <<EOF
+primehub group set-mlflow <group_id> <<EOF
 {
   "tracking_uri": "http://app-mlflow-xyzab:5000",
   "ui_uri": "https://primehub-python-sdk.primehub.io/console/apps/mlflow-xyzab",
@@ -205,11 +211,11 @@ EOF
 You can also set MLflow configuration from a json file:
 
 ```
-primehub group set-mlflow --file /tmp/mlflow.json
+primehub group set-mlflow <group_id> --file /tmp/mlflow.json
 ```
 
-To clear MLflow for current group, use `unset-mlflow` command:
+To clear MLflow for a group, use `unset-mlflow` command:
 
 ```
-primehub groups unset-mlflow
+primehub groups unset-mlflow <group_id>
 ```

@@ -199,11 +199,13 @@ defaults to False
             return results
         return results['data']['updateGroup']
 
-    @cmd(name='set-mlflow', description='Set MLflow config to current group', optionals=[('file', file_flag)])
-    def _set_mlflow(self, **kwargs):
+    @cmd(name='set-mlflow', description='Set MLflow config to a group by id', optionals=[('file', file_flag)])
+    def _set_mlflow(self, group_id: str, **kwargs):
         """
-        Set MLflow configuration to current group
+        Set MLflow configuration to a group by id
 
+        :type group_id: str
+        :param group_id: group id
         :type file: str
         :param file: The file path of MLflow configuration
         """
@@ -222,12 +224,14 @@ defaults to False
                                     "\n\nExample:\n" +
                                     json.dumps(json.loads(example), indent=2) +
                                     f"\n\n{field_help}\n")
-        return self.set_mlflow(config)
+        return self.set_mlflow(group_id, config)
 
-    def set_mlflow(self, config: dict):
+    def set_mlflow(self, group_id: str, config: dict):
         """
-        Set MLflow configuration to current group
+        Set MLflow configuration to a group by id
 
+        :type group_id: str
+        :param group_id: group id
         :type config: dict
         :param config: The content of MLflow configuration
         """
@@ -241,14 +245,17 @@ defaults to False
         if not data['trackingUri']:
             raise PrimeHubException("'tracking_uri' is required")
 
-        results = self.request({'where': {'id': self.group_id}, 'data': data}, query)
+        results = self.request({'where': {'id': group_id}, 'data': data}, query)
         if 'data' not in results:
             return results
 
-    @cmd(name='unset-mlflow', description='Unset MLflow config from current group')
-    def unset_mlflow(self):
+    @cmd(name='unset-mlflow', description='Unset MLflow config from a group by id')
+    def unset_mlflow(self, group_id: str):
         """
-        Unset MLflow configuration from current group
+        Unset MLflow configuration from a group by id
+
+        :type group_id: str
+        :param group_id: group id
         """
         query = _mutation_mlflow
         data = {
@@ -257,15 +264,17 @@ defaults to False
             "trackingEnvs": [],
             "artifactEnvs": [],
         }
-        results = self.request({'where': {'id': self.group_id}, 'data': data}, query)
+        results = self.request({'where': {'id': group_id}, 'data': data}, query)
         if 'data' not in results:
             return results
 
-    @cmd(name='get-mlflow', description='Get MLflow config from current group')
-    def get_mlflow(self):
+    @cmd(name='get-mlflow', description='Get MLflow config from a group by id')
+    def get_mlflow(self, group_id: str):
         """
-        Get MLflow configuration from current group
+        Get MLflow configuration from a group by id
 
+        :type group_id: str
+        :param group_id: group id
         :rtype dict
         :return MLflow configuration
         """
@@ -289,7 +298,7 @@ defaults to False
           }
         }
         """
-        results = self.request({'where': {'id': self.group_id}}, query)
+        results = self.request({'where': {'id': group_id}}, query)
         if 'data' not in results:
             return results
         return results['data']['group']['mlflow']

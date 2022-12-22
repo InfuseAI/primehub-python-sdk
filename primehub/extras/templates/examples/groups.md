@@ -20,10 +20,10 @@ id                                    name     displayName     quotaCpu      quo
 
 ### MLflow configuration
 
-To get MLflow configuration of current group, use `get-mlflow` command:
+To get MLflow configuration of a group, use `get-mlflow` command:
 
 ```
-primehub groups get-mlflow
+primehub groups get-mlflow <group_id>
 ```
 
 ```
@@ -36,7 +36,7 @@ artifactEnvs:   []
 To set MLflow configuration, use `set-mlflow` command:
 
 ```bash
-primehub group set-mlflow <<EOF
+primehub group set-mlflow <group_id> <<EOF
 {
   "tracking_uri": "http://app-mlflow-xyzab:5000",
   "ui_uri": "https://primehub-python-sdk.primehub.io/console/apps/mlflow-xyzab",
@@ -53,11 +53,11 @@ EOF
 You can also set MLflow configuration from a json file:
 
 ```
-primehub group set-mlflow --file /tmp/mlflow.json
+primehub group set-mlflow <group_id> --file /tmp/mlflow.json
 ```
 
-To clear MLflow for current group, use `unset-mlflow` command:
+To clear MLflow for a group, use `unset-mlflow` command:
 
 ```
-primehub groups unset-mlflow
+primehub groups unset-mlflow <group_id>
 ```
