@@ -327,8 +327,8 @@ class AdminGroupsImages(HTTPSupport):
 
 class AdminGroupsUsers(HTTPSupport):
 
-    @cmd(name='add-user', description='Add the user to the group', optionals=[('enable_group_admin', toggle_flag)])
-    def add_user(self, group_id: str, user_id: str, **kwargs):
+    @cmd(name='connect-user', description='Add the user to the group', optionals=[('enable_group_admin', toggle_flag)])
+    def connect_user(self, group_id: str, user_id: str, **kwargs):
         """
         Add the user to the group
 
@@ -382,9 +382,9 @@ class AdminGroupsUsers(HTTPSupport):
         # but we only care if the user was added successfully
         return results['data']['updateGroup']
 
-    @cmd(name='remove-user', description='Remove the user from the group',
+    @cmd(name='disconnect-user', description='Remove the user from the group',
          optionals=[('disable_group_admin', toggle_flag)])
-    def remove_user(self, group_id: str, user_id: str, **kwargs):
+    def disconnect_user(self, group_id: str, user_id: str, **kwargs):
         """
         Add the user to the group
 

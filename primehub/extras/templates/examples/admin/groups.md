@@ -118,14 +118,14 @@ id                                    username    group_admin
 c634f8c9-d22e-4ead-bfa2-21ed018f6029  phadmin     True
 ```
 
-`add-user` and `remove-user` have same arguments to add or remove a user from the group,
+`connect-user` and `disconnect-user` have same arguments to add or remove a user from the group,
 but they are also do the group-admin enabling and disable.
 
 You can add an existing user with `--enable_group_admin` to added the group admin permission:
 
 ```
-$ primehub admin groups add-user 149f4cb6-e8d1-44e8-93d4-3a77f46ac682 698da31d-2ef8-476d-9d56-6275a949402c --enable_group_admin
+$ primehub admin groups connect-user 149f4cb6-e8d1-44e8-93d4-3a77f46ac682 698da31d-2ef8-476d-9d56-6275a949402c --enable_group_admin
 ```
 
-The permission can disable with `remove-user` and `--disable_group_admin`. When `--disable_group_admin` has set,
+The permission can disable with `disconnect-user` and `--disable_group_admin`. When `--disable_group_admin` has set,
 removal operation will only remove the permission not the user.
