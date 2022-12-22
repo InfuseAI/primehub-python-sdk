@@ -164,10 +164,11 @@ Create a new volume and connect it to the group
 
 
 ```
-primehub admin groups create-volume <group_id>
+primehub admin groups create-volume <group_id> <writable>
 ```
 
 * group_id: The group id
+* writable: Set the writable for the connection
  
 
 * *(optional)* file: The file path of the configurations

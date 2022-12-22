@@ -166,12 +166,15 @@ class AdminGroupsVolumes(HTTPSupport):
 
     @cmd(name='create-volume', description='Create a new volume and connect it to the group',
          optionals=[('file', file_flag)])
-    def _create_volume(self, group_id: str, **kwargs):
+    def _create_volume(self, group_id: str, writable: bool, **kwargs):
         """
         Create a new volume and connect it to the group
 
         :type group_id: str
         :param group_id: The group id
+
+        :type writable: bool
+        :param writable: Set the writable for the connection
 
         :type file: str
         :param file: The file path of the configurations
@@ -185,14 +188,17 @@ class AdminGroupsVolumes(HTTPSupport):
             from primehub.admin_volumes import invalid_config as volume_invalid_config
             volume_invalid_config('The configuration is required.')
 
-        return self.create_volume(group_id, config)
+        return self.create_volume(group_id, writable, config)
 
-    def create_volume(self, group_id: str, config: Dict) -> Dict:
+    def create_volume(self, group_id: str, writable: bool, config: Dict) -> Dict:
         """
         Create a new volume and connect it to the group
 
         :type group_id: str
         :param group_id: The group id
+
+        :type writable: bool
+        :param writable: Set the writable for the connection
 
         :type config: dict
         :param config: The configurations for creating an instanceType
@@ -203,9 +209,9 @@ class AdminGroupsVolumes(HTTPSupport):
 
         # assign the connected group
         config['global'] = False
-        config['groups'] = [dict(id=group_id)]
+        config['groups'] = dict(connect=[dict(id=group_id, writable=writable)])
 
-        return self.primehub.admin_instancetypes.create(config)
+        return self.primehub.admin_volumes.create(config)
 
     @cmd(name='disconnect-volume', description='Make the volume leave the group')
     def disconnect_volume(self, group_id: str, volume_id: str) -> Dict:
@@ -338,7 +344,7 @@ class AdminGroupsInstanceTypes(HTTPSupport):
 
         # assign the connected group
         config['global'] = False
-        config['groups'] = [dict(id=group_id)]
+        config['groups'] = dict(connect=[dict(id=group_id)])
 
         return self.primehub.admin_instancetypes.create(config)
 
@@ -479,7 +485,7 @@ class AdminGroupsImages(HTTPSupport):
 
         # assign the connected group
         config['global'] = False
-        config['groups'] = [dict(id=group_id)]
+        config['groups'] = dict(connect=[dict(id=group_id)])
 
         return self.primehub.admin_images.create(config)
 
