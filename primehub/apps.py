@@ -46,6 +46,7 @@ _query_ph_applications = query = """
               description
             }
             appTemplate {
+              id
               name
               docLink
               description

@@ -10,9 +10,12 @@ Get a group or list groups
 Available Commands:
   add-user             Add a user to a group by id
   get                  Get group by name
+  get-mlflow           Get MLflow config from current group
   list                 List groups
   list-users           List users in the group by id
   remove-user          Remove a user from a group by id
+  set-mlflow           Set MLflow config to current group
+  unset-mlflow         Unset MLflow config from current group
 
 Options:
   -h, --help           Show the help
@@ -59,6 +62,19 @@ primehub groups get <group_name>
 
 
 
+### get-mlflow
+
+Get MLflow config from current group
+
+
+```
+primehub groups get-mlflow
+```
+ 
+
+
+
+
 ### list
 
 List groups
@@ -98,6 +114,34 @@ primehub groups remove-user <group_id> <user_id>
 
 * group_id: group id
 * user_id: user id
+ 
+
+
+
+
+### set-mlflow
+
+Set MLflow config to current group
+
+
+```
+primehub groups set-mlflow
+```
+ 
+
+* *(optional)* file: The file path of MLflow configuration
+
+
+
+
+### unset-mlflow
+
+Unset MLflow config from current group
+
+
+```
+primehub groups unset-mlflow
+```
  
 
 
