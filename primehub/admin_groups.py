@@ -162,6 +162,140 @@ def apply_auto_fill(config: dict):
         config['quotaGpu'] = 0
 
 
+class AdminGroupsVolumes(HTTPSupport):
+
+    @cmd(name='create-volume', description='Create a new volume and connect it to the group', optionals=[('file', file_flag)])
+    def _create_volume(self, group_id: str, **kwargs):
+        """
+        Create a new volume and connect it to the group
+
+        :type group_id: str
+        :param group_id: The group id
+
+        :type file: str
+        :param file: The file path of the configurations
+
+        :rtype dict
+        :return The instanceType
+        """
+
+        config = primehub_load_config(filename=kwargs.get('file', None))
+        if not config:
+            from primehub.admin_volumes import invalid_config as volume_invalid_config
+            volume_invalid_config('The configuration is required.')
+
+        return self.create_volume(group_id, config)
+
+    def create_volume(self, group_id: str, config: Dict) -> Dict:
+        """
+        Create a new volume and connect it to the group
+
+        :type group_id: str
+        :param group_id: The group id
+
+        :type config: dict
+        :param config: The configurations for creating an instanceType
+
+        :rtype dict
+        :return The volume
+        """
+
+        # assign the connected group
+        config['global'] = False
+        config['groups'] = [dict(id=group_id)]
+
+        return self.primehub.admin_instancetypes.create(config)
+
+    @cmd(name='disconnect-volume', description='Make the volume leave the group')
+    def disconnect_volume(self, group_id: str, volume_id: str) -> Dict:
+        """
+        Make the volume leave the group
+
+        :type group_id: str
+        :param group_id: The group id
+
+        :type volume_id: str
+        :param volume_id: The volume id
+
+        :rtype dict
+        :return The volume
+        """
+        return self._volume_group_in_and_out(group_id, volume_id, False)
+
+    @cmd(name='connect-volume', description='Make the volume join the group')
+    def connect_volume(self, group_id: str, volume_id: str) -> Dict:
+        """
+        Make the volume join the group
+
+        :type group_id: str
+        :param group_id: The group id
+
+        :type volume_id: str
+        :param volume_id: The volume id
+
+        :rtype dict
+        :return The volume
+        """
+        return self._volume_group_in_and_out(group_id, volume_id, True)
+
+    def _volume_group_in_and_out(self, group_id: str, image_id: str, execute_connect: bool):
+        query = """
+        mutation UpdateVolumeMutation(
+          $payload: DatasetUpdateInput!
+          $where: DatasetWhereUniqueInput!
+        ) {
+          updateVolume: updateDataset(data: $payload, where: $where) {
+            id
+            uploadServerSecret {
+              username
+              password
+            }
+          }
+        }
+        """
+
+        connect = []
+        disconnect = []
+        group_info = {"id": group_id}
+
+        if execute_connect:
+            connect.append(group_info)
+        else:
+            disconnect.append(group_info)
+
+        variables = {
+            "payload": {
+                "groups": {
+                    "connect": connect,
+                    "disconnect": disconnect
+                }
+            },
+            "where": {
+                "id": image_id
+            }
+        }
+        results = self.request(variables, query)
+        if 'data' not in results:
+            return results
+        return results['data']['updateVolume']
+
+    @cmd(name='list-volumes', description='List volumes in the group')
+    def list_volumes(self, group_id: str) -> List:
+        """
+        List volumes in the group
+
+        :type group_id: str
+        :param group_id: The group id
+
+        :rtype list
+        :return volumes list
+        """
+        results = self.primehub.admin_groups.get(group_id)
+        if 'id' not in results or 'volumes' not in results:
+            return results
+        return results['volumes']
+
+
 class AdminGroupsInstanceTypes(HTTPSupport):
 
     @cmd(name='create-instancetype', description='Create a new instanceType and connect it to the group', optionals=[('file', file_flag)])
@@ -660,7 +794,8 @@ class AdminGroupsUsers(HTTPSupport):
 
 
 class AdminGroups(Helpful, Module,
-                  AdminGroupsUsers, AdminGroupsImages, AdminGroupsInstanceTypes):
+                  AdminGroupsUsers, AdminGroupsImages,
+                  AdminGroupsInstanceTypes, AdminGroupsVolumes):
 
     @cmd(name='create', description='Create a group', optionals=[('file', file_flag)])
     def _create_cmd(self, **kwargs):
