@@ -78,9 +78,7 @@ class AdminReport(Helpful, Module):
 
         query = """
         query UsageReportQuery($usageReportPage: Int) {
-          usageReport: usageReportsConnection(
-            page: $usageReportPage
-          ) {
+          usageReport: usageReportsConnection(page: $usageReportPage) {
             edges {
               cursor
               node {
