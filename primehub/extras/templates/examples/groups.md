@@ -49,6 +49,17 @@ EOF
 ```
 
 * The `tracking_uri` field is required for `set-mlflow` command
+* If `jq` command installed, you can use `jq` to obtain `tracking_uri` easily:
+    ```
+    primehub apps list --json | jq -r '.[] | select(.appTemplate.id == "mlflow") | {"id": .id, "name": .displayName, "tracking_uri": (.svcEndpoints[0] | tostring | ("http://" + .)) }'
+    ```
+    ```
+    {
+      "id": "mlflow-xyzab",
+      "name": "mlflow-infuseai",
+      "tracking_uri": "http://app-mlflow-xyzab:5000"
+    }
+    ```
 
 You can also set MLflow configuration from a json file:
 
