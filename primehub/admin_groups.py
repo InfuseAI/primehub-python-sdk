@@ -164,7 +164,8 @@ def apply_auto_fill(config: dict):
 
 class AdminGroupsVolumes(HTTPSupport):
 
-    @cmd(name='create-volume', description='Create a new volume and connect it to the group', optionals=[('file', file_flag)])
+    @cmd(name='create-volume', description='Create a new volume and connect it to the group',
+         optionals=[('file', file_flag)])
     def _create_volume(self, group_id: str, **kwargs):
         """
         Create a new volume and connect it to the group
@@ -298,7 +299,8 @@ class AdminGroupsVolumes(HTTPSupport):
 
 class AdminGroupsInstanceTypes(HTTPSupport):
 
-    @cmd(name='create-instancetype', description='Create a new instanceType and connect it to the group', optionals=[('file', file_flag)])
+    @cmd(name='create-instancetype', description='Create a new instanceType and connect it to the group',
+         optionals=[('file', file_flag)])
     def _create_instancetype(self, group_id: str, **kwargs):
         """
         Create a new instanceType and connect it to the group
