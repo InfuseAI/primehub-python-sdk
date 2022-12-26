@@ -13,7 +13,7 @@ Available Commands:
   delete               Delete a volume by id
   get                  Get a volume by name
   list                 List volumes
-  list-group           List group of a volume by id
+  list-groups          List groups of a volume by id
   regen-upload-secret  Regenerate the secret of the upload server
   remove-group         Remove group connection from a volume by id
   update               Update the volume
@@ -108,13 +108,13 @@ primehub admin volumes list
 
 
 
-### list-group
+### list-groups
 
-List group of a volume by id
+List groups of a volume by id
 
 
 ```
-primehub admin volumes list-group <id>
+primehub admin volumes list-groups <id>
 ```
 
 * id: the id of a volume

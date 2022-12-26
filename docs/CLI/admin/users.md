@@ -13,7 +13,7 @@ Available Commands:
   delete               Delete an user by id
   get                  Get an user by id
   list                 List users
-  list-group           List group of a user by id
+  list-groups          List groups of a user by id
   remove-group         Remove group connection from a user by id
   reset-password       Reset password by id
   update               Update the user
@@ -107,13 +107,13 @@ primehub admin users list
 
 
 
-### list-group
+### list-groups
 
-List group of a user by id
+List groups of a user by id
 
 
 ```
-primehub admin users list-group <id>
+primehub admin users list-groups <id>
 ```
 
 * id: the id of a user

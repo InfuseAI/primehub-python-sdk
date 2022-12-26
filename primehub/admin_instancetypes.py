@@ -122,8 +122,8 @@ class AdminInstanceTypes(Helpful, Module):
 
         return results['data']['updateInstanceType']
 
-    @cmd(name='list-group', description='List group of an instance type by id')
-    def list_group(self, id: str):
+    @cmd(name='list-groups', description='List groups of an instance type by id')
+    def list_groups(self, id: str):
         """
         List groups of an instance type by id. It will return empty list if the instance type is at the global scope.
 

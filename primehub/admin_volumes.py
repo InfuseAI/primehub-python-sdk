@@ -126,8 +126,8 @@ class AdminVolumes(Helpful, Module):
             return waring_if_needed(result['data']['updateDataset'], self.primehub.stderr)
         return result
 
-    @cmd(name='list-group', description='List group of a volume by id')
-    def list_group(self, id: str):
+    @cmd(name='list-groups', description='List groups of a volume by id')
+    def list_groups(self, id: str):
         """
         List groups of a volume by id. It will return writable groups only if the volume is at the global scope.
 

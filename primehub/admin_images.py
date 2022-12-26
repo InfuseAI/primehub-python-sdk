@@ -123,8 +123,8 @@ class AdminImages(Helpful, Module):
 
         return results['data']['updateImage']
 
-    @cmd(name='list-group', description='List group of an image by id')
-    def list_group(self, id: str):
+    @cmd(name='list-groups', description='List groups of an image by id')
+    def list_groups(self, id: str):
         """
         List groups of an image by id. It will return empty list if the image is at the global scope.
 

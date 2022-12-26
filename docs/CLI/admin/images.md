@@ -13,7 +13,7 @@ Available Commands:
   delete               Delete an image by id
   get                  Get an image by id
   list                 List images
-  list-group           List group of an image by id
+  list-groups          List groups of an image by id
   remove-group         Remove group connection from an image by id
   update               Update the image
 
@@ -106,13 +106,13 @@ primehub admin images list
 
 
 
-### list-group
+### list-groups
 
-List group of an image by id
+List groups of an image by id
 
 
 ```
-primehub admin images list-group <id>
+primehub admin images list-groups <id>
 ```
 
 * id: the id of an image

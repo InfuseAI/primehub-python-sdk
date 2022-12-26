@@ -13,7 +13,7 @@ Available Commands:
   delete               Delete an instance type by id
   get                  Get an instance type by id
   list                 List instance type
-  list-group           List group of an instance type by id
+  list-groups          List groups of an instance type by id
   remove-group         Remove group connection from an instance type by id
   update               Update the instance type
 
@@ -106,13 +106,13 @@ primehub admin instancetypes list
 
 
 
-### list-group
+### list-groups
 
-List group of an instance type by id
+List groups of an instance type by id
 
 
 ```
-primehub admin instancetypes list-group <id>
+primehub admin instancetypes list-groups <id>
 ```
 
 * id: the id of an instance type
