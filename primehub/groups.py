@@ -1,7 +1,30 @@
+import json
 from typing import Dict, Any, Optional
 
-from primehub import Helpful, cmd, Module
-from primehub.utils import resource_not_found
+from primehub import Helpful, cmd, Module, primehub_load_config
+from primehub.utils.optionals import file_flag
+from primehub.utils import resource_not_found, PrimeHubException
+
+_mutation_mlflow = """
+mutation UpdateGroupMLflowConfig($where: GroupWhereUniqueInput!, $data: GroupUpdateInput!) {
+  updateGroup(where: $where, data: $data) {
+    id
+    name
+    mlflow {
+      trackingUri
+      uiUrl
+      trackingEnvs {
+        name
+        value
+      }
+      artifactEnvs {
+        name
+        value
+      }
+    }
+  }
+}
+"""
 
 
 class Groups(Helpful, Module):
@@ -176,6 +199,110 @@ defaults to False
         if 'data' not in results:
             return results
         return results['data']['updateGroup']
+
+    @cmd(name='set-mlflow', description='Set MLflow config to a group by id', optionals=[('file', file_flag)])
+    def _set_mlflow(self, group_id: str, **kwargs):
+        """
+        Set MLflow configuration to a group by id
+
+        :type group_id: str
+        :param group_id: group id
+        :type file: str
+        :param file: The file path of MLflow configuration
+        """
+        config = primehub_load_config(filename=kwargs.get('file', None))
+        if not config:
+            example = """
+            {
+              "tracking_uri":"http://app-mlflow-xyzab:5000",
+              "ui_uri":"https://primehub-python-sdk.primehub.io/console/apps/mlflow-xyzab",
+              "tracking_envs":[{"name":"key1","value":"value1"}],
+              "artifact_envs":[{"name":"key1","value":"value1"}]
+            }
+            """.strip()
+            field_help = "* 'tracking_uri' field is required"
+            raise PrimeHubException('MLflow configuration is required.' +
+                                    "\n\nExample:\n" +
+                                    json.dumps(json.loads(example), indent=2) +
+                                    f"\n\n{field_help}\n")
+        return self.set_mlflow(group_id, config)
+
+    def set_mlflow(self, group_id: str, config: dict):
+        """
+        Set MLflow configuration to a group by id
+
+        :type group_id: str
+        :param group_id: group id
+        :type config: dict
+        :param config: The content of MLflow configuration
+        """
+        query = _mutation_mlflow
+        data = {
+            "trackingUri": config.get('tracking_uri'),
+            "uiUrl": config.get('ui_uri', ''),
+            "trackingEnvs": config.get('tracking_envs', []),
+            "artifactEnvs": config.get('artifact_envs', [])
+        }
+        if not data['trackingUri']:
+            raise PrimeHubException("'tracking_uri' is required")
+
+        results = self.request({'where': {'id': group_id}, 'data': data}, query)
+        if 'data' not in results:
+            return results
+
+    @cmd(name='unset-mlflow', description='Unset MLflow config from a group by id')
+    def unset_mlflow(self, group_id: str):
+        """
+        Unset MLflow configuration from a group by id
+
+        :type group_id: str
+        :param group_id: group id
+        """
+        query = _mutation_mlflow
+        data: Dict[str, Any] = {
+            "trackingUri": None,
+            "uiUrl": None,
+            "trackingEnvs": [],
+            "artifactEnvs": [],
+        }
+        results = self.request({'where': {'id': group_id}, 'data': data}, query)
+        if 'data' not in results:
+            return results
+
+    @cmd(name='get-mlflow', description='Get MLflow config from a group by id')
+    def get_mlflow(self, group_id: str):
+        """
+        Get MLflow configuration from a group by id
+
+        :type group_id: str
+        :param group_id: group id
+        :rtype dict
+        :return MLflow configuration
+        """
+        query = """
+        query GetGroupMLflowConfig($where: GroupWhereUniqueInput!) {
+          group(where: $where) {
+            id
+            name
+            mlflow {
+              trackingUri
+              uiUrl
+              trackingEnvs {
+                name
+                value
+              }
+              artifactEnvs {
+                name
+                value
+              }
+            }
+          }
+        }
+        """
+        results = self.request({'where': {'id': group_id}}, query)
+        if 'data' not in results:
+            return results
+        return results['data']['group']['mlflow']
 
     def help_description(self):
         return "Get a group or list groups"
