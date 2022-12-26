@@ -3,7 +3,7 @@ from typing import Optional
 
 from primehub import Helpful, Module, cmd, primehub_load_config
 from primehub.utils import PrimeHubException
-from primehub.utils.optionals import file_flag
+from primehub.utils.optionals import file_flag, toggle_flag
 from primehub.utils.validator import validate_name, validate_pv_groups, validate_group_exists
 
 
@@ -162,7 +162,24 @@ class AdminVolumes(Helpful, Module):
             return [x for x in groups if x['writable']]
         return groups
 
-    @cmd(name='add-group', description='Add group connection to a volume by id')
+    @cmd(name='add-group', description='Add group connection to a volume by id', optionals=[('writable', toggle_flag)])
+    def _add_group(self, id: str, group_id, **kwargs):
+        """
+        Add group connection to a volume by id
+
+        :type id: str
+        :param id: the id of a volume
+        :type group_id: str
+        :param group_id: group id
+        :type writable: bool, optional
+        :param writable: Add `--writable` if the group has write permission to the volume.
+
+        :rtype dict
+        :return a volume with id only
+        """
+        writable = kwargs.get('writable', False)
+        self.add_group(id, group_id, writable)
+
     def add_group(self, id: str, group_id, writable=False):
         """
         Add group connection to a volume by id
