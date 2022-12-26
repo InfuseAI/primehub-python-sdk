@@ -8,8 +8,8 @@ Usage:
 Manage groups
 
 Available Commands:
-  connect-image         Make the instanceType join the group
   connect-image         Make the image join the group
+  connect-instancetype  Make the instanceType join the group
   connect-user          Add the user to the group
   connect-volume        Make the volume join the group
   create                Create a group
@@ -45,22 +45,6 @@ Global Options:
 
 ### connect-image
 
-Make the instanceType join the group
-
-
-```
-primehub admin groups connect-image <group_id> <instancetype_id>
-```
-
-* group_id: The group id
-* instancetype_id
- 
-
-
-
-
-### connect-image
-
 Make the image join the group
 
 
@@ -70,6 +54,22 @@ primehub admin groups connect-image <group_id> <image_id>
 
 * group_id: The group id
 * image_id: The image id
+ 
+
+
+
+
+### connect-instancetype
+
+Make the instanceType join the group
+
+
+```
+primehub admin groups connect-instancetype <group_id> <instancetype_id>
+```
+
+* group_id: The group id
+* instancetype_id: The instanceType id
  
 
 

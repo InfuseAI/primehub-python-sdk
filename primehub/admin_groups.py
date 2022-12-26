@@ -364,7 +364,7 @@ class AdminGroupsInstanceTypes(HTTPSupport):
         """
         return self._instancetype_group_in_and_out(group_id, instancetype_id, False)
 
-    @cmd(name='connect-image', description='Make the instanceType join the group')
+    @cmd(name='connect-instancetype', description='Make the instanceType join the group')
     def connect_instancetype(self, group_id: str, instancetype_id: str) -> Dict:
         """
         Make the instanceType join the group
