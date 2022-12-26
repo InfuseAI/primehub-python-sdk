@@ -88,6 +88,11 @@ class TestCmdFiles(BaseTestCase):
         from operator import itemgetter
         a = sorted(a, key=itemgetter('name'))
         b = sorted(b, key=itemgetter('name'))
+
+        # remove the additional phfsUri
+        for x in a:
+            del x['phfsUri']
+
         self.assertEqual(a, b)
 
     def test_files_list(self):
