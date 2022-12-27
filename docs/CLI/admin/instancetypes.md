@@ -13,7 +13,7 @@ Available Commands:
   delete               Delete an instance type by id
   get                  Get an instance type by id
   list                 List instance type
-  list-group           List group of an instance type by id
+  list-groups          List groups of an instance type by id
   remove-group         Remove group connection from an instance type by id
   update               Update the instance type
 
@@ -106,13 +106,13 @@ primehub admin instancetypes list
 
 
 
-### list-group
+### list-groups
 
-List group of an instance type by id
+List groups of an instance type by id
 
 
 ```
-primehub admin instancetypes list-group <id>
+primehub admin instancetypes list-groups <id>
 ```
 
 * id: the id of an instance type
@@ -339,4 +339,30 @@ primehub admin instancetypes update work-in-staging <<EOF
   "nodeSelector": {"zone": "staging-cpu-1"}
 }
 EOF
+```
+
+### Connect and disconnect groups
+
+List groups of an instance type by id:
+
+```
+$ primehub admin instancetypes list-groups gpu-2
+
+id                                    name                     displayName
+------------------------------------  -----------------------  ---------------------------
+71ac1e32-65fa-4e8e-a735-ba282e3149b1  example-group-1          Example Group 1
+0fdaea59-705a-4546-8d13-2d52511342b0  example-group-2          Example Group 2
+```
+* Please note it will return empty list if the instance type is at global scope
+
+Add a group connection to an instance type by id
+
+```
+$ primehub admin instancetypes add-group gpu-2 dc6a0f50-2679-4d6b-b819-8da1b2e1b0f9
+```
+
+Remove a group connection from an instance type by id
+
+```
+$ primehub admin instancetypes remove-group gpu-2 71ac1e32-65fa-4e8e-a735-ba282e3149b1
 ```

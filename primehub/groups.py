@@ -2,7 +2,7 @@ import json
 from typing import Dict, Any, Optional
 
 from primehub import Helpful, cmd, Module, primehub_load_config
-from primehub.utils.optionals import file_flag
+from primehub.utils.optionals import file_flag, toggle_flag
 from primehub.utils import resource_not_found, PrimeHubException
 
 _mutation_mlflow = """
@@ -104,7 +104,21 @@ class Groups(Helpful, Module):
                 u['group_admin'] = False
         return users
 
-    @cmd(name='add-user', description='Add a user to a group by id')
+    @cmd(name='add-user', description='Add a user to a group by id', optionals=[('is_admin', toggle_flag)])
+    def _add_user(self, group_id: str, user_id: str, **kwargs):
+        """
+        Add a user to a group by id. Only group admin can add users.
+
+        :type group_id: str
+        :param group_id: group id
+        :type user_id: str
+        :param user_id: user id
+        :type is_admin: bool
+        :param is_admin: Add `--is_admin` if the user is added as group admin.
+        """
+        is_admin = kwargs.get('is_admin', False)
+        self.add_user(group_id, user_id, is_admin)
+
     def add_user(self, group_id: str, user_id: str, is_admin: bool = False):
         """
         Add a user to a group by id. Only group admin can add users.

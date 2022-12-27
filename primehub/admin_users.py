@@ -230,8 +230,8 @@ class AdminUsers(Helpful, Module):
 
         return results['data']['updateUser']
 
-    @cmd(name='list-group', description='List group of a user by id')
-    def list_group(self, id: str):
+    @cmd(name='list-groups', description='List groups of a user by id')
+    def list_groups(self, id: str):
         """
         List groups of a user by id
 

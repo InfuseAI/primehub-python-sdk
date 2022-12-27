@@ -13,7 +13,7 @@ Available Commands:
   delete               Delete an image by id
   get                  Get an image by id
   list                 List images
-  list-group           List group of an image by id
+  list-groups          List groups of an image by id
   remove-group         Remove group connection from an image by id
   update               Update the image
 
@@ -106,13 +106,13 @@ primehub admin images list
 
 
 
-### list-group
+### list-groups
 
-List group of an image by id
+List groups of an image by id
 
 
 ```
-primehub admin images list-group <id>
+primehub admin images list-groups <id>
 ```
 
 * id: the id of an image
@@ -285,4 +285,30 @@ $ primehub admin images create <<EOF
   }
 }
 EOF
+```
+
+### Connect and disconnect groups
+
+List groups of an image by id
+
+```
+$ primehub admin images list-groups base-notebook
+
+id                                    name                     displayName
+------------------------------------  -----------------------  ---------------------------
+71ac1e32-65fa-4e8e-a735-ba282e3149b1  example-group-1          Example Group 1
+0fdaea59-705a-4546-8d13-2d52511342b0  example-group-2          Example Group 2
+```
+* Please note it will return empty list if the image is at global scope
+
+Add a group connection to an image by id
+
+```
+$ primehub admin images add-group base-notebook dc6a0f50-2679-4d6b-b819-8da1b2e1b0f9
+```
+
+Remove a group connection from an image by id
+
+```
+$ primehub admin images remove-group base-notebook 71ac1e32-65fa-4e8e-a735-ba282e3149b1
 ```
