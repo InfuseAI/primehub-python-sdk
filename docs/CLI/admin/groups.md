@@ -8,35 +8,80 @@ Usage:
 Manage groups
 
 Available Commands:
-  add-user             Add the user to the group
-  create               Create a group
-  delete               Delete the group by id
-  get                  Get the group info by id
-  list                 List groups
-  list-users           List users in the group
-  remove-user          Remove the user from the group
-  update               Update the group
+  connect-image         Make the image join the group
+  connect-instancetype  Make the instanceType join the group
+  connect-user          Add the user to the group
+  connect-volume        Make the volume join the group
+  create                Create a group
+  create-image          Add the image to the group
+  create-instancetype   Create a new instanceType and connect it to the group
+  create-volume         Create a new volume and connect it to the group
+  delete                Delete the group by id
+  disconnect-image      Make the image leave the group
+  disconnect-instancetype
+                        Make the instanceType leave the group
+  disconnect-user       Remove the user from the group
+  disconnect-volume     Make the volume leave the group
+  get                   Get the group info by id
+  list                  List groups
+  list-images           List images in the group
+  list-instancetypes    List instanceTypes in the group
+  list-users            List users in the group
+  list-volumes          List volumes in the group
+  update                Update the group
 
 Options:
-  -h, --help           Show the help
+  -h, --help            Show the help
 
 Global Options:
-  --config CONFIG      Change the path of the config file (Default: ~/.primehub/config.json)
-  --endpoint ENDPOINT  Override the GraphQL API endpoint
-  --token TOKEN        Override the API Token
-  --group GROUP        Override the current group
-  --json               Output the json format (output human-friendly format by default)
+  --config CONFIG       Change the path of the config file (Default: ~/.primehub/config.json)
+  --endpoint ENDPOINT   Override the GraphQL API endpoint
+  --token TOKEN         Override the API Token
+  --group GROUP         Override the current group
+  --json                Output the json format (output human-friendly format by default)
 
 ```
 
 
-### add-user
+### connect-image
+
+Make the image join the group
+
+
+```
+primehub admin groups connect-image <group_id> <image_id>
+```
+
+* group_id: The group id
+* image_id: The image id
+ 
+
+
+
+
+### connect-instancetype
+
+Make the instanceType join the group
+
+
+```
+primehub admin groups connect-instancetype <group_id> <instancetype_id>
+```
+
+* group_id: The group id
+* instancetype_id: The instanceType id
+ 
+
+
+
+
+### connect-user
 
 Add the user to the group
 
 
 ```
-primehub admin groups add-user <group_id> <user_id>
+primehub admin groups connect-user <group_id> <user_id>
 ```
 
 * group_id: the group id
@@ -44,6 +89,22 @@ primehub admin groups add-user <group_id> <user_id>
  
 
 * *(optional)* enable_group_admin
+
+
+
+
+### connect-volume
+
+Make the volume join the group
+
+
+```
+primehub admin groups connect-volume <group_id> <volume_id>
+```
+
+* group_id: The group id
+* volume_id: The volume id
+ 
 
 
 
@@ -63,6 +124,58 @@ primehub admin groups create
 
 
 
+### create-image
+
+Add the image to the group
+
+
+```
+primehub admin groups create-image <group_id>
+```
+
+* group_id: The group id
+ 
+
+* *(optional)* file: The file path of the configurations
+
+
+
+
+### create-instancetype
+
+Create a new instanceType and connect it to the group
+
+
+```
+primehub admin groups create-instancetype <group_id>
+```
+
+* group_id: The group id
+ 
+
+* *(optional)* file: The file path of the configurations
+
+
+
+
+### create-volume
+
+Create a new volume and connect it to the group
+
+
+```
+primehub admin groups create-volume <group_id> <writable>
+```
+
+* group_id: The group id
+* writable: Set the writable for the connection
+ 
+
+* *(optional)* file: The file path of the configurations
+
+
+
+
 ### delete
 
 Delete the group by id
@@ -73,6 +186,72 @@ primehub admin groups delete <id>
 ```
 
 * id: the group id
+ 
+
+
+
+
+### disconnect-image
+
+Make the image leave the group
+
+
+```
+primehub admin groups disconnect-image <group_id> <image_id>
+```
+
+* group_id: The group id
+* image_id: The image id
+ 
+
+
+
+
+### disconnect-instancetype
+
+Make the instanceType leave the group
+
+
+```
+primehub admin groups disconnect-instancetype <group_id> <instancetype_id>
+```
+
+* group_id: The group id
+* instancetype_id: The instanceType id
+ 
+
+
+
+
+### disconnect-user
+
+Remove the user from the group
+
+
+```
+primehub admin groups disconnect-user <group_id> <user_id>
+```
+
+* group_id: the group id
+* user_id: the user id
+ 
+
+* *(optional)* disable_group_admin
+
+
+
+
+### disconnect-volume
+
+Make the volume leave the group
+
+
+```
+primehub admin groups disconnect-volume <group_id> <volume_id>
+```
+
+* group_id: The group id
+* volume_id: The volume id
  
 
 
@@ -108,6 +287,36 @@ primehub admin groups list
 
 
 
+### list-images
+
+List images in the group
+
+
+```
+primehub admin groups list-images <group_id>
+```
+
+* group_id: The group id
+ 
+
+
+
+
+### list-instancetypes
+
+List instanceTypes in the group
+
+
+```
+primehub admin groups list-instancetypes <group_id>
+```
+
+* group_id: The group id
+ 
+
+
+
+
 ### list-users
 
 List users in the group
@@ -123,20 +332,17 @@ primehub admin groups list-users <group_id>
 
 
 
-### remove-user
+### list-volumes
 
-Remove the user from the group
+List volumes in the group
 
 
 ```
-primehub admin groups remove-user <group_id> <user_id>
+primehub admin groups list-volumes <group_id>
 ```
 
-* group_id: the group id
-* user_id: the user id
+* group_id: The group id
  
-
-* *(optional)* disable_group_admin
 
 
 
@@ -281,14 +487,14 @@ id                                    username    group_admin
 c634f8c9-d22e-4ead-bfa2-21ed018f6029  phadmin     True
 ```
 
-`add-user` and `remove-user` have same arguments to add or remove a user from the group,
+`connect-user` and `disconnect-user` have same arguments to add or remove a user from the group,
 but they are also do the group-admin enabling and disable.
 
 You can add an existing user with `--enable_group_admin` to added the group admin permission:
 
 ```
-$ primehub admin groups add-user 149f4cb6-e8d1-44e8-93d4-3a77f46ac682 698da31d-2ef8-476d-9d56-6275a949402c --enable_group_admin
+$ primehub admin groups connect-user 149f4cb6-e8d1-44e8-93d4-3a77f46ac682 698da31d-2ef8-476d-9d56-6275a949402c --enable_group_admin
 ```
 
-The permission can disable with `remove-user` and `--disable_group_admin`. When `--disable_group_admin` has set,
+The permission can disable with `disconnect-user` and `--disable_group_admin`. When `--disable_group_admin` has set,
 removal operation will only remove the permission not the user.
