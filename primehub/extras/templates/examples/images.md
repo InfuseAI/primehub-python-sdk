@@ -33,3 +33,30 @@ spec:
   url:               infuseai/docker-stacks:tensorflow-notebook-v2-5-0-63fdf50a
   urlForGpu:         infuseai/docker-stacks:tensorflow-notebook-v2-5-0-63fdf50a-gpu-cuda-11
 ```
+
+Create a group image:
+
+```
+$ primehub images create <<EOF
+{
+  "name": "base-notebook-for-group-1",
+  "displayName": "Base notebook for group 1",
+  "description": "Base notebook for group 1",
+  "type": "both",
+  "url": "infuseai/base-notebook-group-1:v1",
+  "urlForGpu": "infuseai/base-notebook-group-1:v1"
+}
+EOF
+```
+
+Or you can create a group image from json file:
+
+```
+$ primehub images create --file /tmp/base-notebook-group-1.json
+```
+
+Delete a group image:
+
+```
+$ primehub images delete base-notebook-for-group-1
+```
