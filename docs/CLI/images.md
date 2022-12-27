@@ -8,7 +8,9 @@ Usage:
 Get a image or list images
 
 Available Commands:
-  get                  Get a image by name
+  create               Create an image
+  delete               Delete an image by name
+  get                  Get an image by name
   list                 List images
 
 Options:
@@ -24,9 +26,39 @@ Global Options:
 ```
 
 
+### create
+
+Create an image
+
+
+```
+primehub images create
+```
+ 
+
+* *(optional)* file: The file path of the configurations
+
+
+
+
+### delete
+
+Delete an image by name
+
+
+```
+primehub images delete <name>
+```
+
+* name
+ 
+
+
+
+
 ### get
 
-Get a image by name
+Get an image by name
 
 
 ```
@@ -89,4 +121,31 @@ spec:
   type:              both
   url:               infuseai/docker-stacks:tensorflow-notebook-v2-5-0-63fdf50a
   urlForGpu:         infuseai/docker-stacks:tensorflow-notebook-v2-5-0-63fdf50a-gpu-cuda-11
+```
+
+Create a group image:
+
+```
+$ primehub images create <<EOF
+{
+  "name": "base-notebook-for-group-1",
+  "displayName": "Base notebook for group 1",
+  "description": "Base notebook for group 1",
+  "type": "both",
+  "url": "infuseai/base-notebook-group-1:v1",
+  "urlForGpu": "infuseai/base-notebook-group-1:v1"
+}
+EOF
+```
+
+Or you can create a group image from json file:
+
+```
+$ primehub images create --file /tmp/base-notebook-group-1.json
+```
+
+Delete a group image:
+
+```
+$ primehub images delete base-notebook-for-group-1
 ```
