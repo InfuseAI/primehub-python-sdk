@@ -117,9 +117,7 @@ class Images(Helpful, Module, GroupResourceOperation):
           }
         }
         """
-        images = [x for x in self.list() if x['name'] == name]
-        if len(images) == 0:
-            raise PrimeHubException('Image not found')
+        self.get(name)
 
         results = self.request({'where': {'id': name}}, query)
         if 'data' not in results:
