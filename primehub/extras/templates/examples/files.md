@@ -4,18 +4,18 @@ We could use `list` to watch files or directory remotely.
 
 ```
 $ primehub files list /
-name             size  lastModified
--------------  ------  --------------
-jobArtifacts/       0
+name             size  lastModified    phfsUri
+-------------  ------  --------------  ---------------------
+jobArtifacts/       0                  phfs:///jobArtifacts/
 ```
 
 You might go deeply into a sub-directory:
 
 ```
 $ primehub files list /jobArtifacts/job-202107290838-aoq173/
-name          size  lastModified
-----------  ------  --------------
-.metadata/       0
+name          size  lastModified    phfsUri
+----------  ------  --------------  ------------------
+.metadata/       0                  phfs:///.metadata/
 ```
 
 Then `download` a file directly or a directory with `--recursive` options
