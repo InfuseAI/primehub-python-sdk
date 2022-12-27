@@ -196,7 +196,7 @@ class Models(Helpful, Module):
         return results
 
     @cmd(name='list-runs', description='List runs of an experiment', return_required=True)
-    def list_runs(self, experiment_name: str) -> list:
+    def list_runs(self, experiment_name: str):
         """
         List runs of an experiment
 
@@ -232,7 +232,7 @@ class Models(Helpful, Module):
         return results
 
     @cmd(name='list-artifacts', description='List artifacts of a run', return_required=True, optionals=[('path', str)])
-    def _list_artifacts(self, run_id: str, **kwargs) -> list:
+    def _list_artifacts(self, run_id: str, **kwargs):
         """
         List artifacts of a run
 
@@ -248,7 +248,7 @@ class Models(Helpful, Module):
         path = kwargs.get('path')
         return self.list_artifacts(run_id, path)
 
-    def list_artifacts(self, run_id: str, path: Optional[str] = None) -> list:
+    def list_artifacts(self, run_id: str, path: Optional[str] = None):
         """
         List artifacts of a run
 
