@@ -264,7 +264,7 @@ class Models(Helpful, Module):
 
         query = """
         query MLflowArtifact($where: MLflowRunWhereUniqueInput!) {
-          mlflowArtifact (where: $where)
+          mlflowArtifact(where: $where)
         }
         """
         where = {
