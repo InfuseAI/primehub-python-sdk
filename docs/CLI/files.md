@@ -10,6 +10,7 @@ List and download shared files
 Available Commands:
   delete               delete shared files
   download             Download shared files
+  get-phfs-uri         Get PHFS URI
   list                 List shared files
   upload               Upload shared files
 
@@ -57,6 +58,21 @@ primehub files download <path> <dest>
  
 
 * *(optional)* recursive
+
+
+
+
+### get-phfs-uri
+
+Get PHFS URI
+
+
+```
+primehub files get-phfs-uri <path>
+```
+
+* path: The path
+ 
 
 
 

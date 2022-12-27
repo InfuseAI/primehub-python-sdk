@@ -76,6 +76,26 @@ class Files(Helpful, Module):
     The files module provides functions to manage Primehub Shared Files
     """
 
+    @cmd(name='get-phfs-uri', description='Get PHFS URI')
+    def get_phfs_uri(self, path):
+        """
+        The cmd to convert path in PHFS to the PHFS URI
+
+        :type path: str
+        :param path: The path
+
+        :rtype str
+        :return The PHFS URI
+        """
+        path_norm = _normalize_user_input_path(path)
+        path_norm = os.path.normpath(path_norm)
+
+        items = self._execute_list(path_norm, limit=0)
+        if items:
+            return f"phfs://{path_norm}"
+        else:
+            raise SharedFileException(f"PHFS path not found: {path}")
+
     @cmd(name='list', description='List shared files')
     def list(self, path):
         """
@@ -143,6 +163,13 @@ class Files(Helpful, Module):
              'options': {'recursive': recursive, 'limit': limit}},
             query)
         items = results['data']['files']['items']
+
+        # patch PHFS-URI
+        for x in items:
+            if path == '/':
+                x['phfsUri'] = f"phfs:///{x['name']}"
+            else:
+                x['phfsUri'] = f"phfs://{path}/{x['name']}"
         return items
 
     def _primehub_store_endpoint(self):
