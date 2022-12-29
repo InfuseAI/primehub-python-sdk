@@ -1,5 +1,5 @@
 import textwrap
-from typing import Iterator, Any
+from typing import Iterator, Any, Optional
 
 from primehub import Helpful, cmd, Module
 from primehub.utils.display import display_tree_like_format
@@ -54,7 +54,8 @@ class Models(Helpful, Module):
                 m['creationTimestamp'] = timestamp_to_isoformat(m['creationTimestamp'])
                 m['lastUpdatedTimestamp'] = timestamp_to_isoformat(m['lastUpdatedTimestamp'])
                 versions = m.pop('latestVersions')
-                m['latestVersion'] = versions[0]['version']
+                if len(versions):
+                    m['latestVersion'] = versions[0]['version']
                 yield m
         return results
 
@@ -134,6 +135,7 @@ class Models(Helpful, Module):
           version
           creationTimestamp
           lastUpdatedTimestamp
+          source
           deployedBy
         }
         """
@@ -182,6 +184,7 @@ class Models(Helpful, Module):
           version
           creationTimestamp
           lastUpdatedTimestamp
+          source
           deployedBy
         }
         """
@@ -191,6 +194,124 @@ class Models(Helpful, Module):
             return results
         results = results['data']['modelVersion']
         return results
+
+    @cmd(name='list-runs', description='List runs of an experiment', return_required=True)
+    def list_runs(self, experiment_name: str):
+        """
+        List runs of an experiment
+
+        :type experiment_name: str
+        :param experiment_name: The experiment name
+
+        :rtype: list
+        :return: The runs of an experiment
+        """
+
+        query = """
+        query MLflowRuns($where: MLflowExperimentWhereUniqueInput!) {
+          mlflowRuns(where: $where)
+        }
+        """
+        where = {
+            'experimentName': experiment_name,
+            'group': self.group_name,
+        }
+
+        results = self.request({'where': where}, query)
+        if 'data' in results:
+            results = results['data']
+            for r in results['mlflowRuns']:
+                m = {
+                    'runId': r['info']['runId'],
+                    'experimentId': r['info']['experimentId'],
+                    'status': r['info']['status'],
+                    'startTime': timestamp_to_isoformat(r['info']['startTime']),
+                    'endTime': timestamp_to_isoformat(r['info']['endTime']),
+                }
+                yield m
+        return results
+
+    @cmd(name='list-artifacts', description='List artifacts of a run', return_required=True, optionals=[('path', str)])
+    def _list_artifacts(self, run_id: str, **kwargs):
+        """
+        List artifacts of a run
+
+        :type run_id: str
+        :param run_id: The run id
+
+        :type path: str
+        :param path: Add `--path <path>` to filter artifacts matching this path
+
+        :rtype: list
+        :return: The artifacts of a run
+        """
+        path = kwargs.get('path')
+        return self.list_artifacts(run_id, path)
+
+    def list_artifacts(self, run_id: str, path: Optional[str] = None):
+        """
+        List artifacts of a run
+
+        :type run_id: str
+        :param run_id: The run id
+
+        :type path: str
+        :param path: Filter artifacts matching this path, defaults to None
+
+        :rtype: list
+        :return: The artifacts of a run
+        """
+
+        query = """
+        query MLflowArtifact($where: MLflowRunWhereUniqueInput!) {
+          mlflowArtifact(where: $where)
+        }
+        """
+        where = {
+            'runId': run_id,
+            'group': self.group_name,
+        }
+        if path:
+            where['path'] = path
+
+        results = self.request({'where': where}, query)
+        if 'data' not in results:
+            return results
+        if 'files' in results['data']['mlflowArtifact']:
+            return results['data']['mlflowArtifact']['files']
+        return []
+
+    @cmd(name='register', description='Register a model')
+    def register(self, name: str, run_id: str, path: str):
+        """
+        Register a model
+
+        :type name: str
+        :param name: Model name
+
+        :type run_id: str
+        :param run_id: The run id
+
+        :type path: str
+        :param path: The location of the model artifacts
+        """
+
+        query = """
+        mutation RegisterModel($where: ModelRegisterInput!) {
+          registerModel(where: $where)
+        }
+        """
+        where = {
+            'name': name,
+            'runId': run_id,
+            'path': path,
+            'group': self.group_name,
+        }
+
+        results = self.request({'where': where}, query)
+        if 'data' not in results:
+            return results
+        return results['data']['registerModel']
 
     @cmd(name='deploy', description='Deploy the model version to the speific deployment', return_required=True)
     def deploy(self, model: str, version: str, deploy_id: str) -> dict:
