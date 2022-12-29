@@ -226,8 +226,9 @@ class Models(Helpful, Module):
                     'experimentId': r['info']['experimentId'],
                     'status': r['info']['status'],
                     'startTime': timestamp_to_isoformat(r['info']['startTime']),
-                    'endTime': timestamp_to_isoformat(r['info']['endTime']),
                 }
+                if r['info'].get('endTime'):
+                    m['endTime'] = timestamp_to_isoformat(r['info']['endTime'])
                 yield m
         return results
 
