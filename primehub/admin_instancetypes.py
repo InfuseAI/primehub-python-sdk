@@ -4,7 +4,7 @@ from typing import Iterator, Dict, Any
 from primehub import Helpful, Module, cmd, primehub_load_config
 from primehub.utils import PrimeHubException, resource_not_found
 from primehub.utils.optionals import file_flag
-from primehub.utils.validator import validate_name, validate_groups, validate_group_exists
+from primehub.utils.validator import validate_name, validate_group_exists
 
 NODE_SELECTOR_KEY_LEN_ERROR = 'nodeSelector: len(key) should be less or equal to 63'
 NODE_SELECTOR_KV_TYPE_ERROR = 'nodeSelector: key and value must be a string'
@@ -409,7 +409,6 @@ def required_str_lengths_3_63(field):
 def validate(payload: dict, for_update=False):
     if not for_update:
         validate_name(payload)
-    validate_groups(payload)
 
     validate_cpu_fields(payload)
     validate_memory_fields(payload)
