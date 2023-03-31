@@ -211,7 +211,7 @@ class AdminGroupsVolumes(HTTPSupport):
         config['global'] = False
         config['groups'] = dict(connect=[dict(id=group_id, writable=writable)])
 
-        return self.primehub.admin_volumes.create(config)
+        return self.primehub.admin.admin_volumes.create(config)
 
     @cmd(name='disconnect-volume', description='Make the volume leave the group')
     def disconnect_volume(self, group_id: str, volume_id: str) -> Dict:
@@ -297,7 +297,7 @@ class AdminGroupsVolumes(HTTPSupport):
         :rtype list
         :return volumes list
         """
-        results = self.primehub.admin_groups.get(group_id)
+        results = self.primehub.admin.admin_groups.get(group_id)
         if 'id' not in results or 'volumes' not in results:
             return results
         return results['volumes']
@@ -346,7 +346,7 @@ class AdminGroupsInstanceTypes(HTTPSupport):
         config['global'] = False
         config['groups'] = dict(connect=[dict(id=group_id)])
 
-        return self.primehub.admin_instancetypes.create(config)
+        return self.primehub.admin.admin_instancetypes.create(config)
 
     @cmd(name='disconnect-instancetype', description='Make the instanceType leave the group')
     def disconnect_instancetype(self, group_id: str, instancetype_id: str) -> Dict:
@@ -439,7 +439,7 @@ class AdminGroupsInstanceTypes(HTTPSupport):
         :rtype list
         :return instance-type list
         """
-        results = self.primehub.admin_groups.get(group_id)
+        results = self.primehub.admin.admin_groups.get(group_id)
         if 'id' not in results or 'instanceTypes' not in results:
             return results
         return results['instanceTypes']
@@ -487,7 +487,7 @@ class AdminGroupsImages(HTTPSupport):
         config['global'] = False
         config['groups'] = dict(connect=[dict(id=group_id)])
 
-        return self.primehub.admin_images.create(config)
+        return self.primehub.admin.admin_images.create(config)
 
     @cmd(name='disconnect-image', description='Make the image leave the group')
     def disconnect_image(self, group_id: str, image_id: str) -> Dict:
@@ -602,7 +602,7 @@ class AdminGroupsImages(HTTPSupport):
         :rtype list
         :return image list
         """
-        results = self.primehub.admin_groups.get(group_id)
+        results = self.primehub.admin.admin_groups.get(group_id)
         if 'id' not in results or 'images' not in results:
             return results
         return results['images']
@@ -766,7 +766,7 @@ class AdminGroupsUsers(HTTPSupport):
         return users
 
     def _make_group_admins(self, group_id: str, user_id: str, added: bool):
-        user_dict = self.primehub.admin_users.get(user_id)
+        user_dict = self.primehub.admin.admin_users.get(user_id)
         username = None
         if 'id' in user_dict and 'username' in user_dict:
             username = user_dict['username']
