@@ -1,3 +1,3 @@
-# PrimeHub Python SDK screenplay
+# PrimeHub Python SDK Use-case
 
-PrimeHub Python SDK screenplay is a set of Juypter notebooks for user to test PrimeHub SDK function.
+By these use-cases, SDK users can learn what the SDK are capable of fundamentally.
