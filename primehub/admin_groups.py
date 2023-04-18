@@ -7,6 +7,22 @@ from primehub.utils import PrimeHubException
 from primehub.utils.optionals import file_flag, toggle_flag
 from primehub.utils.validator import validate_connection
 
+group_basic_info = """
+fragment GroupBasicInfo on Group {
+  id
+  displayName
+  name
+  admins
+  quotaCpu
+  quotaGpu
+  quotaMemory
+  projectQuotaCpu
+  projectQuotaGpu
+  projectQuotaMemory
+  sharedVolumeCapacity
+}
+"""
+
 
 def invalid_config(message: str):
     example = """
@@ -840,20 +856,7 @@ class AdminGroups(Helpful, Module,
             ...GroupBasicInfo
           }
         }
-        fragment GroupBasicInfo on Group {
-          id
-          displayName
-          name
-          admins
-          quotaCpu
-          quotaGpu
-          quotaMemory
-          projectQuotaCpu
-          projectQuotaGpu
-          projectQuotaMemory
-          sharedVolumeCapacity
-        }
-        """
+        """ + group_basic_info
 
         apply_auto_fill(config)
         results = self.request({'data': validate(config)}, query)
@@ -893,20 +896,7 @@ class AdminGroups(Helpful, Module,
             }
           }
         }
-        fragment GroupBasicInfo on Group {
-          id
-          displayName
-          name
-          admins
-          quotaCpu
-          quotaGpu
-          quotaMemory
-          projectQuotaCpu
-          projectQuotaGpu
-          projectQuotaMemory
-          sharedVolumeCapacity
-        }
-        """
+        """ + group_basic_info
 
         variables: dict = {'orderBy': {}, 'where': {}}
         page = kwargs.get('page', 0)
@@ -1070,31 +1060,35 @@ class AdminGroups(Helpful, Module,
         """
 
         query = """
-        mutation UpdateGroup($data: GroupUpdateInput!, $where: GroupWhereUniqueInput!) {
+        mutation UpdateGroup(
+          $data: GroupUpdateInput!,
+          $where: GroupWhereUniqueInput!
+        ) {
           updateGroup(data: $data, where: $where) {
             ...GroupBasicInfo
           }
         }
-        fragment GroupBasicInfo on Group {
-          id
-          displayName
-          name
-          admins
-          quotaCpu
-          quotaGpu
-          quotaMemory
-          projectQuotaCpu
-          projectQuotaGpu
-          projectQuotaMemory
-          sharedVolumeCapacity
-        }
-        """
+        """ + group_basic_info
+
         variables = {'where': {'id': id}, 'data': validate(config, True)}
         results = self.request(variables, query)
 
         if 'data' not in results:
             return results
-        return results['data']['updateGroup']
+
+        updated_query = """
+        query Group(
+          $where: GroupWhereUniqueInput!
+        ) {
+          group(where: $where) {
+            ...GroupBasicInfo
+          }
+        }
+        """ + group_basic_info
+        updated_results = self.request({'where': {'id': id}}, updated_query)
+        if 'data' not in updated_results:
+            return updated_results
+        return updated_results['data']['group']
 
     @cmd(name='delete', description='Delete the group by id', return_required=True)
     def delete(self, id: str) -> dict:
