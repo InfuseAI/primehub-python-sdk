@@ -7,6 +7,22 @@ from primehub.utils import PrimeHubException
 from primehub.utils.optionals import file_flag, toggle_flag
 from primehub.utils.validator import validate_connection
 
+group_basic_info = """
+fragment GroupBasicInfo on Group {
+  id
+  displayName
+  name
+  admins
+  quotaCpu
+  quotaGpu
+  quotaMemory
+  projectQuotaCpu
+  projectQuotaGpu
+  projectQuotaMemory
+  sharedVolumeCapacity
+}
+"""
+
 
 def invalid_config(message: str):
     example = """
@@ -844,7 +860,6 @@ class AdminGroups(Helpful, Module,
           id
           displayName
           name
-          admins
           quotaCpu
           quotaGpu
           quotaMemory
@@ -853,9 +868,14 @@ class AdminGroups(Helpful, Module,
           projectQuotaMemory
           sharedVolumeCapacity
         }
-        """
+        """ + group_basic_info
 
         apply_auto_fill(config)
+
+        # cannot specify admins when creating
+        if config.get('admins'):
+            config['admins'] = ''
+
         results = self.request({'data': validate(config)}, query)
 
         if 'data' not in results:
@@ -893,20 +913,7 @@ class AdminGroups(Helpful, Module,
             }
           }
         }
-        fragment GroupBasicInfo on Group {
-          id
-          displayName
-          name
-          admins
-          quotaCpu
-          quotaGpu
-          quotaMemory
-          projectQuotaCpu
-          projectQuotaGpu
-          projectQuotaMemory
-          sharedVolumeCapacity
-        }
-        """
+        """ + group_basic_info
 
         variables: dict = {'orderBy': {}, 'where': {}}
         page = kwargs.get('page', 0)
@@ -1012,10 +1019,13 @@ class AdminGroups(Helpful, Module,
 
         if 'data' not in results:
             return results
+        group = results['data']['group']
+        if not group:
+            return group
 
-        results['data']['group']['volumes'] = results['data']['group'].pop('datasets', '[]')
-
-        return results['data']['group']
+        group['volumes'] = group.pop('datasets', '[]')
+        self._output_format_admins(id, group)
+        return group
 
     def _everyone_group_id(self) -> dict:
         query = """
@@ -1070,31 +1080,40 @@ class AdminGroups(Helpful, Module,
         """
 
         query = """
-        mutation UpdateGroup($data: GroupUpdateInput!, $where: GroupWhereUniqueInput!) {
+        mutation UpdateGroup(
+          $data: GroupUpdateInput!,
+          $where: GroupWhereUniqueInput!
+        ) {
           updateGroup(data: $data, where: $where) {
             ...GroupBasicInfo
           }
         }
-        fragment GroupBasicInfo on Group {
-          id
-          displayName
-          name
-          admins
-          quotaCpu
-          quotaGpu
-          quotaMemory
-          projectQuotaCpu
-          projectQuotaGpu
-          projectQuotaMemory
-          sharedVolumeCapacity
-        }
-        """
+        """ + group_basic_info
+
+        if config.get('admins'):
+            config['admins'] = self._transform_admins(id, config.get('admins', []))
+
         variables = {'where': {'id': id}, 'data': validate(config, True)}
         results = self.request(variables, query)
 
         if 'data' not in results:
             return results
-        return results['data']['updateGroup']
+
+        updated_query = """
+        query Group(
+          $where: GroupWhereUniqueInput!
+        ) {
+          group(where: $where) {
+            ...GroupBasicInfo
+          }
+        }
+        """ + group_basic_info
+        updated_results = self.request({'where': {'id': id}}, updated_query)
+        if 'data' not in updated_results:
+            return updated_results
+        updated_group = updated_results['data']['group']
+        self._output_format_admins(id, updated_group)
+        return updated_group
 
     @cmd(name='delete', description='Delete the group by id', return_required=True)
     def delete(self, id: str) -> dict:
@@ -1120,6 +1139,43 @@ class AdminGroups(Helpful, Module,
         if 'data' not in results:
             return results
         return results['data']['deleteGroup']
+
+    def _transform_admins(self, id: str, user_ids: List[str]):
+        if len(user_ids) == 0:
+            return ''
+
+        member_dict = {}
+        users = self.primehub.admin.admin_groups.list_users(id)
+        for user in users:
+            user_id = user['id']
+            username = user['username']
+            member_dict[user_id] = username
+
+        admin_usernames = []
+        invalid_user_ids = []
+        for user_id in user_ids:
+            if user_id in member_dict:
+                admin_usernames.append(member_dict[user_id])
+            else:
+                invalid_user_ids.append(user_id)
+
+        if len(invalid_user_ids) > 0:
+            _invalid_ids = ', '.join(invalid_user_ids)
+            msg = f'admins contain invalid user ids: {_invalid_ids}'
+            raise PrimeHubException(msg)
+        return ','.join(admin_usernames)
+
+    def _output_format_admins(self, id: str, group: dict):
+        admin_users = []
+        admin_usernames = group.get('admins', '').split(',')
+        users = self.primehub.admin.admin_groups.list_users(id)
+        for user in users:
+            if user['username'] in admin_usernames:
+                admin_users.append(dict(
+                    id=user['id'],
+                    username=user['username']
+                ))
+        group['admins'] = admin_users
 
     def help_description(self):
         return "Manage groups"
