@@ -868,7 +868,7 @@ class AdminGroups(Helpful, Module,
           projectQuotaMemory
           sharedVolumeCapacity
         }
-        """ + group_basic_info
+        """
 
         apply_auto_fill(config)
 
