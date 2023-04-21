@@ -352,6 +352,8 @@ class AdminUsers(Helpful, Module):
         if 'data' not in results:
             return results
         user = results['data']['user']
+        if not user:
+            return user
 
         # hide the everyone group
         groups = user['groups']
